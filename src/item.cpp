@@ -6313,7 +6313,7 @@ void item::fill_with( item &liquid, long amount )
         // if container already has liquid we need to set the amount
         item &cts = contents.front();
         cts.mod_charges( amount );
-    } else {
+    else {
         item liquid_copy( liquid );
         liquid_copy.charges = amount;
         put_in( liquid_copy );
