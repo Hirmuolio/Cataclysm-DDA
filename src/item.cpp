@@ -7045,7 +7045,7 @@ void item::apply_freezerburn()
     }
 }
 
-void item::process_temperature_rot( int temp, float insulation, const tripoint pos,
+void item::process_temperature_rot( float insulation, const tripoint pos,
                                     player *carrier, const std::string flag )
 {
     const time_point now = calendar::turn;
@@ -7059,6 +7059,7 @@ void item::process_temperature_rot( int temp, float insulation, const tripoint p
     }
 
     bool carried = carrier != nullptr && carrier->has_item( *this );
+	int temp = g->get_temperature( pos );
 
     // process temperature and rot at most once every 100_turns (10 min)
     // note we're also gated by item::processing_speed
@@ -7090,7 +7091,6 @@ void item::process_temperature_rot( int temp, float insulation, const tripoint p
         const auto seed = g->get_seed();
         const auto local = g->m.getlocal( pos );
         auto local_mod = g->new_game ? 0 : g->m.temperature( local );
-        const auto temp_modify = ( !g->new_game ) && ( g->m.ter( local ) == t_rootcellar );
 
         int enviroment_mod;
         // Toilets and vending machines will try to get the heat radiation and convection during mapgen and segfault.
@@ -7112,14 +7112,7 @@ void item::process_temperature_rot( int temp, float insulation, const tripoint p
             time_duration time_delta = std::min( 1_hours, now - 1_hours - time );
             time += time_delta;
 
-            w_point weather = wgen.get_weather( pos, time, seed );
-
-            //Use weather if above ground, use map temp if below
-            double env_temperature = ( pos.z >= 0 ? weather.temperature + enviroment_mod : temp ) + local_mod;
-
-            // If in a root celler: use AVERAGE_ANNUAL_TEMPERATURE
-            // If not: use calculated temperature
-            env_temperature = ( temp_modify * AVERAGE_ANNUAL_TEMPERATURE ) + ( !temp_modify * env_temperature );
+            double env_temperature;
 
             if( flag == "fridge" ) {
                 env_temperature = std::min( env_temperature, static_cast<double>( temperatures::fridge ) );
@@ -7129,7 +7122,14 @@ void item::process_temperature_rot( int temp, float insulation, const tripoint p
                 env_temperature = std::max( env_temperature, static_cast<double>( temperatures::normal ) );
             } else if( flag == "root_cellar" ) {
                 env_temperature = AVERAGE_ANNUAL_TEMPERATURE;
-            }
+            } else if( pos.z < 0 ) {
+                env_temperature = AVERAGE_ANNUAL_TEMPERATURE + enviroment_mod + local_mod;
+            } else {
+				w_point weather = wgen.get_weather( pos, time, seed );
+
+				//Use weather if above ground, use map temp if below
+				env_temperature = weather.temperature + enviroment_mod + local_mod;
+			}
 
             // Calculate item temperature from enviroment temperature
             // If the time was more than 2 d ago just set the item to enviroment temperature
@@ -7755,16 +7755,7 @@ bool item::process_tool( player *carrier, const tripoint &pos )
     return false;
 }
 
-bool item::process( player *carrier, const tripoint &pos, bool activate )
-{
-    if( has_temperature() || is_food_container() ) {
-        return process( carrier, pos, activate, g->get_temperature( pos ), 1, "" );
-    } else {
-        return process( carrier, pos, activate, 0, 1, "" );
-    }
-}
-
-bool item::process( player *carrier, const tripoint &pos, bool activate, int temp,
+bool item::process( player *carrier, const tripoint &pos, bool activate,
                     float insulation, const std::string flag )
 {
     const bool preserves = type->container && type->container->preserves;
@@ -7774,7 +7765,7 @@ bool item::process( player *carrier, const tripoint &pos, bool activate, int tem
             // is not changed, the item is still fresh.
             it->last_rot_check = calendar::turn;
         }
-        if( it->process( carrier, pos, activate, temp, type->insulation_factor * insulation, flag ) ) {
+        if( it->process( carrier, pos, activate, type->insulation_factor * insulation, flag ) ) {
             it = contents.erase( it );
         } else {
             ++it;
@@ -7842,7 +7833,7 @@ bool item::process( player *carrier, const tripoint &pos, bool activate, int tem
     }
     // All foods that go bad have temperature
     if( has_temperature() ) {
-        process_temperature_rot( temp, insulation, pos, carrier, flag );
+        process_temperature_rot( insulation, pos, carrier, flag );
     }
 
     return false;
