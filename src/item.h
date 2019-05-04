@@ -692,7 +692,7 @@ class item : public visitable<item>
          * @param carrier The current carrier
          * @param flag is used to tell that the item is in a temperature controlled place. "heater", "fridge", "freezer", "root_cellar"
          */
-        void process_temperature_rot( int temp, float insulation, const tripoint pos, player *carrier,
+        void process_temperature_rot( float insulation, const tripoint pos, player *carrier,
                                       const std::string flag );
 
         /** Set the item to HOT */
@@ -990,8 +990,8 @@ class item : public visitable<item>
          * should than delete the item wherever it was stored.
          * Returns false if the item is not destroyed.
          */
-        bool process( player *carrier, const tripoint &pos, bool activate, float insulation,
-                      const std::string flag );
+        bool process( player *carrier, const tripoint &pos, bool activate, float insulation = 1,
+                      const std::string flag = "" );
 
         /**
          * Gets the point (vehicle tile) the cable is connected to.

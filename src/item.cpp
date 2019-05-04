@@ -7112,7 +7112,7 @@ void item::process_temperature_rot( float insulation, const tripoint pos,
             time_duration time_delta = std::min( 1_hours, now - 1_hours - time );
             time += time_delta;
 
-            double env_temperature;
+            double env_temperature = 0;
 
             if( flag == "fridge" ) {
                 env_temperature = std::min( env_temperature, static_cast<double>( temperatures::fridge ) );
