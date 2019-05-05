@@ -79,6 +79,7 @@
 #include "tileray.h"
 #include "weighted_list.h"
 #include "material.h"
+#include "enums.h"
 
 const mtype_id mon_zombie( "mon_zombie" );
 
@@ -4473,7 +4474,7 @@ static bool item_is_in_activity( const item *it )
 }
 
 static bool process_item( item_stack &items, std::list<item>::iterator &n, const tripoint &location,
-                          const bool activate, const float insulation, const std::string flag )
+                          const bool activate, const float insulation, const temperature_flag flag )
 {
     if( !item_is_in_activity( &*n ) ) {
         // make a temporary copy, remove the item (in advance)
@@ -4501,7 +4502,7 @@ static bool process_item( item_stack &items, std::list<item>::iterator &n, const
 
 static bool process_map_items( item_stack &items, std::list<item>::iterator &n,
                                const tripoint &location, const std::string &,
-                               const float insulation, const std::string flag )
+                               const float insulation, const temperature_flag flag )
 {
     return process_item( items, n, location, false, insulation, flag );
 }
@@ -4608,9 +4609,9 @@ void map::process_items_in_submap( submap &current_submap, const tripoint &gridp
 
         const tripoint map_location = tripoint( grid_offset + active_item.location, gridp.z );
         // root cellars are special
-        std::string flag = "";
+        temperature_flag flag = temperature_flag::TEMP_NORMAL;
         if( g->m.ter( map_location ) == t_rootcellar ) {
-            flag = "root_cellar";
+            flag = temperature_flag::TEMP_ROOT_CELLAR;
         }
         auto items = i_at( map_location );
         processor( items, active_item.item_iterator, map_location, signal, 1, flag );
@@ -4672,21 +4673,21 @@ void map::process_items_in_vehicle( vehicle &cur_veh, submap &current_submap, co
         const tripoint item_loc = it->pos();
         auto items = cur_veh.get_items( static_cast<int>( it->part_index() ) );
         float it_insulation = 1.0;
-        std::string flag = "";
+        temperature_flag flag = temperature_flag::TEMP_NORMAL;
         if( item_iter->has_temperature() || item_iter->is_food_container() ) {
             const vpart_info &pti = pt.info();
             if( engine_heater_is_on ) {
-                flag = "heater";
+                flag = temperature_flag::TEMP_HEATER;
             }
             // some vehicle parts provide insulation, default is 1
             it_insulation = item::find_type( pti.item )->insulation_factor;
 
             if( pt.enabled && pti.has_flag( VPFLAG_FRIDGE ) ) {
                 it_insulation = 1; // ignore fridge insulation if on
-                flag = "fridge";
+                flag = temperature_flag::TEMP_FRIDGE;
             } else if( pt.enabled && pti.has_flag( VPFLAG_FREEZER ) ) {
                 it_insulation = 1; // ignore freezer insulation if on
-                flag = "freezer";
+                flag = temperature_flag::TEMP_FREEZER;
             }
         }
         if( !processor( items, item_iter, item_loc, signal, it_insulation, flag ) ) {
@@ -5115,7 +5116,7 @@ std::list<std::pair<tripoint, item *> > map::get_rc_items( int x, int y, int z )
 
 static bool trigger_radio_item( item_stack &items, std::list<item>::iterator &n,
                                 const tripoint &pos, const std::string &signal,
-                                const float, const std::string flag )
+                                const float, const temperature_flag flag )
 {
     bool trigger_item = false;
     if( n->has_flag( "RADIO_ACTIVATION" ) && n->has_flag( signal ) ) {
@@ -6704,10 +6705,10 @@ void map::loadn( const int gridx, const int gridy, const int gridz, const bool u
 bool map::has_rotten_away( item &itm, const tripoint &pnt ) const
 {
     if( itm.is_corpse() && itm.goes_bad() ) {
-        itm.process_temperature_rot( g->get_temperature( pnt ), 1, pnt, nullptr, "" );
+        itm.process_temperature_rot( g->get_temperature( pnt ), 1, pnt, nullptr );
         return itm.get_rot() > 10_days && !itm.can_revive();
     } else if( itm.goes_bad() ) {
-        itm.process_temperature_rot( g->get_temperature( pnt ), 1, pnt, nullptr, "" );
+        itm.process_temperature_rot( g->get_temperature( pnt ), 1, pnt, nullptr );
         return itm.has_rotten_away();
     } else if( itm.type->container && itm.type->container->preserves ) {
         // Containers like tin cans preserves all items inside, they do not rot at all.
@@ -6716,7 +6717,7 @@ bool map::has_rotten_away( item &itm, const tripoint &pnt ) const
         // Items inside rot but do not vanish as the container seals them in.
         for( auto &c : itm.contents ) {
             if( c.goes_bad() ) {
-                c.process_temperature_rot( g->get_temperature( pnt ), 1, pnt, nullptr, "" );
+                c.process_temperature_rot( g->get_temperature( pnt ), 1, pnt, nullptr );
             }
         }
         return false;
