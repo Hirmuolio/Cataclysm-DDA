@@ -339,7 +339,7 @@ void vehicle_part::process_contents( const tripoint &pos, const bool e_heater )
     if( base.is_food_container() ) {
         std::string flag = "";
         if( e_heater ) {
-			flag = "heater";
+            flag = "heater";
         }
         base.process( nullptr, pos, false, 1, flag );
     }

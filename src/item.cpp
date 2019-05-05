@@ -7059,7 +7059,7 @@ void item::process_temperature_rot( float insulation, const tripoint pos,
     }
 
     bool carried = carrier != nullptr && carrier->has_item( *this );
-	int temp = g->get_temperature( pos );
+    int temp = g->get_temperature( pos );
 
     // process temperature and rot at most once every 100_turns (10 min)
     // note we're also gated by item::processing_speed
@@ -7125,11 +7125,11 @@ void item::process_temperature_rot( float insulation, const tripoint pos,
             } else if( pos.z < 0 ) {
                 env_temperature = AVERAGE_ANNUAL_TEMPERATURE + enviroment_mod + local_mod;
             } else {
-				w_point weather = wgen.get_weather( pos, time, seed );
+                w_point weather = wgen.get_weather( pos, time, seed );
 
-				//Use weather if above ground, use map temp if below
-				env_temperature = weather.temperature + enviroment_mod + local_mod;
-			}
+                //Use weather if above ground, use map temp if below
+                env_temperature = weather.temperature + enviroment_mod + local_mod;
+            }
 
             // Calculate item temperature from enviroment temperature
             // If the time was more than 2 d ago just set the item to enviroment temperature

@@ -7464,7 +7464,7 @@ int iuse::cable_attach( player *p, item *it, bool, const tripoint & )
     const auto set_cable_active = []( player * p, item * it, const std::string & state ) {
         it->set_var( "state", state );
         it->active = true;
-        it->process( p, p->pos(), false, 1, "" );
+        it->process( p, p->pos(), false );
         p->moves -= 15;
     };
     if( initial_state == "attach_first" ) {
