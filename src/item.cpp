@@ -7045,7 +7045,7 @@ void item::apply_freezerburn()
     }
 }
 
-void item::process_temperature_rot( float insulation, const tripoint pos,
+void item::process_temperature_rot( int temp, float insulation, const tripoint pos,
                                     player *carrier, const std::string flag )
 {
     const time_point now = calendar::turn;
@@ -7059,7 +7059,6 @@ void item::process_temperature_rot( float insulation, const tripoint pos,
     }
 
     bool carried = carrier != nullptr && carrier->has_item( *this );
-    int temp = g->get_temperature( pos );
 
     // process temperature and rot at most once every 100_turns (10 min)
     // note we're also gated by item::processing_speed
@@ -7833,7 +7832,7 @@ bool item::process( player *carrier, const tripoint &pos, bool activate,
     }
     // All foods that go bad have temperature
     if( has_temperature() ) {
-        process_temperature_rot( insulation, pos, carrier, flag );
+        process_temperature_rot( g->get_temperature( pos ), insulation, pos, carrier, flag );
     }
 
     return false;

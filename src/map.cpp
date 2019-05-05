@@ -6704,10 +6704,10 @@ void map::loadn( const int gridx, const int gridy, const int gridz, const bool u
 bool map::has_rotten_away( item &itm, const tripoint &pnt ) const
 {
     if( itm.is_corpse() && itm.goes_bad() ) {
-        itm.process_temperature_rot( 1, pnt, nullptr, "" );
+        itm.process_temperature_rot( g->get_temperature( pnt ), 1, pnt, nullptr, "" );
         return itm.get_rot() > 10_days && !itm.can_revive();
     } else if( itm.goes_bad() ) {
-        itm.process_temperature_rot( 1, pnt, nullptr, "" );
+        itm.process_temperature_rot( g->get_temperature( pnt ), 1, pnt, nullptr, "" );
         return itm.has_rotten_away();
     } else if( itm.type->container && itm.type->container->preserves ) {
         // Containers like tin cans preserves all items inside, they do not rot at all.
@@ -6716,7 +6716,7 @@ bool map::has_rotten_away( item &itm, const tripoint &pnt ) const
         // Items inside rot but do not vanish as the container seals them in.
         for( auto &c : itm.contents ) {
             if( c.goes_bad() ) {
-                c.process_temperature_rot( 1, pnt, nullptr, "" );
+                c.process_temperature_rot( g->get_temperature( pnt ), 1, pnt, nullptr, "" );
             }
         }
         return false;
