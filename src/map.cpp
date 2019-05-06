@@ -4358,9 +4358,6 @@ item &map::add_item_at( const tripoint &p,
     if( new_item.has_flag( "ACT_IN_FIRE" ) && get_field( p, fd_fire ) != nullptr ) {
         new_item.active = true;
     }
-    if( new_item.has_temperature() ) {
-        new_item.active = true;
-    }
 
     point l;
     submap *const current_submap = get_submap_at( p, l );
