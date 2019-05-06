@@ -7111,23 +7111,34 @@ void item::process_temperature_rot( int temp, float insulation, const tripoint p
             time_duration time_delta = std::min( 1_hours, now - 1_hours - time );
             time += time_delta;
 
+            //Use weather if above ground, use map temp if below
             double env_temperature = 0;
-
-            if( flag == temperature_flag::TEMP_FRIDGE ) {
-                env_temperature = std::min( env_temperature, static_cast<double>( temperatures::fridge ) );
-            } else if( flag == temperature_flag::TEMP_FREEZER ) {
-                env_temperature = std::min( env_temperature, static_cast<double>( temperatures::freezer ) );
-            } else if( flag == temperature_flag::TEMP_HEATER ) {
-                env_temperature = std::max( env_temperature, static_cast<double>( temperatures::normal ) );
-            } else if( flag == temperature_flag::TEMP_ROOT_CELLAR ) {
-                env_temperature = AVERAGE_ANNUAL_TEMPERATURE;
-            } else if( pos.z < 0 ) {
-                env_temperature = AVERAGE_ANNUAL_TEMPERATURE + enviroment_mod + local_mod;
-            } else {
+            if( pos.z >= 0 ) {
                 w_point weather = wgen.get_weather( pos, time, seed );
-
-                //Use weather if above ground, use map temp if below
                 env_temperature = weather.temperature + enviroment_mod + local_mod;
+            } else {
+                env_temperature = AVERAGE_ANNUAL_TEMPERATURE + enviroment_mod + local_mod;
+            }
+
+            switch( flag ) {
+                case TEMP_NORMAL:
+                    // Just use the temperature normally
+                    break;
+                case TEMP_FRIDGE:
+                    env_temperature = std::min( env_temperature, static_cast<double>( temperatures::fridge ) );
+                    break;
+                case TEMP_FREEZER:
+                    env_temperature = std::min( env_temperature, static_cast<double>( temperatures::freezer ) );
+                    break;
+                case TEMP_HEATER:
+                    env_temperature = std::max( env_temperature, static_cast<double>( temperatures::normal ) );
+                    break;
+                case TEMP_ROOT_CELLAR:
+                    env_temperature = AVERAGE_ANNUAL_TEMPERATURE;
+                    break;
+                default:
+                    env_temperature = temp;
+                    debugmsg( "Temperature flag enum not valid. Using current temperature." );
             }
 
             // Calculate item temperature from enviroment temperature
