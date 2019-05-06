@@ -6,6 +6,8 @@
 #include "item.h"
 #include "map.h"
 #include "optional.h"
+#include "enums.h"
+#include "cata_utility.h"
 
 
 bool is_nearly( float value, float expected )
@@ -22,9 +24,9 @@ TEST_CASE( "Item spawns with right thermal attributes" )
 {
     item D( "meat_cooked" );
 
-    CHECK( D.type->comestible->specific_heat_liquid == 3.7f );
-    CHECK( D.type->comestible->specific_heat_solid == 2.15f );
-    CHECK( D.type->comestible->latent_heat == 260 );
+    CHECK( D.get_specific_heat_liquid() == 3.7f );
+    CHECK( D.get_specific_heat_solid() == 2.15f );
+    CHECK( D.get_latent_heat() == 260 );
 
     CHECK( D.temperature == 0 );
     CHECK( D.specific_energy == -10 );
@@ -250,5 +252,30 @@ TEST_CASE( "Rate of temperature change" )
         // same temp
         CHECK( is_nearly( meat1.temperature, 28654986 ) );
         CHECK( is_nearly( meat1.temperature, meat2.temperature ) );
+    }
+}
+
+TEST_CASE( "Temperature controlled location" )
+{
+    // Note: Weather is always constant in tests. Even if you pass a temperature to process_temperature_rot it will get overridden by weather if time delta > 1 h
+    SECTION( "Heater test" ) {
+        // Spawn water
+        // Process immediately in heater. Sets temperature to temperatures::normal.
+        // Process water 15 min later. Should still be temperatures::normal.
+        // Process water 2h 3m later. Should still be temperatures::normal.
+        item water1( "water" );
+        water1.process_temperature_rot( 0, 1, tripoint( 0, 0, 0 ), nullptr, temperature_flag::TEMP_HEATER );
+
+        CHECK( is_nearly( water1.temperature, 100000 * temp_to_kelvin( temperatures::normal ) ) );
+
+        calendar::turn = to_turn<int>( calendar::turn + 15_minutes );
+        water1.process_temperature_rot( 0, 1, tripoint( 0, 0, 0 ), nullptr, temperature_flag::TEMP_HEATER );
+
+        CHECK( is_nearly( water1.temperature, 100000 * temp_to_kelvin( temperatures::normal ) ) );
+
+        calendar::turn = to_turn<int>( calendar::turn + 2_hours + 3_minutes );
+        water1.process_temperature_rot( 0, 1, tripoint( 0, 0, 0 ), nullptr, temperature_flag::TEMP_HEATER );
+
+        CHECK( is_nearly( water1.temperature, 100000 * temp_to_kelvin( temperatures::normal ) ) );
     }
 }
