@@ -7045,7 +7045,7 @@ void item::apply_freezerburn()
     }
 }
 
-void item::process_temperature_rot( int temp, float insulation, const tripoint pos,
+void item::process_temperature_rot( float insulation, const tripoint pos,
                                     player *carrier, const temperature_flag flag )
 {
     const time_point now = calendar::turn;
@@ -7058,27 +7058,41 @@ void item::process_temperature_rot( int temp, float insulation, const tripoint p
         return;
     }
 
-    bool carried = carrier != nullptr && carrier->has_item( *this );
-
     // process temperature and rot at most once every 100_turns (10 min)
     // note we're also gated by item::processing_speed
     time_duration smallest_interval = 10_minutes;
-    if( now - last_temp_check < smallest_interval ) {
-        // Could be newly created item.
-        if( specific_energy < 0 ) {
-            if( carried ) {
-                temp += 5; // body heat increases inventory temperature
-            }
-            calc_temp( temp, insulation, now );
-            calc_rot( now );
-        }
+    if( now - last_temp_check < smallest_interval && specific_energy > 0 ) {
         return;
     }
 
-    // body heat increases inventory temperature by 5F
-    // This is apllied separately in many places since we may use the unmodified enviroment temperature from get_cur_weather_gen
+    int temp = g->get_temperature( pos );
+
+    switch( flag ) {
+        case TEMP_NORMAL:
+            // Just use the temperature normally
+            break;
+        case TEMP_FRIDGE:
+            temp = std::min( temp, temperatures::fridge );
+            break;
+        case TEMP_FREEZER:
+            temp = std::min( temp, temperatures::freezer );
+            break;
+        case TEMP_HEATER:
+            temp = std::max( temp, temperatures::normal );
+            break;
+        case TEMP_ROOT_CELLAR:
+            temp = AVERAGE_ANNUAL_TEMPERATURE;
+            break;
+        default:
+            temp = temp;
+            debugmsg( "Temperature flag enum not valid. Using current temperature." );
+    }
+
+    // body heat increases inventory temperature by 5F and clothes increase insulation
+    bool carried = carrier != nullptr && carrier->has_item( *this );
     if( carried ) {
         insulation *= 1.5; // clothing provides inventory some level of insulation
+        temp += 5; // body heat increases inventory temperature
     }
 
     time_point time = std::min( { last_rot_check, last_temp_check } );
@@ -7166,17 +7180,13 @@ void item::process_temperature_rot( int temp, float insulation, const tripoint p
 
     // Remaining <1 h from above
     // and items that are held near the player
-    // If the item has negative energy process it now. It is a new item.
     if( now - time > smallest_interval ) {
-        if( carried ) {
-            temp += 5; // body heat increases inventory temperature
-        }
         calc_temp( temp, insulation, now );
         calc_rot( now );
         return;
     }
 
-    // Some new items can evade all the above. Set them here.
+    // Just now created items will get here.
     if( specific_energy < 0 ) {
         set_item_temperature( temp_to_kelvin( temp ) );
     }
@@ -7843,7 +7853,7 @@ bool item::process( player *carrier, const tripoint &pos, bool activate,
     }
     // All foods that go bad have temperature
     if( has_temperature() ) {
-        process_temperature_rot( g->get_temperature( pos ), insulation, pos, carrier, flag );
+        process_temperature_rot( insulation, pos, carrier, flag );
     }
 
     return false;
