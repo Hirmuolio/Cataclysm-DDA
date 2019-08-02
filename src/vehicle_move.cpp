@@ -428,7 +428,7 @@ veh_collision vehicle::part_collision( int part, const tripoint &p,
 {
     // Vertical collisions need to be handled differently
     // All collisions have to be either fully vertical or fully horizontal for now
-    const bool vert_coll = bash_floor || p.z != smz;
+    const bool vert_coll = bash_floor || p.z != sm_pos.z;
     const bool pl_ctrl = player_in_control( g->u );
     Creature *critter = g->critter_at( p, true );
     player *ph = dynamic_cast<player *>( critter );
@@ -986,7 +986,11 @@ rl_vec2d vehicle::velo_vec() const
     rl_vec2d ret;
     if( skidding ) {
         ret = move_vec();
-    } else {
+    } else if( move_vec().dot_product( face_vec() ) < 0 ){
+		// Car is being pushed backwards. Make it move backwards
+		ret = -face_vec();
+	} else {
+		// Normal operation. Car moves forwards
         ret = face_vec();
     }
     ret = ret.normalized();
@@ -1218,7 +1222,7 @@ vehicle *vehicle::act_on_map()
             g->setremoteveh( nullptr );
         }
 
-        g->m.on_vehicle_moved( smz );
+        g->m.on_vehicle_moved( sm_pos.z );
         // Destroy vehicle (sank to nowhere)
         g->m.destroy_vehicle( this );
         return nullptr;
