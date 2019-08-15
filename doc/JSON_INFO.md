@@ -309,6 +309,8 @@ The syntax listed here is still valid.
 | Identifier | Description
 |---         |---
 | `name`     | Unique ID. Must be one continuous word, use underscores if necessary.
+| `freq_total`| To choose a monster for spawning, the game creates by default 1000 entries and picks one. Each monster will have a number of entries equal to it's "freq" and the default monster will fill in the remaining. `freq_total` allows you to set custom number of total entries.
+|`auto_total`| This sets the total entries to the sum of `freq` of all monsters.
 | `default`  | Default monster, automatically fills in any remaining spawn chances.
 | `monsters` | To choose a monster for spawning, the game creates 1000 entries and picks one. Each monster will have a number of entries equal to it's "freq" and the default monster will fill in the remaining. See the table below for how to build the single monster definitions.
 
