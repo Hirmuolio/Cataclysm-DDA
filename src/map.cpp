@@ -6667,6 +6667,9 @@ void map::loadn( const tripoint &grid, const bool update_vehicles )
 
 bool map::has_rotten_away( item &itm, const tripoint &pnt ) const
 {
+    if( itm.has_flag( "FAKE_SMOKE" ) || has_flag( "FAKE_MILL" ){
+        return false
+	}
     if( itm.is_corpse() && itm.goes_bad() ) {
         itm.process_temperature_rot( 1, pnt, nullptr );
         return itm.get_rot() > 10_days && !itm.can_revive();
