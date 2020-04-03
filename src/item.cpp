@@ -9334,10 +9334,10 @@ bool item::process( player *carrier, const tripoint &pos, bool activate,
     }
     // All foods that go bad have temperature
     if( has_temperature() ) {
-        // process temperature and rot at most once every 9_minutes
+        // process temperature and rot at most once every 10_minutes
         // note we're also gated by item::processing_speed
         const time_point now = calendar::turn;
-        const time_duration smallest_interval = 9_minutes;
+        const time_duration smallest_interval = 10_minutes;
         if( now - last_temp_check < smallest_interval && specific_energy > 0 ) {
             return false;
         }

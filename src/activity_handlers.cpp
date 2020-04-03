@@ -1572,7 +1572,6 @@ void activity_handlers::fill_liquid_do_turn( player_activity *act, player *p )
         if( liquid.has_temperature() && liquid.specific_energy < 0 ) {
             liquid.set_item_temperature( std::max( temp_to_kelvin( g->weather.get_temperature( p->pos() ) ),
                                                    277.15 ) );
-            liquid.reset_temp_check();
         }
 
         // 2. Transfer charges.
