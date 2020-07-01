@@ -4412,3 +4412,63 @@ std::unique_ptr<iuse_actor> change_scent_iuse::clone() const
 {
     return std::make_unique<change_scent_iuse>( *this );
 }
+
+void activate_actor::load( const JsonObject &obj )
+{
+    move_cost = obj.get_int( "moves", move_cost );
+    item_counter = obj.get_int( "item_counter", item_counter );
+	message = obj.get_int( "message", "" );
+}
+
+std::unique_ptr<iuse_actor> activate_actor::clone() const
+{
+    return std::make_unique<activate_actor>( *this );
+}
+
+int activate_actor::use( player &p, item &it, bool t, const tripoint &spos ) const
+{
+    it.active = true;
+	
+	p.mod_moves( -move_cost );
+	
+	p.add_msg_if_player( m_mixed, _( "You modify your %s, but waste a lot of thread." ),
+                             mod.tname() );
+
+    tripoint pos = spos;
+    float light = light_mod( p.pos() );
+    if( !prep_firestarter_use( p, pos ) ) {
+        return 0;
+    }
+
+    double skill_level = p.get_skill_level( skill_survival );
+    /** @EFFECT_SURVIVAL speeds up fire starting */
+    float moves_modifier = std::pow( 0.8, std::min( 5.0, skill_level ) );
+    const int moves_base = moves_cost_by_fuel( pos );
+    const double moves_per_turn = to_moves<double>( 1_turns );
+    const int min_moves = std::min<int>(
+                              moves_base, std::sqrt( 1 + moves_base / moves_per_turn ) * moves_per_turn );
+    const int moves = std::max<int>( min_moves, moves_base * moves_modifier ) / light;
+    if( moves > to_moves<int>( 1_minutes ) ) {
+        // If more than 1 minute, inform the player
+        p.add_msg_if_player( m_info, need_sunlight ?
+                             _( "If the current weather holds, it will take around %d minutes to light a fire." ) :
+                             _( "At your skill level, it will take around %d minutes to light a fire." ),
+                             moves / to_moves<int>( 1_minutes ) );
+    } else if( moves < to_moves<int>( 2_turns ) && g->m.is_flammable( pos ) ) {
+        // If less than 2 turns, don't start a long action
+        resolve_firestarter_use( p, pos );
+        p.mod_moves( -moves );
+        return it.type->charges_to_use();
+    }
+
+    // skill gains are handled by the activity, but stored here in the index field
+    const int potential_skill_gain =
+        moves_modifier + moves_cost_fast / 100.0 + 2;
+    p.assign_activity( ACT_START_FIRE, moves, potential_skill_gain,
+                       0, it.tname() );
+    p.activity.targets.push_back( item_location( p, &it ) );
+    p.activity.values.push_back( g->natural_light_level( pos.z ) );
+    p.activity.placement = pos;
+    // charges to use are handled by the activity
+    return 0;
+}

@@ -1127,4 +1127,34 @@ class sew_advanced_actor : public iuse_actor
         int use( player &, item &, bool, const tripoint & ) const override;
         std::unique_ptr<iuse_actor> clone() const override;
 };
+
+/**
+ * Activate an item
+ */
+class activate_actor : public iuse_actor
+{
+    public:
+        /**
+         * Moves used to do the action.
+         */
+        int move_cost = 20;
+		
+		/**
+         * Set item counters to this value.
+         */
+		int item_counter = 0;
+		
+		/**
+         * Message to display. Only if the activator is player.
+         */
+		std::string message;
+
+
+        activate_actor( const std::string &type = "activate" ) : iuse_actor( type ) {}
+
+        ~activate_actor() override = default;
+        void load( const JsonObject &obj ) override;
+        int use( player &, item &, bool, const tripoint & ) const override;
+        std::unique_ptr<iuse_actor> clone() const override;
+};
 #endif // CATA_SRC_IUSE_ACTOR_H
