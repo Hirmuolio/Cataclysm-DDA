@@ -887,6 +887,9 @@ struct itype {
 
         /** Actions an instance can perform (if any) indexed by action type */
         std::map<std::string, use_function> use_methods;
+		
+		/** Actions an instance can perform (if any) indexed by action type */
+        std::map<std::string, use_function> action_methods;
 
         /** Action to take BEFORE the item is placed on map. If it returns non-zero, item won't be placed. */
         use_function drop_action;

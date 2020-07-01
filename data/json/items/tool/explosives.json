@@ -638,6 +638,7 @@
       "active": true,
       "menu_text": "Pull pin"
     },
+	"item_actions": [ { "type": "explosion", "explosion": { "power": 240, "shrapnel": { "casing_mass": 217, "fragment_mass": 0.15 } } } ],
     "flags": [ "RADIO_MODABLE", "RADIO_INVOKE_PROC", "BOMB", "GRENADE" ]
   },
   {

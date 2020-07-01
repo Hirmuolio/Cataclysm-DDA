@@ -2596,6 +2596,7 @@ void Item_factory::load_basic_info( const JsonObject &jo, itype &def, const std:
     }
 
     set_use_methods_from_json( jo, "use_action", def.use_methods );
+	set_action_methods_from_json( jo, "item_actions", def.action_methods );
 
     assign( jo, "countdown_interval", def.countdown_interval );
     assign( jo, "countdown_destroy", def.countdown_destroy );
