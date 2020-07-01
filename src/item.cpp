@@ -358,6 +358,7 @@ item::item( const itype *type, time_point turn, int qty ) : type( type ), bday( 
     corpse = has_flag( flag_CORPSE ) ? &mtype_id::NULL_ID().obj() : nullptr;
     contents = item_contents( type->pockets );
     item_counter = type->countdown_interval;
+    last_processed = bday;
 
     if( qty >= 0 ) {
         charges = qty;
@@ -9417,7 +9418,7 @@ bool item::process_UPS( player *carrier, const tripoint & /*pos*/ )
     return false;
 }
 
-bool item::process_wet( player * /*carrier*/, const tripoint & /*pos*/ )
+bool item::process_wet()
 {
     if( item_counter == 0 ) {
         if( is_tool() && type->tool->revert_to ) {
@@ -9500,8 +9501,14 @@ void item::set_last_rot_check( const time_point &pt )
 bool item::process_internal( player *carrier, const tripoint &pos,
                              float insulation, const temperature_flag flag, float spoil_modifier )
 {
+    time_duration time_delta = calendar::turn - last_processed;
+    if( to_turns<int>( time_delta ) < 1 ) {
+        // DOUBLE PROCESS BUG
+        return false;
+    }
     if( has_flag( flag_ETHEREAL_ITEM ) ) {
         if( !has_var( "ethereal" ) ) {
+            last_processed = calendar::turn;
             return true;
         }
         set_var( "ethereal", std::stoi( get_var( "ethereal" ) ) - 1 );
@@ -9509,10 +9516,12 @@ bool item::process_internal( player *carrier, const tripoint &pos,
         if( processed && carrier != nullptr ) {
             carrier->add_msg_if_player( _( "Your %s disappears!" ), tname() );
         }
+        last_processed = calendar::turn;
         return processed;
     }
 
     if( faults.count( fault_gun_blackpowder ) ) {
+        last_processed = calendar::turn;
         return process_blackpowder_fouling( carrier );
     }
 
@@ -9530,7 +9539,7 @@ bool item::process_internal( player *carrier, const tripoint &pos,
     }
 
     if( !is_food() && item_counter > 0 ) {
-        item_counter--;
+        item_counter -= to_turns<int>( time_delta );
     }
 
     if( item_counter == 0 && type->countdown_action ) {
@@ -9553,8 +9562,9 @@ bool item::process_internal( player *carrier, const tripoint &pos,
     if( is_corpse() && process_corpse( carrier, pos ) ) {
         return true;
     }
-    if( has_flag( flag_WET ) && process_wet( carrier, pos ) ) {
+    if( has_flag( flag_WET ) && process_wet() ) {
         // Drying items are never destroyed, but we want to exit so they don't get processed as tools.
+        last_processed = calendar::turn;
         return false;
     }
     if( has_flag( flag_LITCIG ) && process_litcig( carrier, pos ) ) {
@@ -9562,6 +9572,7 @@ bool item::process_internal( player *carrier, const tripoint &pos,
     }
     if( ( has_flag( flag_WATER_EXTINGUISH ) || has_flag( flag_WIND_EXTINGUISH ) ) &&
         process_extinguish( carrier, pos ) ) {
+        last_processed = calendar::turn;
         return false;
     }
     if( has_flag( flag_CABLE_SPOOL ) ) {
@@ -9570,9 +9581,11 @@ bool item::process_internal( player *carrier, const tripoint &pos,
     }
     if( has_flag( flag_IS_UPS ) ) {
         // DO NOT process this as a tool! It really isn't!
+        last_processed = calendar::turn;
         return process_UPS( carrier, pos );
     }
     if( is_tool() ) {
+        last_processed = calendar::turn;
         return process_tool( carrier, pos );
     }
     // All foods that go bad have temperature
@@ -9584,6 +9597,7 @@ bool item::process_internal( player *carrier, const tripoint &pos,
         return true;
     }
 
+    last_processed = calendar::turn;
     return false;
 }
 

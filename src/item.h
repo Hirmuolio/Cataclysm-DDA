@@ -2160,7 +2160,7 @@ class item : public visitable<item>
         // processing types, just to make the process function cleaner.
         // The interface is the same as for @ref process.
         bool process_corpse( player *carrier, const tripoint &pos );
-        bool process_wet( player *carrier, const tripoint &pos );
+        bool process_wet();
         bool process_litcig( player *carrier, const tripoint &pos );
         bool process_extinguish( player *carrier, const tripoint &pos );
         // Place conditions that should remove fake smoke item in this sub-function
@@ -2243,6 +2243,8 @@ class item : public visitable<item>
         time_point last_rot_check = calendar::turn_zero;
         /** the last time the temperature was updated for this item */
         time_point last_temp_check = calendar::turn_zero;
+        /** the last time the item was processed */
+        time_point last_processed;
         /// The time the item was created.
         time_point bday;
         /**
