@@ -1098,5 +1098,10 @@
     "type": "item_action",
     "id": "CRAFT",
     "name": { "str": "Work on craft" }
+  },
+  {
+    "type": "item_action",
+    "id": "activate",
+    "name": { "str": "Activate" }
   }
 ]

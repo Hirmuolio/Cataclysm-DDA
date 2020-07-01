@@ -1613,6 +1613,8 @@ void item::debug_info( std::vector<iteminfo> &info, const iteminfo_query *parts,
                                       to_hours<int>( age() ) ) );
             info.push_back( iteminfo( "BASE", _( "charges: " ), "", iteminfo::lower_is_better,
                                       charges ) );
+			info.push_back( iteminfo( "BASE", _( "item_counter: " ), "", iteminfo::lower_is_better,
+                                      item_counter ) );
             info.push_back( iteminfo( "BASE", _( "damage: " ), "", iteminfo::lower_is_better,
                                       damage_ ) );
             info.push_back( iteminfo( "BASE", _( "active: " ), "", iteminfo::lower_is_better,

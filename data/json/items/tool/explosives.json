@@ -633,7 +633,7 @@
     "color": "green",
     "use_action": {
       "type": "activate",
-      "msg": "You pull the pin on the grenade. AA",
+      "msg": "You pull the pin from the %s.",
       "item_counter": 5,
       "active": true,
       "menu_text": "Pull pin"
