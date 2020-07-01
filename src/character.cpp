@@ -339,6 +339,7 @@ static const std::string flag_BELTED( "BELTED" );
 static const std::string flag_BLIND( "BLIND" );
 static const std::string flag_DEAF( "DEAF" );
 static const std::string flag_DISABLE_SIGHTS( "DISABLE_SIGHTS" );
+static const std::string flag_EFFECT_IMPEDING( "EFFECT_IMPEDING" );
 static const std::string flag_EFFECT_INVISIBLE( "EFFECT_INVISIBLE" );
 static const std::string flag_EFFECT_NIGHT_VISION( "EFFECT_NIGHT_VISION" );
 static const std::string flag_FIX_NEARSIGHT( "FIX_NEARSIGHT" );
@@ -400,8 +401,6 @@ Character &get_player_character()
 Character::Character() :
 
     visitable<Character>(),
-    damage_bandaged( {{ 0 }} ),
-    damage_disinfected( {{ 0 }} ),
     cached_time( calendar::before_time_starts ),
     id( -1 ),
     next_climate_control_check( calendar::before_time_starts ),
@@ -439,7 +438,6 @@ Character::Character() :
     healthy_calories = 55000;
     stored_calories = healthy_calories;
     initialize_stomach_contents();
-    healed_total = { { 0, 0, 0, 0, 0, 0 } };
 
     name.clear();
     custom_profession.clear();
@@ -1558,6 +1556,29 @@ void Character::try_remove_webs()
     }
 }
 
+void Character::try_remove_impeding_effect()
+{
+    for( const effect &eff : get_effects_with_flag( flag_EFFECT_IMPEDING ) ) {
+        const efftype_id &eff_id = eff.get_id();
+        if( is_mounted() ) {
+            auto mon = mounted_creature.get();
+            if( x_in_y( mon->type->melee_dice * mon->type->melee_sides,
+                        6 * get_effect_int( eff_id ) ) ) {
+                add_msg( _( "The %s breaks free!" ), mon->get_name() );
+                mon->remove_effect( eff_id );
+                remove_effect( eff_id );
+            }
+            /** @EFFECT_STR increases chance to escape webs */
+        } else if( x_in_y( get_str(), 6 * get_effect_int( eff_id ) ) ) {
+            add_msg_player_or_npc( m_good, _( "You free yourself!" ),
+                                   _( "<npcname> frees themselves!" ) );
+            remove_effect( eff_id );
+        } else {
+            add_msg_if_player( _( "You try to free yourself, but can't!" ) );
+        }
+    }
+}
+
 bool Character::move_effects( bool attacking )
 {
     if( has_effect( effect_downed ) ) {
@@ -1585,6 +1606,11 @@ bool Character::move_effects( bool attacking )
         try_remove_crushed();
         return false;
     }
+    if( has_effect_with_flag( flag_EFFECT_IMPEDING ) ) {
+        try_remove_impeding_effect();
+        return false;
+    }
+
     // Below this point are things that allow for movement if they succeed
 
     // Currently we only have one thing that forces movement if you succeed, should we get more
@@ -1625,6 +1651,10 @@ void Character::wait_effects( bool attacking )
     }
     if( has_effect( effect_webbed ) ) {
         try_remove_webs();
+        return;
+    }
+    if( has_effect_with_flag( flag_EFFECT_IMPEDING ) ) {
+        try_remove_impeding_effect();
         return;
     }
     if( has_effect( effect_grabbed ) && !attacking && !try_remove_grab() ) {
@@ -2284,28 +2314,12 @@ std::vector<item_location> Character::nearby( const
     return res;
 }
 
-int Character::i_add_to_container( const item &it, const bool unloading )
-{
-    int charges = it.count();
-    if( unloading || !it.count_by_charges() ) {
-        return charges;
-    }
-
-    charges -= weapon.fill_with( *it.type, charges );
-    for( item &worn_it : worn ) {
-        if( charges > 0 ) {
-            charges -= worn_it.fill_with( *it.type, charges );
-        } else {
-            break;
-        }
-    }
-
-    return charges;
-}
-
 item_pocket *Character::best_pocket( const item &it, const item *avoid )
 {
-    item_pocket *ret = weapon.best_pocket( it );
+    item_pocket *ret = nullptr;
+    if( &weapon != avoid ) {
+        ret = weapon.best_pocket( it );
+    }
     for( item &worn_it : worn ) {
         if( &worn_it == avoid ) {
             continue;
@@ -2324,7 +2338,7 @@ item_pocket *Character::best_pocket( const item &it, const item *avoid )
     return ret;
 }
 
-item *Character::try_add( item it, const item *avoid )
+item *Character::try_add( item it, const item *avoid, const bool allow_wield )
 {
     itype_id item_type_id = it.typeId();
     last_item = item_type_id;
@@ -2355,7 +2369,7 @@ item *Character::try_add( item it, const item *avoid )
                 return nullptr;
             }
         } else {
-            if( wield( it ) ) {
+            if( allow_wield && wield( it ) ) {
                 ret = &weapon;
             } else {
                 return nullptr;
@@ -2374,12 +2388,17 @@ item *Character::try_add( item it, const item *avoid )
     return ret;
 }
 
-item &Character::i_add( item it, bool  /* should_stack */, const item *avoid )
+item &Character::i_add( item it, bool /* should_stack */, const item *avoid, const bool allow_drop,
+                        const bool allow_wield )
 {
-    item *added = try_add( it, avoid );
+    item *added = try_add( it, avoid, /*allow_wield=*/allow_wield );
     if( added == nullptr ) {
-        if( !wield( it ) ) {
-            return get_map().add_item_or_charges( pos(), it );
+        if( !allow_wield || !wield( it ) ) {
+            if( allow_drop ) {
+                return get_map().add_item_or_charges( pos(), it );
+            } else {
+                return null_item_reference();
+            }
         } else {
             return weapon;
         }
@@ -2432,10 +2451,6 @@ std::vector<item_location> Character::all_items_loc()
 std::vector<item_location> Character::top_items_loc()
 {
     std::vector<item_location> ret;
-    if( has_weapon() ) {
-        item_location weap_loc( *this, &weapon );
-        ret.push_back( weap_loc );
-    }
     for( item &worn_it : worn ) {
         item_location worn_loc( *this, &worn_it );
         ret.push_back( worn_loc );
@@ -4565,25 +4580,23 @@ void Character::regen( int rate_multiplier )
     }
 
     // include healing effects
-    for( int i = 0; i < num_hp_parts; i++ ) {
-        const bodypart_id &bp = convert_bp( hp_to_bp( static_cast<hp_part>( i ) ) ).id();
+    for( const bodypart_id &bp : get_all_body_parts( true ) ) {
         float healing = healing_rate_medicine( rest, bp ) * to_turns<int>( 5_minutes );
-
         int healing_apply = roll_remainder( healing );
-        healed_bp( i, healing_apply );
+        mod_part_healed_total( bp, healing_apply );
         heal( bp, healing_apply );
-        if( damage_bandaged[i] > 0 ) {
-            damage_bandaged[i] -= healing_apply;
-            if( damage_bandaged[i] <= 0 ) {
-                damage_bandaged[i] = 0;
+        if( get_part_damage_bandaged( bp ) > 0 ) {
+            mod_part_damage_bandaged( bp, -healing_apply );
+            if( get_part_damage_bandaged( bp ) <= 0 ) {
+                set_part_damage_bandaged( bp, 0 );
                 remove_effect( effect_bandaged, bp->token );
                 add_msg_if_player( _( "Bandaged wounds on your %s healed." ), body_part_name( bp ) );
             }
         }
-        if( damage_disinfected[i] > 0 ) {
-            damage_disinfected[i] -= healing_apply;
-            if( damage_disinfected[i] <= 0 ) {
-                damage_disinfected[i] = 0;
+        if( get_part_damage_disinfected( bp ) > 0 ) {
+            mod_part_damage_disinfected( bp, -healing_apply );
+            if( get_part_damage_disinfected( bp ) <= 0 ) {
+                set_part_damage_disinfected( bp, 0 );
                 remove_effect( effect_disinfected, bp->token );
                 add_msg_if_player( _( "Disinfected wounds on your %s healed." ), body_part_name( bp ) );
             }
@@ -4591,12 +4604,12 @@ void Character::regen( int rate_multiplier )
 
         // remove effects if the limb was healed by other way
         if( has_effect( effect_bandaged, bp->token ) && ( get_part( bp )->is_at_max_hp() ) ) {
-            damage_bandaged[i] = 0;
+            set_part_damage_bandaged( bp, 0 );
             remove_effect( effect_bandaged, bp->token );
             add_msg_if_player( _( "Bandaged wounds on your %s healed." ), body_part_name( bp ) );
         }
         if( has_effect( effect_disinfected, bp->token ) && ( get_part( bp )->is_at_max_hp() ) ) {
-            damage_disinfected[i] = 0;
+            set_part_damage_disinfected( bp, 0 );
             remove_effect( effect_disinfected, bp->token );
             add_msg_if_player( _( "Disinfected wounds on your %s healed." ), body_part_name( bp ) );
         }
@@ -4690,7 +4703,7 @@ void Character::update_body( const time_point &from, const time_point &to )
         // TODO: change @ref med to take time_duration
         mend( five_mins * to_turns<int>( 5_minutes ) );
     }
-    if( ticks_between( from, to, 24_hours ) > 0 ) {
+    if( ticks_between( from, to, 24_hours ) > 0 && !has_trait_flag( "NO_MINIMAL_HEALING" ) ) {
         enforce_minimum_healing();
     }
 
@@ -7668,6 +7681,10 @@ bool Character::invoke_item( item *used, const std::string &method, const tripoi
     if( !has_enough_charges( *used, true ) ) {
         return false;
     }
+    if( used->is_medication() && !can_use_heal_item( *used ) ) {
+        add_msg_if_player( m_bad, _( "Your biology is not compatible with that healing item." ) );
+        return false;
+    }
 
     item *actually_used = used->get_usable_item( method );
     if( actually_used == nullptr ) {
@@ -8162,11 +8179,6 @@ tripoint Character::adjacent_tile() const
     }
 
     return random_entry( ret, pos() ); // player position if no valid adjacent tiles
-}
-
-void Character::healed_bp( int bp, int amount )
-{
-    healed_total[bp] += amount;
 }
 
 void Character::set_fac_id( const std::string &my_fac_id )
@@ -8929,8 +8941,7 @@ void Character::hurtall( int dam, Creature *source, bool disturb /*= true*/ )
 int Character::hitall( int dam, int vary, Creature *source )
 {
     int damage_taken = 0;
-    for( int i = 0; i < num_hp_parts; i++ ) {
-        const bodypart_id bp = convert_bp( hp_to_bp( static_cast<hp_part>( i ) ) ).id();
+    for( const bodypart_id &bp : get_all_body_parts( true ) ) {
         int ddam = vary ? dam * rng( 100 - vary, 100 ) / 100 : dam;
         int cut = 0;
         auto damage = damage_instance::physical( ddam, cut, 0 );

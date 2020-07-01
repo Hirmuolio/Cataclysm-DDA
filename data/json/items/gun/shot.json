@@ -318,7 +318,7 @@
     "description": "A home-made double-barreled shotgun.  It is simply two pipes attached to a stock, with a pair of hammers to strike the two rounds it holds.",
     "clip_size": 2,
     "modes": [ [ "DEFAULT", "single", 1 ], [ "DOUBLE", "double", 2 ] ],
-    "relative": { "weight": 500, "volume": 1, "price": 5000 },
+    "relative": { "weight": "500 g", "volume": "250 ml", "price": 5000 },
     "barrel_length": "72 ml",
     "valid_mod_locations": [
       [ "accessories", 2 ],
@@ -827,10 +827,10 @@
     "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "shot": 6 } } ]
   },
   {
-    "id": "slam_shotgun",
+    "id": "four_winds_shotgun",
     "copy-from": "shotgun_base",
     "type": "GUN",
-    "name": { "str": "makeshift shotgun" },
+    "name": { "str": "four winds shotgun" },
     "description": "A crude shotgun, composed of two thick steel pipes, an end cap and a nail.  The lack of sights make this weapon only useful at point-blank range.",
     "weight": "3629 g",
     "volume": "2264 ml",
