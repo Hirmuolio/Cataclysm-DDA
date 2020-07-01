@@ -8638,7 +8638,7 @@ bool item::needs_processing() const
     bool need_process = false;
     visit_items( [&need_process]( const item * it ) {
         if( it->active || it->has_flag( flag_RADIO_ACTIVATION ) || it->has_flag( flag_ETHEREAL_ITEM ) ||
-            it->is_artifact() || it->is_food() ) {
+            it->is_artifact() || it->has_temperature() ) {
             need_process = true;
             return VisitResponse::ABORT;
         }
