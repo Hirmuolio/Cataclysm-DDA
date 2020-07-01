@@ -312,6 +312,9 @@ class Item_factory
 
         void set_use_methods_from_json( const JsonObject &jo, const std::string &member,
                                         std::map<std::string, use_function> &use_methods );
+		
+		void set_action_methods_from_json( const JsonObject &jo, const std::string &member,
+                                        std::map<std::string, use_function> &use_methods );
 
         use_function usage_from_string( const std::string &type ) const;
 

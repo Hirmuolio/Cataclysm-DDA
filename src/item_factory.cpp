@@ -3101,6 +3101,31 @@ void Item_factory::set_use_methods_from_json( const JsonObject &jo, const std::s
     }
 }
 
+void Item_factory::set_action_methods_from_json( const JsonObject &jo, const std::string &member,
+        std::map<std::string, use_function> &use_methods )
+{
+    if( !jo.has_member( member ) ) {
+        return;
+    }
+
+    use_methods.clear();
+    if( jo.has_array( member ) ) {
+        for( const JsonValue entry : jo.get_array( member ) ) {
+            if( entry.test_object() ) {
+                auto obj = entry.get_object();
+                std::pair<std::string, use_function> fun = usage_from_object( obj );
+                if( fun.second ) {
+                    use_methods.insert( fun );
+                }
+            } else {
+                entry.throw_error( "array element is neither string nor object." );
+            }
+        }
+    } else {
+            jo.throw_error( "member 'item_action' is not object." );
+    }
+}
+
 // Helper to safely look up and store iuse actions.
 void Item_factory::emplace_usage( std::map<std::string, use_function> &container,
                                   const std::string &iuse_id )
