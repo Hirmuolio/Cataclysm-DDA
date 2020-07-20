@@ -395,7 +395,6 @@ item::item( const itype *type, time_point turn, int qty ) : type( type ), bday( 
         }
 
     } else if( has_temperature() || goes_bad() ) {
-        active = true;
         last_temp_check = bday;
 
     } else if( type->tool ) {
@@ -463,7 +462,6 @@ item::item( const recipe *rec, int qty, std::list<item> items, std::vector<item_
     craft_data_->comps_used = selections;
 
     if( is_food() ) {
-        active = true;
         last_temp_check = bday;
         if( goes_bad() ) {
             const item *most_rotten = get_most_rotten_component( *this );
