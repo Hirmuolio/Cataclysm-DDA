@@ -1124,8 +1124,9 @@ void avatar_action::use_item( avatar &you, item_location &loc )
         update_lum( loc, false );
         you.use( loc );
         update_lum( loc, true );
-
-        make_active( loc );
+        if( loc.get_item()->needs_processing() ){
+			make_active( loc );
+		}
     } else {
         you.use( loc );
     }

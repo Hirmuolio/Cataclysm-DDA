@@ -1080,6 +1080,11 @@ class map
          * hot or perishable liquid to a container.
          */
         void make_active( item_location &loc );
+		
+		/**
+         * Update an item's active status to inactive.
+         */
+        void make_inactive( item_location &loc );
 
         /**
          * Update luminosity before and after item's transformation

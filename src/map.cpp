@@ -4361,10 +4361,6 @@ void map::make_active( item_location &loc )
 {
     item *target = loc.get_item();
 
-    // Trust but verify, don't let stinking callers set items active when they shouldn't be.
-    if( !target->needs_processing() ) {
-        return;
-    }
     point l;
     submap *const current_submap = get_submap_at( loc.position(), l );
     cata::colony<item> &item_stack = current_submap->get_items( l );
@@ -4375,6 +4371,22 @@ void map::make_active( item_location &loc )
                                           abs_sub.y + loc.position().y / SEEY, loc.position().z ) );
     }
     current_submap->active_items.add( *iter, l );
+}
+
+void map::make_inactive( item_location &loc )
+{
+    item *target = loc.get_item();
+
+    point l;
+    submap *const current_submap = get_submap_at( loc.position(), l );
+    cata::colony<item> &item_stack = current_submap->get_items( l );
+    cata::colony<item>::iterator iter = item_stack.get_iterator_from_pointer( target );
+
+    if( current_submap->active_items.empty() ) {
+        submaps_with_active_items.insert( tripoint( abs_sub.x + loc.position().x / SEEX,
+                                          abs_sub.y + loc.position().y / SEEY, loc.position().z ) );
+    }
+    current_submap->active_items.remove( *iter, l );
 }
 
 void map::update_lum( item_location &loc, bool add )
