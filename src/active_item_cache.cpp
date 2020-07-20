@@ -29,6 +29,7 @@ void active_item_cache::remove( const item *it )
 
 void active_item_cache::add( item &it, point location )
 {
+	it.active = true;
     // If the item is alread in the cache for some reason, don't add a second reference
     std::list<item_reference> &target_list = active_items[it.processing_speed()];
     if( std::find_if( target_list.begin(),
@@ -44,7 +45,6 @@ void active_item_cache::add( item &it, point location )
         special_items[ special_item_type::explosive ].push_back( item_reference{ location, it.get_safe_reference() } );
     }
     target_list.push_back( item_reference{ location, it.get_safe_reference() } );
-	it.active = true;
 }
 
 bool active_item_cache::empty() const

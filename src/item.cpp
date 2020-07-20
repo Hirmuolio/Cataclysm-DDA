@@ -9712,6 +9712,7 @@ bool item::process_internal( player *carrier, const tripoint &pos,
 
     // Remaining stuff is only done for active items.
     if( !active ) {
+		debugmsg( _( "%s" ), tname() );
         return false;
     }
 
