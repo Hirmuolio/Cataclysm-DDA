@@ -8,6 +8,7 @@
 
 void active_item_cache::remove( const item *it )
 {
+	//it->active = false;
     active_items[it->processing_speed()].remove_if( [it]( const item_reference & active_item ) {
         item *const target = active_item.item_ref.get();
         return !target || target == it;
@@ -44,6 +45,7 @@ void active_item_cache::add( item &it, point location )
         special_items[ special_item_type::explosive ].push_back( item_reference{ location, it.get_safe_reference() } );
     }
     target_list.push_back( item_reference{ location, it.get_safe_reference() } );
+	it.active = true;
 }
 
 bool active_item_cache::empty() const
