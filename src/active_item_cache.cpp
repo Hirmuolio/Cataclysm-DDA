@@ -8,7 +8,6 @@
 
 void active_item_cache::remove( const item *it )
 {
-	//it->active = false;
     active_items[it->processing_speed()].remove_if( [it]( const item_reference & active_item ) {
         item *const target = active_item.item_ref.get();
         return !target || target == it;
