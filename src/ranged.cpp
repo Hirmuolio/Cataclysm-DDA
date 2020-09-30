@@ -96,7 +96,6 @@ static const trap_str_id tr_practice_target( "tr_practice_target" );
 static const fault_id fault_gun_blackpowder( "fault_gun_blackpowder" );
 static const fault_id fault_gun_chamber_spent( "fault_gun_chamber_spent" );
 static const fault_id fault_gun_dirt( "fault_gun_dirt" );
-static const fault_id fault_gun_unlubricated( "fault_gun_unlubricated" );
 
 static const skill_id skill_dodge( "dodge" );
 static const skill_id skill_driving( "driving" );
@@ -544,7 +543,7 @@ bool player::handle_gun_damage( item &it )
     int dirt = it.get_var( "dirt", 0 );
     int dirtadder = 0;
     double dirt_dbl = static_cast<double>( dirt );
-    if( it.faults.count( fault_gun_chamber_spent ) ) {
+    if( it.has_fault_flag( "JAMMED_GUN" ) ) {
         return false;
     }
 
@@ -635,7 +634,7 @@ bool player::handle_gun_damage( item &it )
             }
         }
     }
-    if( it.has_fault( fault_gun_unlubricated ) &&
+    if( it.has_fault_flag( "UNLUBRICATED" ) &&
         x_in_y( dirt_dbl, dirt_max_dbl ) ) {
         add_msg_player_or_npc( m_bad, _( "Your %s emits a grimace-inducing screech!" ),
                                _( "<npcname>'s %s emits a grimace-inducing screech!" ),
@@ -643,12 +642,12 @@ bool player::handle_gun_damage( item &it )
         it.inc_damage();
     }
     if( ( ( !curammo_effects.count( "NON-FOULING" ) && !it.has_flag( flag_NON_FOULING ) ) ||
-          ( it.has_fault( fault_gun_unlubricated ) ) ) &&
+          ( it.has_fault_flag( "BAD_CYCLING" ) ) ) &&
         !it.has_flag( flag_PRIMITIVE_RANGED_WEAPON ) ) {
         if( curammo_effects.count( "BLACKPOWDER" ) ||
-            it.has_fault( fault_gun_unlubricated ) ) {
+            it.has_fault_flag( "BAD_CYCLING" ) ) {
             if( ( ( it.ammo_data()->ammo->recoil < firing.min_cycle_recoil ) ||
-                  ( it.has_fault( fault_gun_unlubricated ) && one_in( 16 ) ) ) &&
+                  ( it.has_fault_flag( "BAD_CYCLING" ) && one_in( 16 ) ) ) &&
                 it.faults_potential().count( fault_gun_chamber_spent ) ) {
                 add_msg_player_or_npc( m_bad, _( "Your %s fails to cycle!" ),
                                        _( "<npcname>'s %s fails to cycle!" ),
@@ -674,7 +673,7 @@ bool player::handle_gun_damage( item &it )
             }
             dirt = it.get_var( "dirt", 0 );
             dirt_dbl = static_cast<double>( dirt );
-            if( dirt > 0 && !it.faults.count( fault_gun_blackpowder ) ) {
+            if( dirt > 0 && !it.has_fault_flag( "NO_DIRTYING" ) ) {
                 it.faults.insert( fault_gun_dirt );
             }
             if( dirt > 0 && curammo_effects.count( "BLACKPOWDER" ) ) {
@@ -770,7 +769,7 @@ int player::fire_gun( const tripoint &target, int shots, item &gun )
     int hits = 0; // total shots on target
     int delay = 0; // delayed recoil that has yet to be applied
     while( curshot != shots ) {
-        if( gun.faults.count( fault_gun_chamber_spent ) && curshot == 0 ) {
+        if( gun.has_fault_flag( "JAMMED_GUN" ) && curshot == 0 ) {
             moves -= 50;
             gun.faults.erase( fault_gun_chamber_spent );
             add_msg_if_player( _( "You cycle your %s manually." ), gun.tname() );
