@@ -641,32 +641,29 @@ bool player::handle_gun_damage( item &it )
                                it.tname() );
         it.inc_damage();
     }
-    if( ( ( !curammo_effects.count( "NON-FOULING" ) && !it.has_flag( flag_NON_FOULING ) ) ||
-          ( it.has_fault_flag( "BAD_CYCLING" ) ) ) &&
-        !it.has_flag( flag_PRIMITIVE_RANGED_WEAPON ) ) {
-        if( curammo_effects.count( "BLACKPOWDER" ) ||
-            it.has_fault_flag( "BAD_CYCLING" ) ) {
-            if( ( ( it.ammo_data()->ammo->recoil < firing.min_cycle_recoil ) ||
-                  ( it.has_fault_flag( "BAD_CYCLING" ) && one_in( 16 ) ) ) &&
-                it.faults_potential().count( fault_gun_chamber_spent ) ) {
-                add_msg_player_or_npc( m_bad, _( "Your %s fails to cycle!" ),
-                                       _( "<npcname>'s %s fails to cycle!" ),
-                                       it.tname() );
-                it.faults.insert( fault_gun_chamber_spent );
-                // Don't return false in this case; this shot happens, follow-up ones won't.
-            }
+
+    if( !it.has_flag( flag_PRIMITIVE_RANGED_WEAPON ) ) {
+        if( ( ( it.ammo_data()->ammo->recoil < firing.min_cycle_recoil ) ||
+              ( it.has_fault_flag( "BAD_CYCLING" ) && one_in( 16 ) ) ) &&
+            it.faults_potential().count( fault_gun_chamber_spent ) ) {
+            add_msg_player_or_npc( m_bad, _( "Your %s fails to cycle!" ),
+                                   _( "<npcname>'s %s fails to cycle!" ),
+                                   it.tname() );
+            it.faults.insert( fault_gun_chamber_spent );
+            // Don't return false in this case; this shot happens, follow-up ones won't.
         }
         // These are the dirtying/fouling mechanics
         if( !curammo_effects.count( "NON-FOULING" ) && !it.has_flag( flag_NON_FOULING ) ) {
+            bool black_powder_ammo = curammo_effects.count( "BLACKPOWDER" );
             if( dirt < static_cast<int>( dirt_max_dbl ) ) {
-                dirtadder = curammo_effects.count( "BLACKPOWDER" ) * ( 200 - ( firing.blackpowder_tolerance *
-                            2 ) );
+                dirtadder = black_powder_ammo * ( 200 - ( firing.blackpowder_tolerance *
+                                                  2 ) );
                 // dirtadder is the dirt-increasing number for shots fired with gunpowder-based ammo. Usually dirt level increases by 1, unless it's blackpowder, in which case it increases by a higher number, but there is a reduction for blackpowder resistance of a weapon.
                 if( dirtadder < 0 ) {
                     dirtadder = 0;
                 }
                 // in addition to increasing dirt level faster, regular gunpowder fouling is also capped at 7,150, not 10,000. So firing with regular gunpowder can never make the gun quite as bad as firing it with black gunpowder. At 7,150 the chance to jam is significantly lower (though still significant) than it is at 10,000, the absolute cap.
-                if( curammo_effects.count( "BLACKPOWDER" ) ||
+                if( black_powder_ammo ||
                     dirt < 7150 ) {
                     it.set_var( "dirt", std::min( static_cast<int>( dirt_max_dbl ), dirt + dirtadder + 1 ) );
                 }
@@ -676,7 +673,7 @@ bool player::handle_gun_damage( item &it )
             if( dirt > 0 && !it.has_fault_flag( "NO_DIRTYING" ) ) {
                 it.faults.insert( fault_gun_dirt );
             }
-            if( dirt > 0 && curammo_effects.count( "BLACKPOWDER" ) ) {
+            if( dirt > 0 && black_powder_ammo ) {
                 it.faults.erase( fault_gun_dirt );
                 it.faults.insert( fault_gun_blackpowder );
             }

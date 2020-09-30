@@ -9896,7 +9896,7 @@ bool item::process_internal( player *carrier, const tripoint &pos,
         return processed;
     }
 
-    if( has_fault_flag( "BLACKPOWDER_FOULING" ) ) {
+    if( has_fault_flag( "BLACKPOWDER_FOULING_DAMAGE" ) ) {
         return process_blackpowder_fouling( carrier );
     }
 
