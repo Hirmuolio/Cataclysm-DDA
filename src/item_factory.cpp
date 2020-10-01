@@ -1192,6 +1192,12 @@ void Item_factory::check_definitions() const
             }
         }
 
+        for( const auto &f : type->damage_faults ) {
+            if( !f.is_valid() ) {
+                msg += string_format( "invalid item damage fault %s\n", f.c_str() );
+            }
+        }
+
         if( type->comestible ) {
             if( !type->comestible->tool.is_null() ) {
                 const itype *req_tool = find_template( type->comestible->tool );
@@ -2886,6 +2892,7 @@ void Item_factory::load_basic_info( const JsonObject &jo, itype &def, const std:
 
     assign( jo, "flags", def.item_tags );
     assign( jo, "faults", def.faults );
+    assign( jo, "damage_faults", def.damage_faults );
 
     if( jo.has_member( "qualities" ) ) {
         def.qualities.clear();

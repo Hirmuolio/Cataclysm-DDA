@@ -35,6 +35,13 @@
       "fault_engine_immobiliser",
       "fault_engine_pump_fuel",
       "fault_engine_starter"
+    ],
+    "damage_faults": [
+      "fault_engine_belt_drive",
+      "fault_engine_filter_air",
+      "fault_engine_filter_fuel",
+      "fault_engine_pump_fuel",
+      "fault_engine_starter"
     ]
   },
   {
