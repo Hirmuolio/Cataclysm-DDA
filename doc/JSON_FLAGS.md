@@ -69,6 +69,7 @@
     - [Fuel types](#fuel-types)
   - [Faults](#faults)
     - [Flags](#flags-13)
+    - [Parameters](#parameters)
 
 ## Notes
 

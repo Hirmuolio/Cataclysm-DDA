@@ -656,8 +656,8 @@ bool player::handle_gun_damage( item &it )
         if( !curammo_effects.count( "NON-FOULING" ) && !it.has_flag( flag_NON_FOULING ) ) {
             bool black_powder_ammo = curammo_effects.count( "BLACKPOWDER" );
             if( dirt < static_cast<int>( dirt_max_dbl ) ) {
-                dirtadder = black_powder_ammo * ( 200 - ( firing.blackpowder_tolerance *
-                                                  2 ) );
+                dirtadder = black_powder_ammo * ( 200 - firing.blackpowder_tolerance *
+                                                  2 );
                 // dirtadder is the dirt-increasing number for shots fired with gunpowder-based ammo. Usually dirt level increases by 1, unless it's blackpowder, in which case it increases by a higher number, but there is a reduction for blackpowder resistance of a weapon.
                 if( dirtadder < 0 ) {
                     dirtadder = 0;
