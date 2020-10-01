@@ -6292,14 +6292,11 @@ bool item::mod_damage( int qty, damage_type dt )
         if( !destroy && !damage_faults_potential().empty() ) {
             float chance_1 = 1.33 * damage_ / max_damage() - 0.25;
             float chance_2 = 3.0 * qty / max_damage();
-
             float fault_chance = chance_1 * chance_2;
-            float rng = rng_float( 0, 1 );
 
             if( rng_float( 0, 1 ) < fault_chance ) {
                 fault_id fault = random_entry( damage_faults_potential() );
                 if( !faults.count( fault ) ) {
-                    debugmsg( "Part developed %s", fault.obj().name() );
                     faults.insert( fault );
                 }
             }
