@@ -6290,9 +6290,8 @@ bool item::mod_damage( int qty, damage_type dt )
 
         //damage_faults
         if( !destroy && !damage_faults_potential().empty() ) {
-            float chance_1 = 1.33 * damage_ / max_damage() - 0.25, 0.0;
+            float chance_1 = 1.33 * damage_ / max_damage() - 0.25;
             float chance_2 = 3.0 * qty / max_damage();
-            , 0.0;
 
             float fault_chance = chance_1 * chance_2;
             float rng = rng_float( 0, 1 );
