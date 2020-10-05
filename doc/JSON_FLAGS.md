@@ -240,6 +240,7 @@ Some armor flags, such as `WATCH` and `ALARMCLOCK` are compatible with other ite
 - ```CLIMATE_CONTROL``` This piece of clothing has climate control of some sort, keeping you warmer or cooler depending on ambient and bodily temperature.
 - ```COLLAR``` This piece of clothing has a wide collar that can keep your mouth warm.
 - ```DEAF``` Makes the player deaf.
+- ```MUTE``` Makes the player mute.
 - ```ELECTRIC_IMMUNE``` This gear completely protects you from electric discharges.
 - ```FANCY``` Wearing this clothing gives a morale bonus if the player has the `Stylish` trait.
 - ```FIX_FARSIGHT``` This gear corrects farsightedness.
@@ -586,6 +587,7 @@ List of known flags, used in both `terrain.json` and `furniture.json`.
 - ```SHORT``` Feature too short to collide with vehicle protrusions. (mirrors, blades).
 - ```SIGN``` Show written message on examine.
 - ```SMALL_PASSAGE``` This terrain or furniture is too small for large or huge creatures to pass through.
+- ```SUN_ROOF_ABOVE``` This furniture (terrain is not supported currently) has a "fake roof" above, that blocks sunlight. Special hack for #44421, to be removed later. 
 - ```SUPPORTS_ROOF``` Used as a boundary for roof construction.
 - ```SUPPRESS_SMOKE``` Prevents smoke from fires; used by ventilated wood stoves, etc.
 - ```SWIMMABLE``` Player and monsters can swim through it.
@@ -898,7 +900,7 @@ Multiple death functions can be used. Not all combinations make sense.
 
 ### Flags
 
-Other monster flags. 
+Other monster flags.
 
 - ```ABSORBS_SPLITS``` Consumes objects it moves over, and if it absorbs enough it will split into a copy.
 - ```ABSORBS``` Consumes objects it moves over. (Modders use this).
@@ -1474,7 +1476,7 @@ Those flags are added by the game code to specific items (for example, that spec
 
 ### Vehicle parts requiring other vehicle parts
 
-The requirement for other vehicle parts is defined for a json flag by setting ```requires_flag``` for the flag. ```requires_flag``` is the other flag that a part with this flag requires. 
+The requirement for other vehicle parts is defined for a json flag by setting ```requires_flag``` for the flag. ```requires_flag``` is the other flag that a part with this flag requires.
 
 
 ### Fuel types

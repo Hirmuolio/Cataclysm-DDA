@@ -60,6 +60,7 @@
     "looks_like": "v12_diesel",
     "faults": [ "fault_engine_belt_drive", "fault_engine_filter_air", "fault_engine_starter" ],
     "damage_faults": [ "fault_engine_belt_drive", "fault_engine_filter_air", "fault_engine_starter" ]
+    "faults": [ "fault_engine_belt_drive", "fault_engine_filter_air", "fault_engine_starter" ]
   },
   {
     "id": "1cyl_combustion",

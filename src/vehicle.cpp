@@ -122,6 +122,7 @@ class RemovePartHandler
         virtual void unboard( const tripoint &loc ) = 0;
         virtual void add_item_or_charges( const tripoint &loc, item it, bool permit_oob ) = 0;
         virtual void set_transparency_cache_dirty( int z ) = 0;
+        virtual void set_floor_cache_dirty( int z ) = 0;
         virtual void removed( vehicle &veh, int part ) = 0;
         virtual void spawn_animal_from_part( item &base, const tripoint &loc ) = 0;
 };
@@ -141,6 +142,9 @@ class DefaultRemovePartHandler : public RemovePartHandler
             map &here = get_map();
             here.set_transparency_cache_dirty( z );
             here.set_seen_cache_dirty( tripoint_zero );
+        }
+        void set_floor_cache_dirty( const int z ) override {
+            get_map().set_floor_cache_dirty( z );
         }
         void removed( vehicle &veh, const int part ) override {
             avatar &player_character = get_avatar();
@@ -204,6 +208,9 @@ class MapgenRemovePartHandler : public RemovePartHandler
         }
         void set_transparency_cache_dirty( const int /*z*/ ) override {
             // Ignored for now. We don't initialize the transparency cache in mapgen anyway.
+        }
+        void set_floor_cache_dirty( const int /*z*/ ) override {
+            // Ignored for now. We don't initialize the floor cache in mapgen anyway.
         }
         void removed( vehicle &veh, const int /*part*/ ) override {
             // TODO: check if this is necessary, it probably isn't during mapgen
@@ -1953,6 +1960,10 @@ bool vehicle::remove_part( const int p, RemovePartHandler &handler )
     // attached to it.
     if( remove_dependent_part( "WINDOW", "CURTAIN" ) || part_flag( p, VPFLAG_OPAQUE ) ) {
         handler.set_transparency_cache_dirty( sm_pos.z );
+    }
+
+    if( part_flag( p, VPFLAG_ROOF ) || part_flag( p, VPFLAG_OPAQUE ) ) {
+        handler.set_floor_cache_dirty( sm_pos.z + 1 );
     }
 
     remove_dependent_part( "SEAT", "SEATBELT" );
@@ -6504,7 +6515,32 @@ int vehicle::break_off( int p, int dmg )
         add_msg_if_player_sees( pos, m_bad, _( "The %1$s's %2$s is destroyed!" ), name, parts[ p ].name() );
 
         scatter_parts( parts[p] );
+        const point position = parts[p].mount;
         remove_part( p );
+
+        // remove parts for which required flags are not present anymore
+        if( !part_info( p ).get_flags().empty() ) {
+            const std::vector<int> parts_here = parts_at_relative( position, false );
+            for( auto &part : parts_here ) {
+                bool remove = false;
+                for( const std::string &flag : part_info( part ).get_flags() ) {
+                    if( !json_flag::get( flag ).requires_flag().empty() ) {
+                        remove = true;
+                        for( const auto &elem : parts_here ) {
+                            if( part_info( elem ).has_flag( json_flag::get( flag ).requires_flag() ) ) {
+                                remove = false;
+                                continue;
+                            }
+                        }
+                    }
+                }
+                if( remove ) {
+                    item part_as_item = parts[part].properties_to_item();
+                    here.add_item_or_charges( pos, part_as_item );
+                    remove_part( part );
+                }
+            }
+        }
     }
 
     return dmg;

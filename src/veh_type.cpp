@@ -104,6 +104,7 @@ static const std::unordered_map<std::string, vpart_bitflags> vpart_bitflag_map =
     { "REACTOR", VPFLAG_REACTOR },
     { "RAIL", VPFLAG_RAIL },
     { "TURRET_CONTROLS", VPFLAG_TURRET_CONTROLS },
+    { "ROOF", VPFLAG_ROOF },
 };
 
 static const std::vector<std::pair<std::string, veh_ter_mod>> standard_terrain_mod = {{
@@ -1076,6 +1077,11 @@ void vehicle_prototype::load( const JsonObject &jo )
 
         vproto.parts.push_back( pt );
     };
+
+    if( jo.has_member( "blueprint" ) ) {
+        // currently unused, read to suppress unvisited members warning
+        jo.get_array( "blueprint" );
+    }
 
     for( JsonObject part : jo.get_array( "parts" ) ) {
         point pos = point( part.get_int( "x" ), part.get_int( "y" ) );
