@@ -194,6 +194,7 @@ static const trait_id trait_THRESH_MEDICAL( "THRESH_MEDICAL" );
 
 static const std::string flag_BIO_GUN( "BIONIC_GUN" );
 static const std::string flag_BIO_WEAPON( "BIONIC_WEAPON" );
+static const std::string flag_BIO_CLOTH( "BIONIC_CLOTH" );
 static const std::string flag_BIO_TOGGLED( "BIONIC_TOGGLED" );
 static const std::string flag_SEALED( "SEALED" );
 
@@ -518,6 +519,18 @@ void npc::check_or_use_weapon_cbm( const bionic_id &cbm_id )
         mod_power_level( -bio.info().power_activate );
         bio.powered = true;
         cbm_weapon_index = index;
+    } else if( bio.info().has_flag( flag_BIO_CLOTH ) free_power > bio.info().power_activate ) {
+		item bio_cloth = item( bio.info().fake_item );
+        if( player_character.can_wear( bio_cloth ).success() ) {
+            add_msg_if_player_sees( pos(), m_info, _( "%s activates their %s." ),
+                                    disp_name(), bio.info().name );
+            mod_power_level( -bio.info().power_activate );
+            bio.powered = true;
+
+            Character::wear_item( bio_cloth, false );
+        } else {
+            add_msg_if_player( m_info, _( "You are unable to wear the resulting item." );
+        }
     }
 }
 
