@@ -1224,7 +1224,7 @@
     "name": { "str": "Battery test" },
     "description": "This can hold batteries in.",
     "occupied_bodyparts": [ [ "torso", 1 ] ],
-    "fake_item": "bio_battery_test_cloth",
-    "flags": [ "BIONIC_TOGGLED", "BIONIC_CLOTH", "NO_UNWIELD" ]
+    "included_clothes": [ "bio_battery_test_cloth" ],
+    "flags": [ "BIONIC_TOGGLED", "NO_UNWIELD" ]
   }
 ]

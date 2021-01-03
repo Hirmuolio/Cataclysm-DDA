@@ -298,6 +298,7 @@ void bionic_data::load( const JsonObject &jsobj, const std::string & )
     optional( jsobj, was_loaded, "learned_proficiencies", proficiencies );
     optional( jsobj, was_loaded, "canceled_mutations", canceled_mutations );
     optional( jsobj, was_loaded, "included_bionics", included_bionics );
+	optional( jsobj, was_loaded, "included_clothes", included_clothes );
     optional( jsobj, was_loaded, "included", included );
     optional( jsobj, was_loaded, "upgraded_bionic", upgraded_bionic );
     optional( jsobj, was_loaded, "fuel_options", fuel_opts );
@@ -519,7 +520,7 @@ void npc::check_or_use_weapon_cbm( const bionic_id &cbm_id )
         mod_power_level( -bio.info().power_activate );
         bio.powered = true;
         cbm_weapon_index = index;
-    } 
+    }
 }
 
 // Why put this in a Big Switch?  Why not let bionics have pointers to
@@ -636,19 +637,7 @@ bool Character::activate_bionic( int b, bool eff_only, bool *close_bionics_ui )
             weapon.ammo_set( bio.ammo_loaded, bio.ammo_count );
             avatar_action::fire_wielded_weapon( player_character );
         }
-    } else if( bio.info().has_flag( flag_BIO_CLOTH ) ) {
-		item bio_cloth = item( bio.info().fake_item );
-		
-		add_msg_activate();
-		
-		//bio_cloth.ammo_set( bio.ammo_loaded, bio.ammo_count );
-		
-		weapon.invlet = '#';
-		
-		add_msg_if_player( m_info, _( "BIO CLOTH ACT." ) );
-        
-        Character::wear_item( bio_cloth, false );
-    }else if( bio.id == bio_ears && has_active_bionic( bio_earplugs ) ) {
+    } else if( bio.id == bio_ears && has_active_bionic( bio_earplugs ) ) {
         add_msg_activate();
         for( bionic &bio : *my_bionics ) {
             if( bio.id == bio_earplugs ) {
@@ -2661,6 +2650,10 @@ void Character::add_bionic( const bionic_id &b )
 
     for( const bionic_id &inc_bid : b->included_bionics ) {
         add_bionic( inc_bid );
+    }
+	
+	for( const itype_id &inc_cloth : b->included_clothes ) {
+        //wear_item(inc_cloth, false );
     }
 
     for( const std::pair<const spell_id, int> &spell_pair : b->learned_spells ) {

@@ -182,7 +182,7 @@
     "material": [ "plastic" ],
     "symbol": "(",
     "color": "magenta",
-    "flags": [ "NEVER_JAMS", "RELOAD_EJECT", "NO_UNWIELD", "TRADER_AVOID" ],
+    "flags": [ "NO_UNWIELD", "TRADER_AVOID" ],
     "pocket_data": [
       {
         "pocket_type": "MAGAZINE_WELL",
