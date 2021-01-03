@@ -1197,5 +1197,14 @@
     "description": "Part of the autodoc's 'Cyborg Identity Package', this bionic gives the user a creepy robot voice.",
     "weight": "100 g",
     "difficulty": 5
+  },
+  {
+    "id": "bio_battery_test",
+    "copy-from": "bionic_general",
+    "type": "BIONIC_ITEM",
+    "name": { "str": "Battery test CBM" },
+    "description": "Allows inserting batteries in yourself.",
+    "weight": "100 g",
+    "difficulty": 5
   }
 ]

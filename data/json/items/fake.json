@@ -183,7 +183,6 @@
     "symbol": "(",
     "color": "magenta",
     "ammo": [ "battery" ],
-    "reload": 200,
     "flags": [ "NEVER_JAMS", "RELOAD_EJECT", "NO_UNWIELD", "TRADER_AVOID" ],
     "pocket_data": [
       {
@@ -203,5 +202,5 @@
         ]
       }
     ]
-  },
+  }
 ]
