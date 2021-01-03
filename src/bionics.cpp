@@ -521,7 +521,7 @@ void npc::check_or_use_weapon_cbm( const bionic_id &cbm_id )
         cbm_weapon_index = index;
     } else if( bio.info().has_flag( flag_BIO_CLOTH ) && free_power > bio.info().power_activate ) {
 		item bio_cloth = item( bio.info().fake_item );
-        if( player_character.can_wear( bio_cloth ).success() ) {
+        if( can_wear( bio_cloth ).success() ) {
             add_msg_if_player_sees( pos(), m_info, _( "%s activates their %s." ),
                                     disp_name(), bio.info().name );
             mod_power_level( -bio.info().power_activate );
@@ -529,7 +529,7 @@ void npc::check_or_use_weapon_cbm( const bionic_id &cbm_id )
 
             Character::wear_item( bio_cloth, false );
         } else {
-            add_msg_if_player( m_info, _( "You are unable to wear the resulting item." );
+            add_msg_if_player( m_info, _( "You are unable to wear the resulting item." ) );
         }
     }
 }
