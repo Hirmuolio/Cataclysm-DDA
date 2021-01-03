@@ -519,20 +519,7 @@ void npc::check_or_use_weapon_cbm( const bionic_id &cbm_id )
         mod_power_level( -bio.info().power_activate );
         bio.powered = true;
         cbm_weapon_index = index;
-    } else if( bio.info().has_flag( flag_BIO_CLOTH ) ) {
-		item bio_cloth = item( bio.info().fake_item );
-		add_msg_if_player( m_info, _( "BIO CLOTH ACT." ) );
-        if( can_wear( bio_cloth ).success() ) {
-            add_msg_if_player_sees( pos(), m_info, _( "%s activates their %s." ),
-                                    disp_name(), bio.info().name );
-            mod_power_level( -bio.info().power_activate );
-            bio.powered = true;
-
-            Character::wear_item( bio_cloth, false );
-        } else {
-            add_msg_if_player( m_info, _( "You are unable to wear the resulting item." ) );
-        }
-    }
+    } 
 }
 
 // Why put this in a Big Switch?  Why not let bionics have pointers to
@@ -649,7 +636,19 @@ bool Character::activate_bionic( int b, bool eff_only, bool *close_bionics_ui )
             weapon.ammo_set( bio.ammo_loaded, bio.ammo_count );
             avatar_action::fire_wielded_weapon( player_character );
         }
-    } else if( bio.id == bio_ears && has_active_bionic( bio_earplugs ) ) {
+    } else if( bio.info().has_flag( flag_BIO_CLOTH ) ) {
+		item bio_cloth = item( bio.info().fake_item );
+		
+		add_msg_activate();
+		
+		//bio_cloth.ammo_set( bio.ammo_loaded, bio.ammo_count );
+		
+		weapon.invlet = '#';
+		
+		add_msg_if_player( m_info, _( "BIO CLOTH ACT." ) );
+        
+        Character::wear_item( bio_cloth, false );
+    }else if( bio.id == bio_ears && has_active_bionic( bio_earplugs ) ) {
         add_msg_activate();
         for( bionic &bio : *my_bionics ) {
             if( bio.id == bio_earplugs ) {
