@@ -225,6 +225,8 @@ static const itype_id itype_string_36( "string_36" );
 static const itype_id itype_toolset( "toolset" );
 static const itype_id itype_UPS( "UPS" );
 static const itype_id itype_UPS_off( "UPS_off" );
+static const itype_id itype_battery( "battery" );
+static const itype_id itype_battery_bionic_container( "bio_battery_test_cloth" );
 
 static const skill_id skill_archery( "archery" );
 static const skill_id skill_dodge( "dodge" );
@@ -398,10 +400,6 @@ static const mtype_id mon_player_blob( "mon_player_blob" );
 
 static const vitamin_id vitamin_blood( "blood" );
 static const morale_type morale_nightmare( "morale_nightmare" );
-
-static const itype_id itype_battery( "battery" );
-static const itype_id itype_battery_bionic_container( "bio_battery_test_cloth" );
-
 
 namespace io
 {
@@ -2542,7 +2540,7 @@ void Character::mod_power_level( const units::energy &npower )
 
                             if( bionic_energy > bionic_capacity ) {
                                 bionic_energy -= 1000000;
-                                battery_energy -= 1000000;
+                                battery_energy += 1000000;
                             }
                         }
 
