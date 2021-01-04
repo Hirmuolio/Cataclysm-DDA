@@ -128,12 +128,12 @@ struct bionic_data {
      * activated independently.
      */
     std::vector<bionic_id> included_bionics;
-	
-	/**
+
+    /**
      * Additional clothes that are worn automatically when this
      * bionic is installed. This can be used to add tools that can be interacted with.
      */
-	std::vector<itype_id> included_clothes;
+    std::vector<itype_id> included_clothes;
 
     /**
      * Id of another bionic which this bionic can upgrade.

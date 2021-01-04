@@ -297,7 +297,7 @@ void bionic_data::load( const JsonObject &jsobj, const std::string & )
     optional( jsobj, was_loaded, "learned_proficiencies", proficiencies );
     optional( jsobj, was_loaded, "canceled_mutations", canceled_mutations );
     optional( jsobj, was_loaded, "included_bionics", included_bionics );
-	optional( jsobj, was_loaded, "included_clothes", included_clothes );
+    optional( jsobj, was_loaded, "included_clothes", included_clothes );
     optional( jsobj, was_loaded, "included", included );
     optional( jsobj, was_loaded, "upgraded_bionic", upgraded_bionic );
     optional( jsobj, was_loaded, "fuel_options", fuel_opts );
@@ -2650,11 +2650,11 @@ void Character::add_bionic( const bionic_id &b )
     for( const bionic_id &inc_bid : b->included_bionics ) {
         add_bionic( inc_bid );
     }
-	
-	for( const itype_id &inc_cloth : b->included_clothes ) {
-		item bio_cloth = item(inc_cloth);
+
+    for( const itype_id &inc_cloth : b->included_clothes ) {
+        item bio_cloth = item( inc_cloth );
         wear_item( bio_cloth, false );
-		//reassign_item( bio_cloth, "#" );
+        //reassign_item( bio_cloth, "#" );
     }
 
     for( const std::pair<const spell_id, int> &spell_pair : b->learned_spells ) {
@@ -2711,26 +2711,26 @@ void Character::remove_bionic( const bionic_id &b )
 
         new_my_bionics.push_back( bionic( i.id, i.invlet ) );
     }
-	
-	// Remove linked equipment
-	std::vector<item_location> removed_items;
-	for( const itype_id &inc_cloth : b->included_clothes ){
-		for( item &it : worn ){
-			if( it.typeId() == inc_cloth ){
-				// Drop contained items
-				for( item *contained : it.contents.all_items_top() ){
-					get_map().add_item_or_charges( pos(), *contained );
-				}
-				
-				item_location worn_loc( *this, &it );
-				removed_items.push_back( worn_loc );
-			}
-		}
-	}
-	for( item_location removed : removed_items ) {
+
+    // Remove linked equipment
+    std::vector<item_location> removed_items;
+    for( const itype_id &inc_cloth : b->included_clothes ) {
+        for( item &it : worn ) {
+            if( it.typeId() == inc_cloth ) {
+                // Drop contained items
+                for( item *contained : it.contents.all_items_top() ) {
+                    get_map().add_item_or_charges( pos(), *contained );
+                }
+
+                item_location worn_loc( *this, &it );
+                removed_items.push_back( worn_loc );
+            }
+        }
+    }
+    for( item_location removed : removed_items ) {
         removed.remove_item();
     }
-	
+
 
     // any spells you learn from installing a bionic you forget.
     for( const std::pair<const spell_id, int> &spell_pair : b->learned_spells ) {

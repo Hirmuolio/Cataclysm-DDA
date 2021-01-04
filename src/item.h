@@ -1788,8 +1788,8 @@ class item : public visitable
 
         /** Quantity of energy currently loaded in tool or battery */
         units::energy energy_remaining() const;
-		
-		/** Maximum quantity of energy loaded in tool or battery */
+
+        /** Maximum quantity of energy loaded in tool or battery */
         units::energy max_energy() const;
 
         /** Quantity of ammunition currently loaded in tool, gun or auxiliary gunmod */

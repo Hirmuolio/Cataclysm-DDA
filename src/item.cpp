@@ -525,14 +525,14 @@ units::energy item::add_energy( const units::energy &qty )
 
     units::energy val = energy_remaining() + qty;
     if( val < 0_J ) {
-		energy = 0_J;
+        energy = 0_J;
         return val;
     } else if( val > type->battery->max_capacity ) {
         energy = type->battery->max_capacity;
-		return val - type->battery->max_capacity;
+        return val - type->battery->max_capacity;
     } else {
         energy = val;
-		return 0_J;
+        return 0_J;
     }
 }
 
