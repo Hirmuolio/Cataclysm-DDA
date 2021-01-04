@@ -301,6 +301,7 @@ static const bionic_id bio_synaptic_regen( "bio_synaptic_regen" );
 static const bionic_id bio_tattoo_led( "bio_tattoo_led" );
 static const bionic_id bio_tools( "bio_tools" );
 static const bionic_id bio_ups( "bio_ups" );
+static const bionic_id bio_battery_test( "bio_battery_test" );
 // Aftershock stuff!
 static const bionic_id afs_bio_linguistic_coprocessor( "afs_bio_linguistic_coprocessor" );
 
@@ -397,6 +398,10 @@ static const mtype_id mon_player_blob( "mon_player_blob" );
 
 static const vitamin_id vitamin_blood( "blood" );
 static const morale_type morale_nightmare( "morale_nightmare" );
+
+static const itype_id itype_battery( "battery" );
+static const itype_id itype_battery_bionic_container( "bio_battery_test_cloth" );
+
 
 namespace io
 {
@@ -2400,50 +2405,117 @@ void Character::set_max_power_level( const units::energy &npower_max )
 void Character::mod_power_level( const units::energy &npower )
 {
 	// Bionic energy is  tracked at mJ but batteries at J. Energy changes at mJ can't be handled on batteries.
-	units::energy change_J = static_cast<int>( units::to_joule( get_power_level() ) );
-	units::energy change_mJ = static_cast<int>( units::to_millijoule( get_power_level() ) ) - change_J * 1000;
+	//units::energy change_J = static_cast<int>( units::to_joule( get_power_level() ) );
+	//units::energy change_mJ = static_cast<int>( units::to_millijoule( get_power_level() ) ) - change_J * 1000;
+	
+	
 	
 	units::energy new_power;
-	if( npower > 0 ){
-		// Charging power
-		units::energy charge_room = get_max_power_level() - get_power_level();
+	if( npower > 0_mJ ){
+		// Charging power. Charge bionic power before batteries.
 		
-		if( npower <= charge_room ){
+		units::energy bionic_room = get_max_power_level() - get_power_level();
+		
+		if( npower <= get_max_power_level() - get_power_level() ){
 			// Charge fits in the power storage
 			set_power_level( get_power_level() + npower );
 			return;
-		} else {
-			// Slurpus charge after filling power storage
+		} else if( !has_bionic( bio_battery_test ) ){
 			set_power_level( get_max_power_level() );
+		} else {
+			// There is enough power to fill the bionic power and some is left over.
 			
-			if( has_bionic( bio_battery_test ) ){
-				// 1 battery charge = 1 kJ
-				// 1 bionic charge = 1 mJ
-				item battery_item;
-				itype_id battery_container = "bio_battery_test_cloth"
-				
-				for( item &it : worn ){
-					if( it.typeId() == battery_container ){
-						battery_item = it;
-						break;
-					}
+			item battery_item;
+			for( item &it : worn ){
+				if( it.typeId() == itype_battery_bionic_container ){
+					battery_item = it;
+					break;
 				}
-				units::energy battery_max = battery_item.max_energy()
-				units::energy battery_current = battery_item.energy_remaining();
-				units::energy battery_room = battery_max - battery_current;
-				units::energy remaining_charge_kj = ( npower - charge_room ) / 1000;
+			}
+			
+			// Rather ugly math to make batteries and their kJ work with bionics and their units::energy
+			// 1 battery charge = 1 kJ
+			// Convert everything to mJ int64 to have common unit for the different systems.
+			
+			int64_t battery_energy = static_cast<int64_t>(battery_item.ammo_remaining() ) * 1000000;
+			int64_t battery_capacity = static_cast<int64_t>( battery_item.ammo_capacity( ammotype( "battery" ) ) ) * 1000000;
+			
+			int64_t bionic_energy = static_cast<int64_t>( units::to_millijoule( get_power_level() ) );
+			int64_t bionic_capacity = static_cast<int64_t>( units::to_millijoule( get_max_power_level() ) );
+			
+			int64_t charge_energy = static_cast<int64_t>( units::to_millijoule( npower ) );
+			
+			if( charge_energy + battery_energy + bionic_energy >= battery_capacity + bionic_capacity ){
+				//Set everything to full
+			} else {
+				// fill bionic -1 kJ
+				// put remaining >kJ in battery
+				// put remaining <kJ in bionic
 				
-				// battery_item.add_energy(
+				charge_energy = charge_energy - bionic_capacity + bionic_energy + 1000000;
+				bionic_energy = bionic_capacity - 1000000;
+				
+				int64_t remaining_kj = charge_energy % 1000000;
+				
+				battery_energy = battery_energy + remaining_kj;
+				bionic_energy = bionic_energy + charge_energy - remaining_kj;
+				
+				// Convert everything back to original units.
+				//set_power_level( units::quantity<bionic_energy, units::energy_in_millijoule_tag> ); 
+				//set_power_level( units::from_millijoule( static_cast<int>(bionic_energy) ) );
+				set_power_level( units::from_millijoule( bionic_energy ) );
+				battery_item.ammo_set( itype_battery, battery_energy / 1000000 );
+				
 			}
 		}
 	} else {
-		// Draining power
+		// Draining power. Drain batteries before bionic power.
+		
 		if( has_bionic( bio_battery_test ) ){
-			units::energy battery_current; // =
-			// Set battery charge to max( battery_current - npower/1000, 0)
-			units::energy remaining_drain = max( npower - battery_current, 0 )
+			
+			item battery_item;
+			for( item &it : worn ){
+				if( it.typeId() == itype_battery_bionic_container ){
+					battery_item = it;
+					break;
+				}
+			}
+			
+			// Rather ugly math to make batteries and their kJ work with bionics and their units::energy
+			// 1 battery charge = 1 kJ
+			// Convert everything to mJ int64 to have common unit for the different systems.
+			
+			int64_t battery_energy = static_cast<int64_t>(battery_item.ammo_remaining() ) * 1000000;
+			int64_t battery_capacity = static_cast<int64_t>( battery_item.ammo_capacity( ammotype( "battery" ) ) ) * 1000000;
+			
+			int64_t bionic_energy = static_cast<int64_t>( units::to_millijoule( get_power_level() ) );
+			int64_t bionic_capacity = static_cast<int64_t>( units::to_millijoule( get_max_power_level() ) );
+			
+			int64_t drain_energy = static_cast<int64_t>( units::to_millijoule( npower ) );
+			
+			// Drain from battery
+			// Move <kJ remainder from battery to bionic power
+			// If bionic over 100% move 1 kJ to battery
+			
+			battery_energy = battery_energy + drain_energy;
+			
+			bionic_energy = bionic_energy + battery_energy % 1000000;
+			battery_energy = battery_energy - battery_energy % 1000000;
+			
+			if( bionic_energy > bionic_capacity ){
+				bionic_energy = bionic_energy - 1000000;
+				battery_energy = battery_energy + 1000000;
+			}
+			
+			// Convert everything back to original units.
+			//set_power_level( 0_mJ + bionic_energy ); 
+			set_power_level( units::from_millijoule( bionic_energy ) );
+			battery_item.ammo_set( itype_battery, battery_energy / 1000000 );
+			
+		} else {
+			set_power_level( get_power_level() - npower );
 		}
-		set_power_level( get_power_level() - remaining_drain );
+		
 	}
     
     
