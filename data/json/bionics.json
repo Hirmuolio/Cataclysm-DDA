@@ -1225,6 +1225,6 @@
     "description": "This can hold batteries in.",
     "occupied_bodyparts": [ [ "torso", 1 ] ],
     "included_clothes": [ "bio_battery_test_cloth" ],
-    "flags": [ "BIONIC_TOGGLED", "NO_UNWIELD" ]
+    "flags": [ "BIONIC_TOGGLED" ]
   }
 ]

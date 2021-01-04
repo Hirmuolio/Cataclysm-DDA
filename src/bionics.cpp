@@ -194,7 +194,6 @@ static const trait_id trait_THRESH_MEDICAL( "THRESH_MEDICAL" );
 
 static const std::string flag_BIO_GUN( "BIONIC_GUN" );
 static const std::string flag_BIO_WEAPON( "BIONIC_WEAPON" );
-static const std::string flag_BIO_CLOTH( "BIONIC_CLOTH" );
 static const std::string flag_BIO_TOGGLED( "BIONIC_TOGGLED" );
 static const std::string flag_SEALED( "SEALED" );
 
@@ -2653,7 +2652,9 @@ void Character::add_bionic( const bionic_id &b )
     }
 	
 	for( const itype_id &inc_cloth : b->included_clothes ) {
-        //wear_item(inc_cloth, false );
+		item bio_cloth = item(inc_cloth);
+        wear_item( bio_cloth, false );
+		//reassign_item( bio_cloth, "#" );
     }
 
     for( const std::pair<const spell_id, int> &spell_pair : b->learned_spells ) {
@@ -2710,6 +2711,18 @@ void Character::remove_bionic( const bionic_id &b )
 
         new_my_bionics.push_back( bionic( i.id, i.invlet ) );
     }
+	
+	// Remove linked equipment
+	for( const itype_id &inc_cloth : b->included_clothes ){
+		add_msg( m_neutral, _( "Looking for %s" ), inc_cloth.tname() );
+		for( item &i : worn ){
+			if( i.typeId() == inc_cloth ){
+				i.on_takeoff( *this );
+				drop_invalid_inventory();
+			}
+		}
+	}
+	
 
     // any spells you learn from installing a bionic you forget.
     for( const std::pair<const spell_id, int> &spell_pair : b->learned_spells ) {
