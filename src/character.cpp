@@ -1383,9 +1383,9 @@ bool Character::uncanny_dodge()
     bool is_u = is_avatar();
     bool seen = get_player_view().sees( *this );
 
-    const bool can_dodge_bio = get_power_level() >= 75_kJ && has_active_bionic( bio_uncanny_dodge );
+    const bool can_dodge_bio = get_whole_power_level() >= 75_kJ && has_active_bionic( bio_uncanny_dodge );
     const bool can_dodge_mut = get_stamina() >= 2400 && has_trait_flag( "UNCANNY_DODGE" );
-    const bool can_dodge_both = get_power_level() >= 37500_J &&
+    const bool can_dodge_both = get_whole_power_level() >= 37500_J &&
                                 has_active_bionic( bio_uncanny_dodge ) &&
                                 get_stamina() >= 1200 && has_trait_flag( "UNCANNY_DODGE" );
 
@@ -2385,10 +2385,10 @@ units::energy Character::get_power_level() const
     return power_level;
 }
 
-units::energy Character::get_whole_power_level()
+units::energy Character::get_whole_power_level() const
 {
     if( has_bionic( bio_battery_test ) ) {
-        for( item &battery_item : worn ) {
+        for( const item &battery_item : worn ) {
             if( battery_item.typeId() == itype_battery_bionic_container ) {
                 return units::from_kilojoule( battery_item.ammo_remaining() ) + get_power_level();
             }
@@ -2403,10 +2403,10 @@ units::energy Character::get_max_power_level() const
     return enchantment_cache->modify_value( enchant_vals::mod::BIONIC_POWER, max_power_level );
 }
 
-units::energy Character::get_whole_max_power_level()
+units::energy Character::get_whole_max_power_level() const
 {
     if( has_bionic( bio_battery_test ) ) {
-        for( item &battery_item : worn ) {
+        for( const item &battery_item : worn ) {
             if( battery_item.typeId() == itype_battery_bionic_container ) {
                 return units::from_kilojoule( battery_item.ammo_capacity( ammotype( "battery" ) ) ) +
                        get_max_power_level();
@@ -2417,7 +2417,7 @@ units::energy Character::get_whole_max_power_level()
     return get_max_power_level();
 }
 
-void Character::set_power_level( const units::energy &npower )
+void Character::set_power_level( const units::energy &npower ) // TODO check
 {
     power_level = std::min( npower, get_max_power_level() );
 }
@@ -2580,22 +2580,22 @@ void Character::mod_max_power_level( const units::energy &npower_max )
     max_power_level += npower_max;
 }
 
-bool Character::is_max_power() const
+bool Character::is_max_power() const // TODO check
 {
     return get_power_level() >= get_max_power_level();
 }
 
 bool Character::has_power() const
 {
-    return get_power_level() > 0_kJ;
+    return get_whole_power_level() > 0_kJ;
 }
 
-bool Character::has_max_power() const
+bool Character::has_max_power() const // TODO check
 {
     return get_max_power_level() > 0_kJ;
 }
 
-bool Character::enough_power_for( const bionic_id &bid ) const
+bool Character::enough_power_for( const bionic_id &bid ) const // TODO check
 {
     return get_power_level() >= bid->power_activate;
 }
@@ -4361,7 +4361,7 @@ void Character::do_skill_rust()
             continue;
         }
 
-        const bool charged_bio_mem = get_power_level() > 25_J && has_active_bionic( bio_memory );
+        const bool charged_bio_mem = get_whole_power_level() > 25_J && has_active_bionic( bio_memory );
         const int oldSkillLevel = skill_level_obj.level();
         if( skill_level_obj.rust( charged_bio_mem, rust_rate_tmp ) ) {
             add_msg_if_player( m_warning,
@@ -8744,8 +8744,8 @@ void Character::update_stamina( int turns )
     }
 
     const int max_stam = get_stamina_max();
-    if( get_power_level() >= 3_kJ && has_active_bionic( bio_gills ) ) {
-        int bonus = std::min<int>( units::to_kilojoule( get_power_level() ) / 3,
+    if( get_whole_power_level() >= 3_kJ && has_active_bionic( bio_gills ) ) {
+        int bonus = std::min<int>( units::to_kilojoule( get_whole_power_level() ) / 3,
                                    max_stam - get_stamina() - stamina_recovery * turns );
         // so the effective recovery is up to 5x default
         bonus = std::min( bonus, 4 * static_cast<int>( base_regen_rate ) );
@@ -9606,7 +9606,7 @@ void Character::absorb_hit( const bodypart_id &bp, damage_instance &dam )
 
         // The bio_ads CBM absorbs damage before hitting armor
         if( has_active_bionic( bio_ads ) ) {
-            if( elem.amount > 0 && get_power_level() > 24_kJ ) {
+            if( elem.amount > 0 && get_whole_power_level() > 24_kJ ) {
                 if( elem.type == damage_type::BASH ) {
                     elem.amount -= rng( 1, 2 );
                 } else if( elem.type == damage_type::CUT ) {
@@ -9906,7 +9906,7 @@ void Character::on_hit( Creature *source, bodypart_id bp_hit,
     }
 
     bool u_see = get_player_view().sees( *this );
-    if( has_active_bionic( bionic_id( "bio_ods" ) ) && get_power_level() > 5_kJ ) {
+    if( has_active_bionic( bionic_id( "bio_ods" ) ) && get_whole_power_level() > 5_kJ ) {
         if( is_player() ) {
             add_msg( m_good, _( "Your offensive defense system shocks %s in mid-attack!" ),
                      source->disp_name() );
@@ -11331,7 +11331,7 @@ std::list<item> Character::use_charges( const itype_id &what, int qty, const int
             return res;
         }
         if( has_power() && has_active_bionic( bio_ups ) ) {
-            int bio = std::min( units::to_kilojoule( get_power_level() ), qty );
+            int bio = std::min( units::to_kilojoule( get_whole_power_level() ), qty );
             mod_power_level( units::from_kilojoule( -bio ) );
             qty -= std::min( qty, bio );
         }
@@ -11414,11 +11414,11 @@ bool Character::has_fire( const int quantity ) const
                 return true;
             }
         }
-    } else if( has_active_bionic( bio_tools ) && get_power_level() > quantity * 5_kJ ) {
+    } else if( has_active_bionic( bio_tools ) && get_whole_power_level() > quantity * 5_kJ ) {
         return true;
-    } else if( has_bionic( bio_lighter ) && get_power_level() > quantity * 5_kJ ) {
+    } else if( has_bionic( bio_lighter ) && get_whole_power_level() > quantity * 5_kJ ) {
         return true;
-    } else if( has_bionic( bio_laser ) && get_power_level() > quantity * 5_kJ ) {
+    } else if( has_bionic( bio_laser ) && get_whole_power_level() > quantity * 5_kJ ) {
         return true;
     } else if( is_npc() ) {
         // HACK: A hack to make NPCs use their Molotovs
@@ -11474,13 +11474,13 @@ void Character::use_fire( const int quantity )
                 return;
             }
         }
-    } else if( has_active_bionic( bio_tools ) && get_power_level() > quantity * 5_kJ ) {
+    } else if( has_active_bionic( bio_tools ) && get_whole_power_level() > quantity * 5_kJ ) {
         mod_power_level( -quantity * 5_kJ );
         return;
-    } else if( has_bionic( bio_lighter ) && get_power_level() > quantity * 5_kJ ) {
+    } else if( has_bionic( bio_lighter ) && get_whole_power_level() > quantity * 5_kJ ) {
         mod_power_level( -quantity * 5_kJ );
         return;
-    } else if( has_bionic( bio_laser ) && get_power_level() > quantity * 5_kJ ) {
+    } else if( has_bionic( bio_laser ) && get_whole_power_level() > quantity * 5_kJ ) {
         mod_power_level( -quantity * 5_kJ );
         return;
     }

@@ -459,7 +459,7 @@ std::pair<int, int> Character::fun_for( const item &comest ) const
     }
 
     if( has_active_bionic( bio_taste_blocker ) &&
-        get_power_level() > units::from_kilojoule( std::abs( comest.get_comestible_fun() ) ) &&
+        get_whole_power_level() > units::from_kilojoule( std::abs( comest.get_comestible_fun() ) ) &&
         fun < 0 ) {
         fun = 0;
     }

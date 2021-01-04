@@ -4581,7 +4581,7 @@ void game::monmove()
 
         if( !critter.is_dead() &&
             u.has_active_bionic( bionic_id( "bio_alarm" ) ) &&
-            u.get_power_level() >= 25_kJ &&
+            u.get_whole_power_level() >= 25_kJ &&
             rl_dist( u.pos(), critter.pos() ) <= 5 &&
             !critter.is_hallucination() ) {
             u.mod_power_level( -25_kJ );
@@ -10183,7 +10183,7 @@ void game::place_player_overmap( const tripoint_abs_omt &om_dest )
 bool game::phasing_move( const tripoint &dest_loc, const bool via_ramp )
 {
     if( !u.has_active_bionic( bionic_id( "bio_probability_travel" ) ) ||
-        u.get_power_level() < 250_kJ ) {
+        u.get_whole_power_level() < 250_kJ ) {
         return false;
     }
 
@@ -10209,7 +10209,7 @@ bool game::phasing_move( const tripoint &dest_loc, const bool via_ramp )
             return false;
         }
         if( tunneldist * 250_kJ >
-            u.get_power_level() ) { //oops, not enough energy! Tunneling costs 250 bionic power per impassable tile
+            u.get_whole_power_level() ) { //oops, not enough energy! Tunneling costs 250 bionic power per impassable tile
             add_msg( _( "You try to quantum tunnel through the barrier but are reflected!  Try again with more energy!" ) );
             u.mod_power_level( -250_kJ );
             return false;

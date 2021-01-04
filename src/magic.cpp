@@ -817,7 +817,7 @@ bool spell::can_cast( Character &guy ) const
             return false;
         }
         case magic_energy_type::bionic:
-            return guy.get_power_level() >= units::from_kilojoule( energy_cost( guy ) );
+            return guy.get_whole_power_level() >= units::from_kilojoule( energy_cost( guy ) );
         case magic_energy_type::fatigue:
             return guy.get_fatigue() < fatigue_levels::EXHAUSTED;
         case magic_energy_type::none:
@@ -1036,7 +1036,7 @@ std::string spell::energy_cur_string( const Character &guy ) const
         return _( "infinite" );
     }
     if( energy_source() == magic_energy_type::bionic ) {
-        return colorize( to_string( units::to_kilojoule( guy.get_power_level() ) ), c_light_blue );
+        return colorize( to_string( units::to_kilojoule( guy.get_whole_power_level() ) ), c_light_blue );
     }
     if( energy_source() == magic_energy_type::mana ) {
         return colorize( to_string( guy.magic->available_mana() ), c_light_blue );
@@ -1604,7 +1604,7 @@ int known_magic::max_mana( const Character &guy ) const
 {
     const float int_bonus = ( ( 0.2f + guy.get_int() * 0.1f ) - 1.0f ) * mana_base;
     const int bionic_penalty = std::round( std::max( 0.0f,
-                                           units::to_kilojoule( guy.get_power_level() ) *
+                                           units::to_kilojoule( guy.get_whole_power_level() ) *
                                            guy.mutation_value( "bionic_mana_penalty" ) ) );
     const float unaugmented_mana = std::max( 0.0f,
                                    ( ( mana_base + int_bonus ) * guy.mutation_value( "mana_multiplier" ) ) +
@@ -1638,7 +1638,7 @@ bool known_magic::has_enough_energy( const Character &guy, spell &sp ) const
         case magic_energy_type::mana:
             return available_mana() >= cost;
         case magic_energy_type::bionic:
-            return guy.get_power_level() >= units::from_kilojoule( cost );
+            return guy.get_whole_power_level() >= units::from_kilojoule( cost );
         case magic_energy_type::stamina:
             return guy.get_stamina() >= cost;
         case magic_energy_type::hp:

@@ -1190,7 +1190,7 @@ void player::process_items()
         set_check_encumbrance( false );
     }
     if( has_active_bionic( bionic_id( "bio_ups" ) ) ) {
-        ch_UPS += units::to_kilojoule( get_power_level() );
+        ch_UPS += units::to_kilojoule( get_whole_power_level() );
     }
     int ch_UPS_used = 0;
 

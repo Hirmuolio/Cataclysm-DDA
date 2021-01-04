@@ -570,7 +570,7 @@ const inventory &Character::crafting_inventory( const tripoint &src_pos, int rad
         if( ( !bio_data.activated || bio.powered ) &&
             !bio_data.fake_item.is_empty() ) {
             *cached_crafting_inventory += item( bio.info().fake_item,
-                                                calendar::turn, units::to_kilojoule( get_power_level() ) );
+                                                calendar::turn, units::to_kilojoule( get_whole_power_level() ) ); // Check this
         }
     }
     if( has_trait( trait_BURROW ) ) {

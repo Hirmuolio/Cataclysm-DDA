@@ -1338,11 +1338,11 @@ class Character : public Creature, public visitable
         /**Returns the available bionic power*/
         units::energy get_power_level() const;
         /**Returns the available bionic power and additional battery power*/
-        units::energy get_whole_power_level();
+        units::energy get_whole_power_level() const;
         /**Returns the maximum bionic power capacity*/
         units::energy get_max_power_level() const;
         /**Returns the maximum bionic power capacity with additional battery capacity*/
-        units::energy get_whole_max_power_level();
+        units::energy get_whole_max_power_level() const;
         void mod_power_level( const units::energy &npower );
         void mod_max_power_level( const units::energy &npower_max );
         void set_power_level( const units::energy &npower );

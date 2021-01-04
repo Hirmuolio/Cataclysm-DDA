@@ -467,7 +467,7 @@ void npc::check_or_use_weapon_cbm( const bionic_id &cbm_id )
         return;
     }
     const float allowed_ratio = static_cast<int>( rules.cbm_reserve ) / 100.0f;
-    const units::energy free_power = get_power_level() - get_max_power_level() * allowed_ratio;
+    const units::energy free_power = get_whole_power_level() - get_whole_max_power_level() * allowed_ratio;
     if( free_power <= 0_mJ ) {
         return;
     }
@@ -1588,7 +1588,7 @@ static bool attempt_recharge( Character &p, bionic &bio, units::energy &amount )
                 power_cost -= armor_power_cost;
             }
         }
-        if( p.get_power_level() >= power_cost ) {
+        if( p.get_whole_power_level() >= power_cost ) {
             // Set the recharging cost and charge the bionic.
             amount = power_cost;
             bio.charge_timer = info.charge_time;

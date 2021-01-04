@@ -7569,7 +7569,7 @@ int item::ammo_remaining() const
             !contents.has_pocket_type( item_pocket::pocket_type::MAGAZINE ) ) {
             // includes auxiliary gunmods
             if( has_flag( flag_USES_BIONIC_POWER ) ) {
-                int power = units::to_kilojoule( get_player_character().get_power_level() );
+                int power = units::to_kilojoule( get_player_character().get_whole_power_level() );
                 return power;
             }
             return charges;
@@ -7624,7 +7624,7 @@ int item::ammo_capacity( const ammotype &ammo ) const
     if( mag ) {
         return mag->ammo_capacity( ammo );
     } else if( has_flag( flag_USES_BIONIC_POWER ) ) {
-        return units::to_kilojoule( get_player_character().get_max_power_level() );
+        return units::to_kilojoule( get_player_character().get_whole_max_power_level() );
     }
 
     if( contents.has_pocket_type( item_pocket::pocket_type::MAGAZINE ) ) {
@@ -7680,7 +7680,7 @@ int item::ammo_consume( int qty, const tripoint &pos )
             qty = std::min( qty, charges );
             Character &player_character = get_player_character();
             if( has_flag( flag_USES_BIONIC_POWER ) ) {
-                charges = units::to_kilojoule( player_character.get_power_level() );
+                charges = units::to_kilojoule( player_character.get_whole_power_level() );
                 player_character.mod_power_level( units::from_kilojoule( -qty ) );
             }
             charges -= qty;
