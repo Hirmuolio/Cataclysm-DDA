@@ -2713,15 +2713,23 @@ void Character::remove_bionic( const bionic_id &b )
     }
 	
 	// Remove linked equipment
+	std::vector<item_location> removed_items;
 	for( const itype_id &inc_cloth : b->included_clothes ){
-		add_msg( m_neutral, _( "Looking for %s" ), inc_cloth.tname() );
-		for( item &i : worn ){
-			if( i.typeId() == inc_cloth ){
-				i.on_takeoff( *this );
-				drop_invalid_inventory();
+		for( item &it : worn ){
+			if( it.typeId() == inc_cloth ){
+				// Drop contained items
+				for( item *contained : it.contents.all_items_top() ){
+					get_map().add_item_or_charges( pos(), *contained );
+				}
+				
+				item_location worn_loc( *this, &it );
+				removed_items.push_back( worn_loc );
 			}
 		}
 	}
+	for( item_location removed : removed_items ) {
+        removed.remove_item();
+    }
 	
 
     // any spells you learn from installing a bionic you forget.
