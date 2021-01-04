@@ -2387,7 +2387,7 @@ units::energy Character::get_power_level() const
     return power_level;
 }
 
-units::energy Character::get_whole_power_level() const
+units::energy Character::get_whole_power_level()
 {
     if( has_bionic( bio_battery_test ) ) {
         for( item &battery_item : worn ) {
@@ -2405,7 +2405,7 @@ units::energy Character::get_max_power_level() const
     return enchantment_cache->modify_value( enchant_vals::mod::BIONIC_POWER, max_power_level );
 }
 
-units::energy Character::get_whole_max_power_level() const
+units::energy Character::get_whole_max_power_level()
 {
     if( has_bionic( bio_battery_test ) ) {
         for( item &battery_item : worn ) {

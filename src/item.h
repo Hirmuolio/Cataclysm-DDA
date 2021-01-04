@@ -248,13 +248,13 @@ class item : public visitable
         /**
          * Add or remove energy from a battery.
          * If adding the specified energy quantity would go over the battery's capacity fill
-         * the battery and ignore the remainder.
+         * the battery and return the remainder.
          * If adding the specified energy quantity would reduce the battery's charge level
-         * below 0 do nothing and return how far below 0 it would have gone.
+         * below 0 set it to 0 and return remaining negative energy.
          * @param qty energy quantity to add (can be negative)
-         * @return 0 valued energy quantity on success
+         * @return remaining energy that did not fit in the battery
          */
-        units::energy set_energy( const units::energy &qty );
+        units::energy add_energy( const units::energy &qty );
 
         /**
          * Filter setting the ammo for this instance
@@ -1788,6 +1788,9 @@ class item : public visitable
 
         /** Quantity of energy currently loaded in tool or battery */
         units::energy energy_remaining() const;
+
+        /** Maximum quantity of energy loaded in tool or battery */
+        units::energy max_energy() const;
 
         /** Quantity of ammunition currently loaded in tool, gun or auxiliary gunmod */
         int ammo_remaining() const;
