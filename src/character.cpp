@@ -2387,9 +2387,36 @@ units::energy Character::get_power_level() const
     return power_level;
 }
 
+units::energy Character::get_whole_power_level() const
+{
+    if( has_bionic( bio_battery_test ) ) {
+        for( item &battery_item : worn ) {
+            if( battery_item.typeId() == itype_battery_bionic_container ) {
+                return units::from_kilojoule( battery_item.ammo_remaining() ) + get_power_level();
+            }
+
+        }
+    }
+    return get_power_level();
+}
+
 units::energy Character::get_max_power_level() const
 {
     return enchantment_cache->modify_value( enchant_vals::mod::BIONIC_POWER, max_power_level );
+}
+
+units::energy Character::get_whole_max_power_level() const
+{
+    if( has_bionic( bio_battery_test ) ) {
+        for( item &battery_item : worn ) {
+            if( battery_item.typeId() == itype_battery_bionic_container ) {
+                return units::from_kilojoule( battery_item.ammo_capacity( ammotype( "battery" ) ) ) +
+                       get_max_power_level();
+            }
+
+        }
+    }
+    return get_max_power_level();
 }
 
 void Character::set_power_level( const units::energy &npower )
@@ -2425,10 +2452,8 @@ void Character::mod_power_level( const units::energy &npower )
         } else {
             // There is enough power to fill the bionic power and some is left over.
 
-            item battery_item;
-            for( item &it : worn ) {
-                if( it.typeId() == itype_battery_bionic_container ) {
-                    battery_item = it;
+            for( item &battery_item : worn ) {
+                if( battery_item.typeId() == itype_battery_bionic_container ) {
                     // Rather ugly math to make batteries and their kJ work with bionics and their units::energy
                     // 1 battery charge = 1 kJ
                     // Convert everything to mJ int64 to have common unit for the different systems.
@@ -2444,8 +2469,8 @@ void Character::mod_power_level( const units::energy &npower )
 
                     if( charge_energy + battery_energy + bionic_energy >= battery_capacity + bionic_capacity ) {
                         //Set everything to full
-						battery_item.ammo_set( itype_battery, battery_item.ammo_capacity( ammotype( "battery" ) ) );
-						set_power_level( get_max_power_level() );
+                        battery_item.ammo_set( itype_battery, battery_item.ammo_capacity( ammotype( "battery" ) ) );
+                        set_power_level( get_max_power_level() );
                     } else {
                         // fill bionic -1 kJ
                         // put remaining >kJ in battery
@@ -2490,53 +2515,53 @@ void Character::mod_power_level( const units::energy &npower )
                     int64_t bionic_capacity = static_cast<int64_t>( units::to_millijoule( get_max_power_level() ) );
 
                     int64_t drain_energy = -static_cast<int64_t>( units::to_millijoule( npower ) );
-					
-					// If power drain >1 kJ drain it from battery
-					// If battery goes negative compensate from bionic
+
+                    // If power drain >1 kJ drain it from battery
+                    // If battery goes negative compensate from bionic
                     // Otherwisw move <kJ remainder from battery to bionic power
                     // If bionic over 100% move 1 kJ to battery
-					
-					// If power drain <1 kJ drain it from bionic
-					// If bionic goes below 1 kJ move 1 kJ energy from battery
-					add_msg( _( "Ba1 %i, Bi1 %i" ), battery_energy, bionic_energy );
-					if( drain_energy >= 1000000){
-						
-						
-						if( drain_energy > battery_energy ){
-							drain_energy = drain_energy - battery_energy;
-							battery_energy = 0;
-							
-							bionic_energy = bionic_energy - drain_energy;
-						} else {
-							battery_energy = battery_energy - drain_energy;
 
-							bionic_energy = bionic_energy + battery_energy % 1000000;
-							battery_energy = battery_energy - battery_energy % 1000000;
+                    // If power drain <1 kJ drain it from bionic
+                    // If bionic goes below 1 kJ move 1 kJ energy from battery
+                    add_msg( _( "Ba1 %i, Bi1 %i" ), battery_energy, bionic_energy );
+                    if( drain_energy >= 1000000 ) {
 
-							
 
-							if( bionic_energy > bionic_capacity ) {
-								bionic_energy = bionic_energy - 1000000;
-								battery_energy = battery_energy + 1000000;
-							}
-						}
-						
+                        if( drain_energy > battery_energy ) {
+                            drain_energy = drain_energy - battery_energy;
+                            battery_energy = 0;
 
-						
-					} else {
-						bionic_energy = bionic_energy - drain_energy;
-						
-						if( bionic_energy < 1000000 ){
-							battery_energy = battery_energy - 1000000;
-							bionic_energy = bionic_energy + 1000000;
-						}
-					}
-					add_msg( _( "Ba2 %i, Bi2 %i" ), battery_energy, bionic_energy );
-					// Convert everything back to original units.
-					set_power_level( units::from_millijoule( bionic_energy ) );
-					battery_item.ammo_set( itype_battery, battery_energy / 1000000 );
-                    
-					
+                            bionic_energy = bionic_energy - drain_energy;
+                        } else {
+                            battery_energy = battery_energy - drain_energy;
+
+                            bionic_energy = bionic_energy + battery_energy % 1000000;
+                            battery_energy = battery_energy - battery_energy % 1000000;
+
+
+
+                            if( bionic_energy > bionic_capacity ) {
+                                bionic_energy -= 1000000;
+                                battery_energy -= 1000000;
+                            }
+                        }
+
+
+
+                    } else {
+                        bionic_energy = bionic_energy - drain_energy;
+
+                        if( bionic_energy < 1000000 ) {
+                            battery_energy -= 1000000;
+                            bionic_energy += 1000000;
+                        }
+                    }
+                    add_msg( _( "Ba2 %i, Bi2 %i" ), battery_energy, bionic_energy );
+                    // Convert everything back to original units.
+                    set_power_level( units::from_millijoule( bionic_energy ) );
+                    battery_item.ammo_set( itype_battery, battery_energy / 1000000 );
+
+
                     break;
                 }
             }
@@ -2897,7 +2922,8 @@ units::volume Character::max_single_item_volume() const
     return ret;
 }
 
-std::pair<item_location, item_pocket *> Character::best_pocket( const item &it, const item *avoid )
+std::pair<item_location, item_pocket *> Character::best_pocket( const item &it,
+        const item *avoid )
 {
     item_location weapon_loc( *this, &weapon );
     std::pair<item_location, item_pocket *> ret = std::make_pair( item_location(), nullptr );
@@ -9982,7 +10008,8 @@ void Character::on_hit( Creature *source, bodypart_id bp_hit,
     Where damage to character is actually applied to hit body parts
     Might be where to put bleed stuff rather than in player::deal_damage()
  */
-void Character::apply_damage( Creature *source, bodypart_id hurt, int dam, const bool bypass_med )
+void Character::apply_damage( Creature *source, bodypart_id hurt, int dam,
+                              const bool bypass_med )
 {
     if( is_dead_state() || has_trait( trait_DEBUG_NODMG ) || has_effect( effect_incorporeal ) ) {
         // don't do any more damage if we're already dead
@@ -11606,7 +11633,8 @@ void Character::on_item_takeoff( const item &it )
     morale->on_item_takeoff( it );
 }
 
-void Character::on_effect_int_change( const efftype_id &eid, int intensity, const bodypart_id &bp )
+void Character::on_effect_int_change( const efftype_id &eid, int intensity,
+                                      const bodypart_id &bp )
 {
     // Adrenaline can reduce perceived pain (or increase it when you enter comedown).
     // See @ref get_perceived_pain()
