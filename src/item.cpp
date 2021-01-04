@@ -516,7 +516,7 @@ bool item::activate_thrown( const tripoint &pos )
     return type->invoke( get_avatar(), *this, pos );
 }
 
-units::energy item::set_energy( const units::energy &qty )
+units::energy item::add_energy( const units::energy &qty )
 {
     if( !is_battery() ) {
         debugmsg( "Tried to set energy of non-battery item" );
@@ -525,13 +525,15 @@ units::energy item::set_energy( const units::energy &qty )
 
     units::energy val = energy_remaining() + qty;
     if( val < 0_J ) {
+		energy = 0_J;
         return val;
     } else if( val > type->battery->max_capacity ) {
         energy = type->battery->max_capacity;
+		return val - type->battery->max_capacity;
     } else {
         energy = val;
+		return 0_J;
     }
-    return 0_J;
 }
 
 item &item::ammo_set( const itype_id &ammo, int qty )
@@ -7551,6 +7553,15 @@ units::energy item::energy_remaining() const
 {
     if( is_battery() ) {
         return energy;
+    }
+
+    return 0_J;
+}
+
+units::energy item::max_energy() const
+{
+    if( is_battery() ) {
+        return type->battery->max_capacity;
     }
 
     return 0_J;

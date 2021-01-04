@@ -2399,17 +2399,54 @@ void Character::set_max_power_level( const units::energy &npower_max )
 
 void Character::mod_power_level( const units::energy &npower )
 {
-    // units::energy is an int, so avoid overflow by converting it to a int64_t, then adding them
-    // If the result is greater than the max power level, set power to max
-    int64_t power = static_cast<int64_t>( units::to_millijoule( get_power_level() ) ) +
-                    static_cast<int64_t>( units::to_millijoule( npower ) );
-    units::energy new_power;
-    if( power > units::to_millijoule( get_max_power_level() ) ) {
-        new_power = get_max_power_level();
-    } else {
-        new_power = get_power_level() + npower;
-    }
-    set_power_level( clamp( new_power, 0_kJ, get_max_power_level() ) );
+	// Bionic energy is  tracked at mJ but batteries at J. Energy changes at mJ can't be handled on batteries.
+	units::energy change_J = static_cast<int>( units::to_joule( get_power_level() ) );
+	units::energy change_mJ = static_cast<int>( units::to_millijoule( get_power_level() ) ) - change_J * 1000;
+	
+	units::energy new_power;
+	if( npower > 0 ){
+		// Charging power
+		units::energy charge_room = get_max_power_level() - get_power_level();
+		
+		if( npower <= charge_room ){
+			// Charge fits in the power storage
+			set_power_level( get_power_level() + npower );
+			return;
+		} else {
+			// Slurpus charge after filling power storage
+			set_power_level( get_max_power_level() );
+			
+			if( has_bionic( bio_battery_test ) ){
+				// 1 battery charge = 1 kJ
+				// 1 bionic charge = 1 mJ
+				item battery_item;
+				itype_id battery_container = "bio_battery_test_cloth"
+				
+				for( item &it : worn ){
+					if( it.typeId() == battery_container ){
+						battery_item = it;
+						break;
+					}
+				}
+				units::energy battery_max = battery_item.max_energy()
+				units::energy battery_current = battery_item.energy_remaining();
+				units::energy battery_room = battery_max - battery_current;
+				units::energy remaining_charge_kj = ( npower - charge_room ) / 1000;
+				
+				// battery_item.add_energy(
+			}
+		}
+	} else {
+		// Draining power
+		if( has_bionic( bio_battery_test ) ){
+			units::energy battery_current; // =
+			// Set battery charge to max( battery_current - npower/1000, 0)
+			units::energy remaining_drain = max( npower - battery_current, 0 )
+		}
+		set_power_level( get_power_level() - remaining_drain );
+	}
+    
+    
 }
 
 void Character::mod_max_power_level( const units::energy &npower_max )
