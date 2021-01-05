@@ -130,6 +130,15 @@
     "difficulty": 4
   },
   {
+    "id": "bio_battery_compartment",
+    "copy-from": "bionic_general",
+    "type": "BIONIC_ITEM",
+    "name": { "str": "Battery Compartment CBM" },
+    "description": "A battery compartment for light batteries.  The inserted battery will extend bionic power reserves and capacity.",
+    "weight": "100 g",
+    "difficulty": 5
+  },
+  {
     "id": "bio_blade",
     "copy-from": "bionic_general_npc_usable",
     "type": "BIONIC_ITEM",
@@ -1195,15 +1204,6 @@
     "type": "BIONIC_ITEM",
     "name": { "str": "Voice Remodulator" },
     "description": "Part of the autodoc's 'Cyborg Identity Package', this bionic gives the user a creepy robot voice.",
-    "weight": "100 g",
-    "difficulty": 5
-  },
-  {
-    "id": "bio_battery_test",
-    "copy-from": "bionic_general",
-    "type": "BIONIC_ITEM",
-    "name": { "str": "Battery test CBM" },
-    "description": "Allows inserting batteries in yourself.",
     "weight": "100 g",
     "difficulty": 5
   }

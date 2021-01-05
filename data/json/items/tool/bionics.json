@@ -1,11 +1,10 @@
 [
   {
-    "id": "bio_battery_test_cloth",
-    "looks_like": "remington_870",
+    "id": "internal_battery_compartment",
     "type": "TOOL_ARMOR",
     "category": "clothing",
     "name": { "str": "internal battery compartment" },
-    "description": "Bionic battery compartment in your chest.",
+    "description": "Internal battery compartment for a light battery.  The battery inserted here extends the power reserves and power capacity of bionic power.",
     "volume": "103 ml",
     "price": 0,
     "material": [ "plastic" ],

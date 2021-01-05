@@ -1219,12 +1219,11 @@
     "flags": [ "BIONIC_TOGGLED" ]
   },
   {
-    "id": "bio_battery_test",
+    "id": "bio_battery_compartment",
     "type": "bionic",
-    "name": { "str": "Battery test" },
-    "description": "This can hold batteries in.",
+    "name": { "str": "Internal Battery Compartment" },
+    "description": "Internal compartment that can hold a single light battery.  The battery contained extends the normal bionic power reserves.  The compartment is accessible from the inventory.",
     "occupied_bodyparts": [ [ "torso", 1 ] ],
-    "included_clothes": [ "bio_battery_test_cloth" ],
-    "flags": [ "BIONIC_TOGGLED" ]
+    "included_clothes": [ "internal_battery_compartment" ]
   }
 ]

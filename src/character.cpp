@@ -226,7 +226,7 @@ static const itype_id itype_toolset( "toolset" );
 static const itype_id itype_UPS( "UPS" );
 static const itype_id itype_UPS_off( "UPS_off" );
 static const itype_id itype_battery( "battery" );
-static const itype_id itype_bio_battery_test_cloth( "bio_battery_test_cloth" );
+static const itype_id itype_internal_battery_compartment( "internal_battery_compartment" );
 
 static const skill_id skill_archery( "archery" );
 static const skill_id skill_dodge( "dodge" );
@@ -303,7 +303,7 @@ static const bionic_id bio_synaptic_regen( "bio_synaptic_regen" );
 static const bionic_id bio_tattoo_led( "bio_tattoo_led" );
 static const bionic_id bio_tools( "bio_tools" );
 static const bionic_id bio_ups( "bio_ups" );
-static const bionic_id bio_battery_test( "bio_battery_test" );
+static const bionic_id bio_battery_compartment( "bio_battery_compartment" );
 // Aftershock stuff!
 static const bionic_id afs_bio_linguistic_coprocessor( "afs_bio_linguistic_coprocessor" );
 
@@ -2387,9 +2387,9 @@ units::energy Character::get_power_level() const
 
 units::energy Character::get_whole_power_level() const
 {
-    if( has_bionic( bio_battery_test ) ) {
+    if( has_bionic(bio_battery_compartment) ) {
         for( const item &battery_item : worn ) {
-            if( battery_item.typeId() == itype_bio_battery_test_cloth ) {
+            if( battery_item.typeId() == itype_internal_battery_compartment ) {
                 return units::from_kilojoule( battery_item.ammo_remaining() ) + get_power_level();
             }
 
@@ -2405,9 +2405,9 @@ units::energy Character::get_max_power_level() const
 
 units::energy Character::get_whole_max_power_level() const
 {
-    if( has_bionic( bio_battery_test ) ) {
+    if( has_bionic( bio_battery_compartment ) ) {
         for( const item &battery_item : worn ) {
-            if( battery_item.typeId() == itype_bio_battery_test_cloth ) {
+            if( battery_item.typeId() == itype_internal_battery_compartment ) {
                 return units::from_kilojoule( battery_item.ammo_capacity( ammotype( "battery" ) ) ) +
                        get_max_power_level();
             }
@@ -2440,13 +2440,13 @@ void Character::mod_power_level( const units::energy &npower )
             // Charge fits in the power storage
             set_power_level( get_power_level() + npower );
             return;
-        } else if( !has_bionic( bio_battery_test ) ) {
+        } else if( !has_bionic( bio_battery_compartment ) ) {
             set_power_level( get_max_power_level() );
         } else {
             // There is enough power to fill the bionic power and some is left over.
 
             for( item &battery_item : worn ) {
-                if( battery_item.typeId() == itype_bio_battery_test_cloth ) {
+                if( battery_item.typeId() == itype_internal_battery_compartment ) {
 					if( !battery_item.magazine_current() ){
 						set_power_level( get_max_power_level() );
 						return;
@@ -2495,11 +2495,11 @@ void Character::mod_power_level( const units::energy &npower )
     } else {
         // Draining power. Drain batteries before bionic power.
 
-        if( has_bionic( bio_battery_test ) ) {
+        if( has_bionic( bio_battery_compartment ) ) {
 
             //item battery_item;
             for( item &battery_item : worn ) {
-                if( battery_item.typeId() == itype_bio_battery_test_cloth ) {
+                if( battery_item.typeId() == itype_internal_battery_compartment ) {
 					if( !battery_item.magazine_current() ){
 						set_power_level( get_power_level() - npower );
 						return;
