@@ -1,0 +1,35 @@
+[
+  {
+    "id": "bio_battery_test_cloth",
+    "looks_like": "remington_870",
+    "type": "TOOL_ARMOR",
+    "category": "clothing",
+    "name": { "str": "internal battery compartment" },
+    "description": "Bionic battery compartment in your chest.",
+    "volume": "103 ml",
+    "price": 0,
+    "material": [ "plastic" ],
+    "symbol": "(",
+    "color": "magenta",
+    "flags": [ "NO_UNWIELD", "TRADER_AVOID" ],
+    "ammo": "battery",
+    "pocket_data": [
+      {
+        "pocket_type": "MAGAZINE_WELL",
+        "rigid": true,
+        "holster": true,
+        "max_contains_volume": "20 L",
+        "max_contains_weight": "20 kg",
+        "item_restriction": [
+          "light_minus_battery_cell",
+          "light_minus_disposable_cell",
+          "light_minus_atomic_battery_cell",
+          "light_battery_cell",
+          "light_disposable_cell",
+          "light_plus_battery_cell",
+          "light_atomic_battery_cell"
+        ]
+      }
+    ]
+  }
+]
