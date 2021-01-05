@@ -2417,7 +2417,7 @@ units::energy Character::get_whole_max_power_level() const
     return get_max_power_level();
 }
 
-void Character::set_power_level( const units::energy &npower ) // TODO check
+void Character::set_power_level( const units::energy &npower )
 {
     power_level = std::min( npower, get_max_power_level() );
 }
