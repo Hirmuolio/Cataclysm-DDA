@@ -637,7 +637,7 @@ static void draw_bionics_tab( const catacurses::window &w_bionics,
     if( you.get_whole_power_level() < 1_J ) {
         power_amount = units::to_millijoule( you.get_whole_power_level() );
         power_unit = "mJ";
-    } else if( you.get_whole_whole_power_level() < 1_kJ ) {
+    } else if( you.get_whole_power_level() < 1_kJ ) {
         power_amount = units::to_joule( you.get_whole_power_level() );
         power_unit = "J";
     } else {
