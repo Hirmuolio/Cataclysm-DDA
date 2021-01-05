@@ -2387,7 +2387,7 @@ units::energy Character::get_power_level() const
 
 units::energy Character::get_whole_power_level() const
 {
-    if( has_bionic(bio_battery_compartment) ) {
+    if( has_bionic(bio_battery_compartment) && get_max_power_level() != 0_mJ ) {
         for( const item &battery_item : worn ) {
             if( battery_item.typeId() == itype_internal_battery_compartment ) {
                 return units::from_kilojoule( battery_item.ammo_remaining() ) + get_power_level();
@@ -2405,7 +2405,7 @@ units::energy Character::get_max_power_level() const
 
 units::energy Character::get_whole_max_power_level() const
 {
-    if( has_bionic( bio_battery_compartment ) ) {
+    if( has_bionic( bio_battery_compartment ) && get_max_power_level() != 0_mJ ) {
         for( const item &battery_item : worn ) {
             if( battery_item.typeId() == itype_internal_battery_compartment ) {
                 return units::from_kilojoule( battery_item.ammo_capacity( ammotype( "battery" ) ) ) +
