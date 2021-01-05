@@ -2586,7 +2586,7 @@ bool Character::has_power() const
     return get_whole_power_level() > 0_kJ;
 }
 
-bool Character::has_max_power() const // TODO check
+bool Character::has_max_power() const
 {
     return get_max_power_level() > 0_kJ;
 }
