@@ -226,7 +226,7 @@ static const itype_id itype_toolset( "toolset" );
 static const itype_id itype_UPS( "UPS" );
 static const itype_id itype_UPS_off( "UPS_off" );
 static const itype_id itype_battery( "battery" );
-static const itype_id itype_battery_bionic_container( "bio_battery_test_cloth" );
+static const itype_id itype_bio_battery_test_cloth( "bio_battery_test_cloth" );
 
 static const skill_id skill_archery( "archery" );
 static const skill_id skill_dodge( "dodge" );
@@ -2389,7 +2389,7 @@ units::energy Character::get_whole_power_level() const
 {
     if( has_bionic( bio_battery_test ) ) {
         for( const item &battery_item : worn ) {
-            if( battery_item.typeId() == itype_battery_bionic_container ) {
+            if( battery_item.typeId() == itype_bio_battery_test_cloth ) {
                 return units::from_kilojoule( battery_item.ammo_remaining() ) + get_power_level();
             }
 
@@ -2407,7 +2407,7 @@ units::energy Character::get_whole_max_power_level() const
 {
     if( has_bionic( bio_battery_test ) ) {
         for( const item &battery_item : worn ) {
-            if( battery_item.typeId() == itype_battery_bionic_container ) {
+            if( battery_item.typeId() == itype_bio_battery_test_cloth ) {
                 return units::from_kilojoule( battery_item.ammo_capacity( ammotype( "battery" ) ) ) +
                        get_max_power_level();
             }
@@ -2433,13 +2433,8 @@ void Character::mod_power_level( const units::energy &npower )
     //units::energy change_J = static_cast<int>( units::to_joule( get_power_level() ) );
     //units::energy change_mJ = static_cast<int>( units::to_millijoule( get_power_level() ) ) - change_J * 1000;
 
-
-
-    units::energy new_power;
     if( npower > 0_mJ ) {
         // Charging power. Charge bionic power before batteries.
-
-        units::energy bionic_room = get_max_power_level() - get_power_level();
 
         if( npower <= get_max_power_level() - get_power_level() ) {
             // Charge fits in the power storage
@@ -2451,7 +2446,11 @@ void Character::mod_power_level( const units::energy &npower )
             // There is enough power to fill the bionic power and some is left over.
 
             for( item &battery_item : worn ) {
-                if( battery_item.typeId() == itype_battery_bionic_container ) {
+                if( battery_item.typeId() == itype_bio_battery_test_cloth ) {
+					if( !battery_item.magazine_current() ){
+						set_power_level( get_max_power_level() );
+						return;
+					}
                     // Rather ugly math to make batteries and their kJ work with bionics and their units::energy
                     // 1 battery charge = 1 kJ
                     // Convert everything to mJ int64 to have common unit for the different systems.
@@ -2500,7 +2499,11 @@ void Character::mod_power_level( const units::energy &npower )
 
             //item battery_item;
             for( item &battery_item : worn ) {
-                if( battery_item.typeId() == itype_battery_bionic_container ) {
+                if( battery_item.typeId() == itype_bio_battery_test_cloth ) {
+					if( !battery_item.magazine_current() ){
+						set_power_level( get_power_level() - npower );
+						return;
+					}
                     // Rather ugly math to make batteries and their kJ work with bionics and their units::energy
                     // 1 battery charge = 1 kJ
                     // Convert everything to mJ int64 to have common unit for the different systems.
@@ -2595,9 +2598,9 @@ bool Character::has_max_power() const // TODO check
     return get_max_power_level() > 0_kJ;
 }
 
-bool Character::enough_power_for( const bionic_id &bid ) const // TODO check
+bool Character::enough_power_for( const bionic_id &bid ) const
 {
-    return get_power_level() >= bid->power_activate;
+    return get_whole_power_level() >= bid->power_activate;
 }
 
 void Character::conduct_blood_analysis()
