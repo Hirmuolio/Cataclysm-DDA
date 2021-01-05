@@ -1383,7 +1383,8 @@ bool Character::uncanny_dodge()
     bool is_u = is_avatar();
     bool seen = get_player_view().sees( *this );
 
-    const bool can_dodge_bio = get_whole_power_level() >= 75_kJ && has_active_bionic( bio_uncanny_dodge );
+    const bool can_dodge_bio = get_whole_power_level() >= 75_kJ &&
+                               has_active_bionic( bio_uncanny_dodge );
     const bool can_dodge_mut = get_stamina() >= 2400 && has_trait_flag( "UNCANNY_DODGE" );
     const bool can_dodge_both = get_whole_power_level() >= 37500_J &&
                                 has_active_bionic( bio_uncanny_dodge ) &&
@@ -2387,7 +2388,7 @@ units::energy Character::get_power_level() const
 
 units::energy Character::get_whole_power_level() const
 {
-    if( has_bionic(bio_battery_compartment) && has_max_power() ) {
+    if( has_bionic( bio_battery_compartment ) && has_max_power() ) {
         for( const item &battery_item : worn ) {
             if( battery_item.typeId() == itype_internal_battery_compartment ) {
                 return units::from_kilojoule( battery_item.ammo_remaining() ) + get_power_level();
@@ -2445,10 +2446,10 @@ void Character::mod_power_level( const units::energy &npower )
 
             for( item &battery_item : worn ) {
                 if( battery_item.typeId() == itype_internal_battery_compartment ) {
-					if( !battery_item.magazine_current() ){
-						set_power_level( get_max_power_level() );
-						return;
-					}
+                    if( !battery_item.magazine_current() ) {
+                        set_power_level( get_max_power_level() );
+                        return;
+                    }
                     // Rather ugly math to make batteries and their kJ work with bionics and their units::energy
                     // 1 battery charge = 1 kJ
                     // Convert everything to mJ int64 to have common unit for the different systems.
@@ -2491,10 +2492,10 @@ void Character::mod_power_level( const units::energy &npower )
         if( has_bionic( bio_battery_compartment ) ) {
             for( item &battery_item : worn ) {
                 if( battery_item.typeId() == itype_internal_battery_compartment ) {
-					if( !battery_item.magazine_current() ){
-						set_power_level( get_power_level() - npower );
-						return;
-					}
+                    if( !battery_item.magazine_current() ) {
+                        set_power_level( get_power_level() - npower );
+                        return;
+                    }
                     // Rather ugly math to make batteries and their kJ work with bionics and their units::energy
                     // 1 battery charge = 1 kJ
                     // Convert everything to mJ int64 to have common unit for the different systems.
