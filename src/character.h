@@ -1347,7 +1347,6 @@ class Character : public Creature, public visitable
         void mod_max_power_level( const units::energy &npower_max );
         void set_power_level( const units::energy &npower );
         void set_max_power_level( const units::energy &npower_max );
-        bool is_max_power() const;
         bool has_power() const;
         bool has_max_power() const;
         bool enough_power_for( const bionic_id &bid ) const;

@@ -2581,11 +2581,6 @@ void Character::mod_max_power_level( const units::energy &npower_max )
     max_power_level += npower_max;
 }
 
-bool Character::is_max_power() const // TODO check
-{
-    return get_power_level() >= get_max_power_level();
-}
-
 bool Character::has_power() const
 {
     return get_whole_power_level() > 0_kJ;
