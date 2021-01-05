@@ -2509,8 +2509,6 @@ void Character::mod_power_level( const units::energy &npower )
                     // Convert everything to mJ int64 to have common unit for the different systems.
 
                     int64_t battery_energy = static_cast<int64_t>( battery_item.ammo_remaining() ) * 1000000;
-                    int64_t battery_capacity = static_cast<int64_t>( battery_item.ammo_capacity(
-                                                   ammotype( "battery" ) ) ) * 1000000;
 
                     int64_t bionic_energy = static_cast<int64_t>( units::to_millijoule( get_power_level() ) );
                     int64_t bionic_capacity = static_cast<int64_t>( units::to_millijoule( get_max_power_level() ) );
