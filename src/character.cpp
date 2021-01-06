@@ -2447,7 +2447,7 @@ void Character::mod_power_level( const units::energy &npower )
             for( item &battery_item : worn ) {
                 if( battery_item.typeId() == itype_internal_battery_compartment ) {
                     if( !battery_item.magazine_current() ) {
-						add_msg( m_warning, _( "Charge without battery." ) );
+                        add_msg( m_warning, _( "Charge without battery." ) );
                         set_power_level( get_max_power_level() );
                         return;
                     }
@@ -2464,15 +2464,15 @@ void Character::mod_power_level( const units::energy &npower )
 
                     if( charge_energy + battery_energy + bionic_energy >= battery_capacity + bionic_capacity ) {
                         //Set everything to full
-						add_msg( m_warning, _( "FULL CHARGE." ) );
+                        add_msg( m_warning, _( "FULL CHARGE." ) );
                         battery_item.ammo_set( itype_battery, battery_item.ammo_capacity( ammotype( "battery" ) ) );
                         set_power_level( get_max_power_level() );
                     } else {
                         // fill bionic -1 kJ
                         // put remaining >kJ in battery
                         // put remaining <kJ in bioni
-						
-						charge_energy = charge_energy - bionic_capacity + bionic_energy + 1000000;
+
+                        charge_energy = charge_energy - bionic_capacity + bionic_energy + 1000000;
                         bionic_energy = bionic_capacity - 1000000;
 
                         int64_t remaining_kj = charge_energy - charge_energy % 1000000;
