@@ -150,13 +150,11 @@ TEST_CASE( "bionic_power", "[bionics] [item]" )
         dummy.add_bionic( bionic_id( "bio_power_storage" ) );
         dummy.set_power_level( 50_kJ );
 
-        // Should have 50 kJ / 100 kJ power.
         CHECK( dummy.get_whole_power_level() == 50_kJ );
         REQUIRE( dummy.get_whole_max_power_level() == 100_kJ );
 
         dummy.mod_power_level( -10500_J );
 
-        // Should have 89.5 kJ / 100 kJ power.
         CHECK( dummy.get_whole_power_level() == 39500_J );
     }
 
@@ -169,11 +167,8 @@ TEST_CASE( "bionic_power", "[bionics] [item]" )
         dummy.add_bionic( bionic_id( "bio_power_storage" ) );
         dummy.mod_power_level( 10500_J );
 
-        // Should have 10.5 kJ / 100 kJ power.
         CHECK( dummy.get_whole_power_level() == 10500_J );
     }
-
-    // Battery powered tests done in succesion with same bionics. Just reset the power as needed.
 
     SECTION( "bio_power_no_battery" ) {
         // Start with power storage
@@ -186,7 +181,6 @@ TEST_CASE( "bionic_power", "[bionics] [item]" )
         dummy.add_bionic( bionic_id( "bio_battery_compartment" ) );
         dummy.set_power_level( 50_kJ );
 
-        // Should have 100 kJ / 100 kJ power.
         CHECK( dummy.get_whole_power_level() == 50_kJ );
         CHECK( dummy.get_whole_max_power_level() == 100_kJ );
     }
@@ -229,7 +223,7 @@ TEST_CASE( "bionic_power", "[bionics] [item]" )
         CHECK( dummy.get_whole_power_level() == 109_kJ );
 
         // Energy levels match with full bionic
-        dummy.mod_power_level( -1000_kJ ); //set battery and bionic empty
+        dummy.mod_power_level( -1000_kJ );
         dummy.set_power_level( 100_kJ );
         dummy.mod_power_level( 10500_J );
         CHECK( dummy.get_whole_power_level() == 110500_J );
@@ -246,9 +240,6 @@ TEST_CASE( "bionic_power", "[bionics] [item]" )
         item &light_battery = dummy.i_add( item( "light_battery_cell" ) );
         battery_compartment.reload( dummy, item_location( dummy, &light_battery ), 1 );
 
-        dummy.set_power_level( 50_kJ );
-
-        // Fill up bionic and battery
         dummy.mod_power_level( 1000_kJ );
 
         // Battery should get drained before bionic
