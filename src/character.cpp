@@ -2447,6 +2447,7 @@ void Character::mod_power_level( const units::energy &npower )
             for( item &battery_item : worn ) {
                 if( battery_item.typeId() == itype_internal_battery_compartment ) {
                     if( !battery_item.magazine_current() ) {
+						add_msg( m_warning, _( "Charge without battery." ) );
                         set_power_level( get_max_power_level() );
                         return;
                     }
@@ -2463,6 +2464,7 @@ void Character::mod_power_level( const units::energy &npower )
 
                     if( charge_energy + battery_energy + bionic_energy >= battery_capacity + bionic_capacity ) {
                         //Set everything to full
+						add_msg( m_warning, _( "FULL CHARGE." ) );
                         battery_item.ammo_set( itype_battery, battery_item.ammo_capacity( ammotype( "battery" ) ) );
                         set_power_level( get_max_power_level() );
                     } else {
@@ -2470,13 +2472,23 @@ void Character::mod_power_level( const units::energy &npower )
                         // put remaining >kJ in battery
                         // put remaining <kJ in bionic
 
-                        charge_energy = charge_energy - bionic_capacity + bionic_energy + 1000000;
+                        add_msg( m_warning, _( "Lataus alkaa." ) );
+						add_msg( m_warning, _( "Charge %i." ), charge_energy );
+						add_msg( m_warning, _( "bionic %i." ), bionic_energy );
+						add_msg( m_warning, _( "battery %i." ), battery_energy );
+						
+						charge_energy = charge_energy - bionic_capacity + bionic_energy + 1000000;
                         bionic_energy = bionic_capacity - 1000000;
 
-                        int64_t remaining_kj = charge_energy % 1000000;
+                        int64_t remaining_kj = charge_energy - charge_energy % 1000000;
 
                         battery_energy = battery_energy + remaining_kj;
                         bionic_energy = bionic_energy + charge_energy - remaining_kj;
+						
+						add_msg( m_warning, _( "B charge %i." ), charge_energy );
+						add_msg( m_warning, _( "Rem %i." ), remaining_kj );
+						add_msg( m_warning, _( "bionic %i." ), bionic_energy );
+						add_msg( m_warning, _( "battery %i." ), battery_energy );
 
                         // Convert everything back to original units.
                         set_power_level( units::from_millijoule( bionic_energy ) );
@@ -2545,7 +2557,7 @@ void Character::mod_power_level( const units::energy &npower )
                 }
             }
         } else {
-            set_power_level( get_power_level() - npower );
+            set_power_level( get_power_level() + npower );
         }
     }
 }

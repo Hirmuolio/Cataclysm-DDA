@@ -1225,8 +1225,8 @@ Character::auto_toggle_bionic_result Character::auto_toggle_bionic( const int b,
             }
 
             if( bio.get_safe_fuel_thresh() > 0
-                && get_power_level() + units::from_kilojoule( fuel_energy ) * effective_efficiency >
-                get_max_power_level() * std::min( 1.0f, bio.get_safe_fuel_thresh() ) ) {
+                && get_whole_power_level() + units::from_kilojoule( fuel_energy ) * effective_efficiency >
+                get_whole_max_power_level() * std::min( 1.0f, bio.get_safe_fuel_thresh() ) ) {
                 if( bio.powered || start ) {
                     if( !start ) {
                         if( is_metabolism_powered ) {
@@ -1239,10 +1239,10 @@ Character::auto_toggle_bionic_result Character::auto_toggle_bionic( const int b,
                             msg_player = _( "Your %s turns off to not waste fuel." );
                             msg_npc = _( "<npcname>'s %s turns off to not waste fuel." );
                         }
-                    } else if( get_max_power_level() == 0_mJ ) {
+                    } else if( get_whole_max_power_level() == 0_mJ ) {
                         msg_player = _( "Your %s cannot be started because you don't have any bionic power storage." );
                         msg_npc = _( "<npcname>'s %s cannot be started because they don't have any bionic power storage." );
-                    } else if( get_power_level() != get_max_power_level() ) {
+                    } else if( get_whole_power_level() != get_whole_max_power_level() ) {
                         msg_player = _( "Your %s cannot be started due to fuel saving." );
                         msg_npc = _( "<npcname>'s %s cannot be started due to fuel saving." );
                     } else {
