@@ -176,15 +176,15 @@ TEST_CASE( "bionic_power", "[bionics] [item]" )
 	// Battery powered tests done in succesion with same bionics. Just reset the power as needed.
 
 	SECTION( "bio_power_no_battery" ) {
-		clear_bionics( dummy );
 		// Start with power storage
 		// Add battery compartment without battery
 		// Fill bionic power
 		// Should have 50 kJ / 100 kJ power
 		
+		clear_bionics( dummy );
 		dummy.add_bionic( bionic_id( "bio_power_storage" ) );
 		dummy.add_bionic( bionic_id( "bio_battery_compartment" ) );
-		dummy.set_power_level( 50_kJ ); // set_power_level limits power to max power so just add lots of power.
+		dummy.set_power_level( 50_kJ );
 		
 		// Should have 100 kJ / 100 kJ power. 
 		CHECK( dummy.get_whole_power_level() == 50_kJ );
@@ -192,10 +192,13 @@ TEST_CASE( "bionic_power", "[bionics] [item]" )
 	}
 	
 	SECTION( "bio_power_battery" ) {
+		clear_bionics( dummy );
+		dummy.add_bionic( bionic_id( "bio_power_storage" ) );
+		dummy.set_power_level( 50_kJ );
+		dummy.add_bionic( bionic_id( "bio_battery_compartment" ) );
+		
 		// Just reload the battery in the first item that player is wearing. This works as long as player was naked in the beginning.
 		// The battery should be empty.
-		CHECK( dummy.get_whole_max_power_level() == 50_kJ );
-		
 		item &battery_compartment = dummy.worn.front();
 		item &light_battery = dummy.i_add( item( "light_battery_cell" ) );
 		battery_compartment.reload( dummy, item_location( dummy, &light_battery ), 1 );
@@ -206,43 +209,66 @@ TEST_CASE( "bionic_power", "[bionics] [item]" )
 		CHECK( dummy.get_whole_max_power_level() == 200_kJ );
 	}
 	SECTION( "bio_power_battery_recharge" ) {
-		REQUIRE( dummy.get_whole_power_level() == 50_kJ );
+		clear_bionics( dummy );
+		dummy.add_bionic( bionic_id( "bio_battery_compartment" ) );
+		dummy.add_bionic( bionic_id( "bio_power_storage" ) );
+		item &battery_compartment = dummy.worn.front();
+		item &light_battery = dummy.i_add( item( "light_battery_cell" ) );
+		battery_compartment.reload( dummy, item_location( dummy, &light_battery ), 1 );
+		
+		dummy.set_power_level( 50_kJ );
+		
 		// With not-full bionic the recharge goes into bionic and not battery
 		dummy.mod_power_level( 10500_J );
 		CHECK( dummy.get_whole_power_level() == 60500_J );
 		CHECK( dummy.get_power_level() == 60500_J );
 		
-		// With full bionic the recharge goes into battery
+		// Energy levels match with almost full bionic
+		dummy.set_power_level( 99_kJ );
+		dummy.mod_power_level( 10_kJ );
+		CHECK( dummy.get_whole_power_level() == 109_kJ );
+		
+		// Energy levels match with full bionic
+		dummy.mod_power_level( -1000_kJ ); //set battery and bionic empty
 		dummy.set_power_level( 100_kJ );
 		dummy.mod_power_level( 10500_J );
 		CHECK( dummy.get_whole_power_level() == 110500_J );
-		CHECK( dummy.get_power_level() == 100_kJ );
+		
+		// Filling completely fills completely
+		dummy.mod_power_level( 100000_J );
+		CHECK( dummy.get_whole_power_level() == 200_kJ );
 	}
 	SECTION( "bio_power_battery_drain" ) {
+		clear_bionics( dummy );
+		dummy.add_bionic( bionic_id( "bio_battery_compartment" ) );
+		dummy.add_bionic( bionic_id( "bio_power_storage" ) );
+		item &battery_compartment = dummy.worn.front();
+		item &light_battery = dummy.i_add( item( "light_battery_cell" ) );
+		battery_compartment.reload( dummy, item_location( dummy, &light_battery ), 1 );
+		
+		dummy.set_power_level( 50_kJ );
+		
 		// Fill up bionic and battery
 		dummy.mod_power_level( 1000_kJ );
-		REQUIRE( dummy.get_whole_power_level() == 300_kJ );
-		REQUIRE( dummy.get_power_level() == 300_J );
 		
 		// Battery should get drained before bionic
 		dummy.mod_power_level( -10_kJ );
-		CHECK( dummy.get_whole_power_level() == 290_kJ );
+		CHECK( dummy.get_whole_power_level() == 190_kJ );
 		CHECK( dummy.get_power_level() == 100_kJ );
 		
 		// Not integer kJ drain
 		dummy.mod_power_level( -10500_J );
-		CHECK( dummy.get_whole_power_level() == 275_kJ );
+		CHECK( dummy.get_whole_power_level() == 179500_J );
 		CHECK( dummy.get_power_level() == 99500_J );
 		
 		// Full battery should work with empty bionic power
-		// The bionic power is shuffled around a bit but not more than 2 kJ
-		// Fill bionic and battery. Then set bionic to empty
+		// The bionic power is shuffled around a bit to fit the 0.5 kJ but not more than 2 kJ
 		dummy.mod_power_level( 1000_kJ );
 		dummy.set_power_level( 0_kJ );
 		REQUIRE( dummy.get_whole_power_level() == 100_kJ );
 		
 		dummy.mod_power_level( -10500_J );
-		CHECK( dummy.get_whole_power_level() == 79500_J );
+		CHECK( dummy.get_whole_power_level() == 89500_J );
 		CHECK( dummy.get_power_level() < 2_kJ );
 	}
 }

@@ -2470,12 +2470,7 @@ void Character::mod_power_level( const units::energy &npower )
                     } else {
                         // fill bionic -1 kJ
                         // put remaining >kJ in battery
-                        // put remaining <kJ in bionic
-
-                        add_msg( m_warning, _( "Lataus alkaa." ) );
-						add_msg( m_warning, _( "Charge %i." ), charge_energy );
-						add_msg( m_warning, _( "bionic %i." ), bionic_energy );
-						add_msg( m_warning, _( "battery %i." ), battery_energy );
+                        // put remaining <kJ in bioni
 						
 						charge_energy = charge_energy - bionic_capacity + bionic_energy + 1000000;
                         bionic_energy = bionic_capacity - 1000000;
@@ -2484,11 +2479,6 @@ void Character::mod_power_level( const units::energy &npower )
 
                         battery_energy = battery_energy + remaining_kj;
                         bionic_energy = bionic_energy + charge_energy - remaining_kj;
-						
-						add_msg( m_warning, _( "B charge %i." ), charge_energy );
-						add_msg( m_warning, _( "Rem %i." ), remaining_kj );
-						add_msg( m_warning, _( "bionic %i." ), bionic_energy );
-						add_msg( m_warning, _( "battery %i." ), battery_energy );
 
                         // Convert everything back to original units.
                         set_power_level( units::from_millijoule( bionic_energy ) );
