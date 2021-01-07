@@ -139,58 +139,47 @@ TEST_CASE( "bionic_power", "[bionics] [item]" )
     avatar &dummy = get_avatar();
     clear_avatar();
 
-
-    SECTION( "bio_power_drain" ) {
+    SECTION( "bio_power" ) {
         clear_bionics( dummy );
-        // Start with power storage
-        // Set bionic power to 50 kJ
-        // Drain 10.5 kJ power
-        // Check that there is now 10.5 kJ less power.
+        // Start with power storage.
+        // Set bionic power to 50 kJ.
+        // Drain 10.5 kJ power. Check that there is now 10.5 kJ less power.
+        // Charge 10.5 kJ power. Check that power is back to 50 kJ.
 
         dummy.add_bionic( bionic_id( "bio_power_storage" ) );
         dummy.set_power_level( 50_kJ );
 
         CHECK( dummy.get_whole_power_level() == 50_kJ );
-        REQUIRE( dummy.get_whole_max_power_level() == 100_kJ );
+        CHECK( dummy.get_whole_max_power_level() == 100_kJ );
 
         dummy.mod_power_level( -10500_J );
-
         CHECK( dummy.get_whole_power_level() == 39500_J );
-    }
 
-    SECTION( "bio_power_charge" ) {
-        clear_bionics( dummy );
-        // Start with power storage
-        // Charge 10.5 kJ power
-        // Check that there is now 10.5 kJ more power.
-
-        dummy.add_bionic( bionic_id( "bio_power_storage" ) );
         dummy.mod_power_level( 10500_J );
-
-        CHECK( dummy.get_whole_power_level() == 10500_J );
+        CHECK( dummy.get_whole_power_level() == 50_kJ );
     }
 
     SECTION( "bio_power_no_battery" ) {
         // Start with power storage
-		// Set power
+        // Set power to 50 kJ
         // Add battery compartment without battery
         // Should have 50 kJ / 100 kJ power
-		// Test that draining works
-		// Test that charging works
+        // Test that draining works
+        // Test that charging works
 
         clear_bionics( dummy );
         dummy.add_bionic( bionic_id( "bio_power_storage" ) );
-		dummy.set_power_level( 50_kJ );
+        dummy.set_power_level( 50_kJ );
         dummy.add_bionic( bionic_id( "bio_battery_compartment" ) );
 
         CHECK( dummy.get_whole_power_level() == 50_kJ );
         CHECK( dummy.get_whole_max_power_level() == 100_kJ );
-		
-		dummy.mod_power_level( -10500_J );
-		CHECK( dummy.get_whole_power_level() == 39500_J );
-		
-		dummy.mod_power_level( 10500_J );
-		CHECK( dummy.get_whole_power_level() == 50_kJ );
+
+        dummy.mod_power_level( -10500_J );
+        CHECK( dummy.get_whole_power_level() == 39500_J );
+
+        dummy.mod_power_level( 10500_J );
+        CHECK( dummy.get_whole_power_level() == 50_kJ );
     }
 
     SECTION( "bio_power_battery" ) {
@@ -210,7 +199,8 @@ TEST_CASE( "bionic_power", "[bionics] [item]" )
         CHECK( dummy.get_power_level() == 50_kJ );
         CHECK( dummy.get_whole_max_power_level() == 200_kJ );
     }
-    SECTION( "bio_power_battery_recharge" ) {
+
+    SECTION( "bio_power_battery_charge" ) {
         clear_bionics( dummy );
         dummy.add_bionic( bionic_id( "bio_battery_compartment" ) );
         dummy.add_bionic( bionic_id( "bio_power_storage" ) );
@@ -220,52 +210,48 @@ TEST_CASE( "bionic_power", "[bionics] [item]" )
 
         dummy.set_power_level( 50_kJ );
 
+        // Adding lots of power sets battery and bionic full.
+        dummy.mod_power_level( 10000_kJ );
+        CHECK( dummy.get_whole_power_level() == 200_kJ );
+        CHECK( dummy.get_power_level() == 100_kJ );
+
+        // Draining exactly the capacity out.
+        dummy.mod_power_level( -200_kJ );
+        CHECK( dummy.get_whole_power_level() == 0_kJ );
+        CHECK( dummy.get_power_level() == 0_kJ );
+
         // With not-full bionic the recharge goes into bionic and not battery
         dummy.mod_power_level( 10500_J );
-        CHECK( dummy.get_whole_power_level() == 60500_J );
-        CHECK( dummy.get_power_level() == 60500_J );
+        CHECK( dummy.get_whole_power_level() == 10500_J );
+        CHECK( dummy.get_power_level() == 10500_J );
 
-        // Energy levels match with almost full bionic
+        // Charging with almost full bionic
         dummy.set_power_level( 99_kJ );
         dummy.mod_power_level( 10_kJ );
         CHECK( dummy.get_whole_power_level() == 109_kJ );
 
-        // Energy levels match with full bionic
+        // Charging with full bionic
         dummy.mod_power_level( -1000_kJ );
         dummy.set_power_level( 100_kJ );
         dummy.mod_power_level( 10500_J );
         CHECK( dummy.get_whole_power_level() == 110500_J );
 
-        // Filling completely fills completely
-        dummy.mod_power_level( 100000_J );
-        CHECK( dummy.get_whole_power_level() == 200_kJ );
-    }
-    SECTION( "bio_power_battery_drain" ) {
-        clear_bionics( dummy );
-        dummy.add_bionic( bionic_id( "bio_battery_compartment" ) );
-        dummy.add_bionic( bionic_id( "bio_power_storage" ) );
-        item &battery_compartment = dummy.worn.front();
-        item &light_battery = dummy.i_add( item( "light_battery_cell" ) );
-        battery_compartment.reload( dummy, item_location( dummy, &light_battery ), 1 );
-
+        // Full battery and bionic. Battery should drain first
         dummy.mod_power_level( 1000_kJ );
-
-        // Battery should get drained before bionic
         dummy.mod_power_level( -10_kJ );
         CHECK( dummy.get_whole_power_level() == 190_kJ );
         CHECK( dummy.get_power_level() == 100_kJ );
 
-        // Not integer kJ drain
+        // Full battery and bionic. Not integer kJ drain.
+        dummy.mod_power_level( 1000_kJ );
         dummy.mod_power_level( -10500_J );
-        CHECK( dummy.get_whole_power_level() == 179500_J );
+        CHECK( dummy.get_whole_power_level() == 189500_J );
         CHECK( dummy.get_power_level() == 99500_J );
 
-        // Full battery should work with empty bionic power
+        // Full battery, empty bionic
         // The bionic power is shuffled around a bit to fit the 0.5 kJ but not more than 2 kJ
         dummy.mod_power_level( 1000_kJ );
         dummy.set_power_level( 0_kJ );
-        REQUIRE( dummy.get_whole_power_level() == 100_kJ );
-
         dummy.mod_power_level( -10500_J );
         CHECK( dummy.get_whole_power_level() == 89500_J );
         CHECK( dummy.get_power_level() < 2_kJ );
