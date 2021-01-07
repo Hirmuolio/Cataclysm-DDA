@@ -1217,5 +1217,14 @@
     "description": "An electrode has been implanted into your brain's ventrolateral preoptic nucleus.  It turns on whenever you're trying to fall asleep, creating an artificial but effective sensation of fatigue.",
     "occupied_bodyparts": [ [ "head", 1 ] ],
     "flags": [ "BIONIC_TOGGLED" ]
+  },
+  {
+    "id": "bio_battery_compartment",
+    "type": "bionic",
+    "name": { "str": "Internal Battery Compartment" },
+    "description": "Internal compartment that can hold a single light battery.  The battery contained extends the normal bionic power reserves.  The compartment is accessible from the inventory.",
+    "occupied_bodyparts": [ [ "torso", 1 ] ],
+    "included_clothes": [ "internal_battery_compartment" ],
+    "capacity": "3 kJ"
   }
 ]

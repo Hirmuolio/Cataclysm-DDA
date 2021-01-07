@@ -3444,7 +3444,7 @@ bool gunmode_checks_weapon( avatar &you, const map &m, std::vector<std::string> 
             if( !( you.has_charges( itype_UPS_off, ups_drain ) ||
                    you.has_charges( itype_adv_UPS_off, adv_ups_drain ) ||
                    ( you.has_active_bionic( bio_ups ) &&
-                     you.get_power_level() >= units::from_kilojoule( ups_drain ) ) ) ) {
+                     you.get_whole_power_level() >= units::from_kilojoule( ups_drain ) ) ) ) {
                 messages.push_back( string_format(
                                         _( "You need a UPS with at least %2$d charges or an advanced UPS with at least %3$d charges to fire the %1$s!" ),
                                         gmode->tname(), ups_drain, adv_ups_drain ) );

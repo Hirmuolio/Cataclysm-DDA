@@ -297,6 +297,7 @@ void bionic_data::load( const JsonObject &jsobj, const std::string & )
     optional( jsobj, was_loaded, "learned_proficiencies", proficiencies );
     optional( jsobj, was_loaded, "canceled_mutations", canceled_mutations );
     optional( jsobj, was_loaded, "included_bionics", included_bionics );
+    optional( jsobj, was_loaded, "included_clothes", included_clothes );
     optional( jsobj, was_loaded, "included", included );
     optional( jsobj, was_loaded, "upgraded_bionic", upgraded_bionic );
     optional( jsobj, was_loaded, "fuel_options", fuel_opts );
@@ -466,7 +467,8 @@ void npc::check_or_use_weapon_cbm( const bionic_id &cbm_id )
         return;
     }
     const float allowed_ratio = static_cast<int>( rules.cbm_reserve ) / 100.0f;
-    const units::energy free_power = get_power_level() - get_max_power_level() * allowed_ratio;
+    const units::energy free_power = get_whole_power_level() - get_whole_max_power_level() *
+                                     allowed_ratio;
     if( free_power <= 0_mJ ) {
         return;
     }
@@ -1223,8 +1225,8 @@ Character::auto_toggle_bionic_result Character::auto_toggle_bionic( const int b,
             }
 
             if( bio.get_safe_fuel_thresh() > 0
-                && get_power_level() + units::from_kilojoule( fuel_energy ) * effective_efficiency >
-                get_max_power_level() * std::min( 1.0f, bio.get_safe_fuel_thresh() ) ) {
+                && get_whole_power_level() + units::from_kilojoule( fuel_energy ) * effective_efficiency >
+                get_whole_max_power_level() * std::min( 1.0f, bio.get_safe_fuel_thresh() ) ) {
                 if( bio.powered || start ) {
                     if( !start ) {
                         if( is_metabolism_powered ) {
@@ -1237,10 +1239,10 @@ Character::auto_toggle_bionic_result Character::auto_toggle_bionic( const int b,
                             msg_player = _( "Your %s turns off to not waste fuel." );
                             msg_npc = _( "<npcname>'s %s turns off to not waste fuel." );
                         }
-                    } else if( get_max_power_level() == 0_mJ ) {
+                    } else if( get_whole_max_power_level() == 0_mJ ) {
                         msg_player = _( "Your %s cannot be started because you don't have any bionic power storage." );
                         msg_npc = _( "<npcname>'s %s cannot be started because they don't have any bionic power storage." );
-                    } else if( get_power_level() != get_max_power_level() ) {
+                    } else if( get_whole_power_level() != get_whole_max_power_level() ) {
                         msg_player = _( "Your %s cannot be started due to fuel saving." );
                         msg_npc = _( "<npcname>'s %s cannot be started due to fuel saving." );
                     } else {
@@ -1587,7 +1589,7 @@ static bool attempt_recharge( Character &p, bionic &bio, units::energy &amount )
                 power_cost -= armor_power_cost;
             }
         }
-        if( p.get_power_level() >= power_cost ) {
+        if( p.get_whole_power_level() >= power_cost ) {
             // Set the recharging cost and charge the bionic.
             amount = power_cost;
             bio.charge_timer = info.charge_time;
@@ -2650,6 +2652,12 @@ void Character::add_bionic( const bionic_id &b )
         add_bionic( inc_bid );
     }
 
+    for( const itype_id &inc_cloth : b->included_clothes ) {
+        item bio_cloth = item( inc_cloth );
+        wear_item( bio_cloth, false );
+        //reassign_item( bio_cloth, "#" );
+    }
+
     for( const std::pair<const spell_id, int> &spell_pair : b->learned_spells ) {
         const spell_id learned_spell = spell_pair.first;
         if( learned_spell->spell_class != trait_id( "NONE" ) ) {
@@ -2704,6 +2712,26 @@ void Character::remove_bionic( const bionic_id &b )
 
         new_my_bionics.push_back( bionic( i.id, i.invlet ) );
     }
+
+    // Remove linked equipment
+    std::vector<item_location> removed_items;
+    for( const itype_id &inc_cloth : b->included_clothes ) {
+        for( item &it : worn ) {
+            if( it.typeId() == inc_cloth ) {
+                // Drop contained items
+                for( item *contained : it.contents.all_items_top() ) {
+                    get_map().add_item_or_charges( pos(), *contained );
+                }
+
+                item_location worn_loc( *this, &it );
+                removed_items.push_back( worn_loc );
+            }
+        }
+    }
+    for( item_location removed : removed_items ) {
+        removed.remove_item();
+    }
+
 
     // any spells you learn from installing a bionic you forget.
     for( const std::pair<const spell_id, int> &spell_pair : b->learned_spells ) {

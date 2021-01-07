@@ -1337,13 +1337,18 @@ class Character : public Creature, public visitable
         /**Applies modifier to fuel_efficiency and returns the resulting efficiency*/
         float get_effective_efficiency( int b, float fuel_efficiency );
 
+        /**Returns the available bionic power*/
         units::energy get_power_level() const;
+        /**Returns the available bionic power and additional battery power*/
+        units::energy get_whole_power_level() const;
+        /**Returns the maximum bionic power capacity*/
         units::energy get_max_power_level() const;
+        /**Returns the maximum bionic power capacity with additional battery capacity*/
+        units::energy get_whole_max_power_level() const;
         void mod_power_level( const units::energy &npower );
         void mod_max_power_level( const units::energy &npower_max );
         void set_power_level( const units::energy &npower );
         void set_max_power_level( const units::energy &npower_max );
-        bool is_max_power() const;
         bool has_power() const;
         bool has_max_power() const;
         bool enough_power_for( const bionic_id &bid ) const;
