@@ -2428,10 +2428,6 @@ void Character::set_max_power_level( const units::energy &npower_max )
 
 void Character::mod_power_level( const units::energy &npower )
 {
-    // Bionic energy is  tracked at mJ but batteries at J. Energy changes at mJ can't be handled on batteries.
-    //units::energy change_J = static_cast<int>( units::to_joule( get_power_level() ) );
-    //units::energy change_mJ = static_cast<int>( units::to_millijoule( get_power_level() ) ) - change_J * 1000;
-
     if( npower > 0_mJ ) {
         // Charging power. Charge bionic power before batteries.
 
@@ -2447,7 +2443,6 @@ void Character::mod_power_level( const units::energy &npower )
             for( item &battery_item : worn ) {
                 if( battery_item.typeId() == itype_internal_battery_compartment ) {
                     if( !battery_item.magazine_current() ) {
-                        add_msg( m_warning, _( "Charge without battery." ) );
                         set_power_level( get_max_power_level() );
                         return;
                     }
@@ -2464,7 +2459,6 @@ void Character::mod_power_level( const units::energy &npower )
 
                     if( charge_energy + battery_energy + bionic_energy >= battery_capacity + bionic_capacity ) {
                         //Set everything to full
-                        add_msg( m_warning, _( "FULL CHARGE." ) );
                         battery_item.ammo_set( itype_battery, battery_item.ammo_capacity( ammotype( "battery" ) ) );
                         set_power_level( get_max_power_level() );
                     } else {
@@ -2495,7 +2489,7 @@ void Character::mod_power_level( const units::energy &npower )
             for( item &battery_item : worn ) {
                 if( battery_item.typeId() == itype_internal_battery_compartment ) {
                     if( !battery_item.magazine_current() ) {
-                        set_power_level( get_power_level() - npower );
+                        set_power_level( get_power_level() + npower );
                         return;
                     }
                     // Rather ugly math to make batteries and their kJ work with bionics and their units::energy

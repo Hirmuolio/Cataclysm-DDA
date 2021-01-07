@@ -172,17 +172,25 @@ TEST_CASE( "bionic_power", "[bionics] [item]" )
 
     SECTION( "bio_power_no_battery" ) {
         // Start with power storage
+		// Set power
         // Add battery compartment without battery
-        // Fill bionic power
         // Should have 50 kJ / 100 kJ power
+		// Test that draining works
+		// Test that charging works
 
         clear_bionics( dummy );
         dummy.add_bionic( bionic_id( "bio_power_storage" ) );
+		dummy.set_power_level( 50_kJ );
         dummy.add_bionic( bionic_id( "bio_battery_compartment" ) );
-        dummy.set_power_level( 50_kJ );
 
         CHECK( dummy.get_whole_power_level() == 50_kJ );
         CHECK( dummy.get_whole_max_power_level() == 100_kJ );
+		
+		dummy.mod_power_level( -10500_J );
+		CHECK( dummy.get_whole_power_level() == 39500_J );
+		
+		dummy.mod_power_level( 10500_J );
+		CHECK( dummy.get_whole_power_level() == 50_kJ );
     }
 
     SECTION( "bio_power_battery" ) {
