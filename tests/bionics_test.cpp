@@ -173,7 +173,7 @@ TEST_CASE( "bionic_power", "[bionics] [item]" )
         dummy.add_bionic( bionic_id( "bio_battery_compartment" ) );
 
         CHECK( dummy.get_whole_power_level() == 50_kJ );
-        CHECK( dummy.get_whole_max_power_level() == 100_kJ );
+        CHECK( dummy.get_whole_max_power_level() == 103_kJ );
 
         dummy.mod_power_level( -10500_J );
         CHECK( dummy.get_whole_power_level() == 39500_J );
@@ -197,7 +197,7 @@ TEST_CASE( "bionic_power", "[bionics] [item]" )
         // Adding the battery increases power capacity but power and bionic power stay.
         CHECK( dummy.get_whole_power_level() == 50_kJ );
         CHECK( dummy.get_power_level() == 50_kJ );
-        CHECK( dummy.get_whole_max_power_level() == 200_kJ );
+        CHECK( dummy.get_whole_max_power_level() == 203_kJ );
     }
 
     SECTION( "bio_power_battery_charge" ) {
@@ -212,11 +212,11 @@ TEST_CASE( "bionic_power", "[bionics] [item]" )
 
         // Adding lots of power sets battery and bionic full.
         dummy.mod_power_level( 10000_kJ );
-        CHECK( dummy.get_whole_power_level() == 200_kJ );
-        CHECK( dummy.get_power_level() == 100_kJ );
+        CHECK( dummy.get_whole_power_level() == 203_kJ );
+        CHECK( dummy.get_power_level() == 103_kJ );
 
-        // Draining exactly the capacity out.
-        dummy.mod_power_level( -200_kJ );
+        // Removing lots of power sets battery and bionic empty.
+        dummy.mod_power_level( -10000_kJ );
         CHECK( dummy.get_whole_power_level() == 0_kJ );
         CHECK( dummy.get_power_level() == 0_kJ );
 
@@ -239,14 +239,14 @@ TEST_CASE( "bionic_power", "[bionics] [item]" )
         // Full battery and bionic. Battery should drain first
         dummy.mod_power_level( 1000_kJ );
         dummy.mod_power_level( -10_kJ );
-        CHECK( dummy.get_whole_power_level() == 190_kJ );
-        CHECK( dummy.get_power_level() == 100_kJ );
+        CHECK( dummy.get_whole_power_level() == 193_kJ );
+        CHECK( dummy.get_power_level() == 103_kJ );
 
         // Full battery and bionic. Not integer kJ drain.
         dummy.mod_power_level( 1000_kJ );
         dummy.mod_power_level( -10500_J );
-        CHECK( dummy.get_whole_power_level() == 189500_J );
-        CHECK( dummy.get_power_level() == 99500_J );
+        CHECK( dummy.get_whole_power_level() == 192500_J );
+        CHECK( dummy.get_power_level() == 102500_J );
 
         // Full battery, empty bionic
         // The bionic power is shuffled around a bit to fit the 0.5 kJ but not more than 2 kJ

@@ -2448,7 +2448,7 @@ void Character::mod_power_level( const units::energy &npower )
                     }
                     // Rather ugly math to make batteries and their kJ work with bionics and their units::energy
                     // 1 battery charge = 1 kJ
-                    // Convert everything to mJ int64 to have common unit for the different systems.
+                    // Convert everything to mJ int64 to have common unit for the different systems and avoid potential overflow.
 
                     int64_t battery_energy = static_cast<int64_t>( battery_item.ammo_remaining() ) * 1000000;
                     int64_t battery_capacity = static_cast<int64_t>( battery_item.ammo_capacity(
@@ -2489,17 +2489,17 @@ void Character::mod_power_level( const units::energy &npower )
             for( item &battery_item : worn ) {
                 if( battery_item.typeId() == itype_internal_battery_compartment ) {
                     if( !battery_item.magazine_current() ) {
-                        set_power_level( get_power_level() + npower );
+                        set_power_level( clamp( get_power_level() + npower, 0_kJ, get_max_power_level() ) );
                         return;
                     }
                     // Rather ugly math to make batteries and their kJ work with bionics and their units::energy
                     // 1 battery charge = 1 kJ
-                    // Convert everything to mJ int64 to have common unit for the different systems.
+                    // Convert everything to mJ int to have common unit for the different systems.
 
-                    int64_t battery_energy = static_cast<int64_t>( battery_item.ammo_remaining() ) * 1000000;
-                    int64_t bionic_energy = static_cast<int64_t>( units::to_millijoule( get_power_level() ) );
-                    int64_t bionic_capacity = static_cast<int64_t>( units::to_millijoule( get_max_power_level() ) );
-                    int64_t drain_energy = -static_cast<int64_t>( units::to_millijoule( npower ) );
+                    int battery_energy = static_cast<int>( battery_item.ammo_remaining() ) * 1000000;
+                    int bionic_energy = static_cast<int>( units::to_millijoule( get_power_level() ) );
+                    int bionic_capacity = static_cast<int>( units::to_millijoule( get_max_power_level() ) );
+                    int drain_energy = -static_cast<int>( units::to_millijoule( npower ) );
 
                     // If power drain >1 kJ drain it from battery
                     // If battery goes negative compensate from bionic
@@ -2533,6 +2533,8 @@ void Character::mod_power_level( const units::energy &npower )
                             bionic_energy += 1000000;
                         }
                     }
+
+                    bionic_energy = std::max( bionic_energy, 0 ) ;
                     // Convert everything back to original units.
                     set_power_level( units::from_millijoule( bionic_energy ) );
                     battery_item.ammo_set( itype_battery, battery_energy / 1000000 );
@@ -2541,7 +2543,7 @@ void Character::mod_power_level( const units::energy &npower )
                 }
             }
         } else {
-            set_power_level( get_power_level() + npower );
+            set_power_level( clamp( get_power_level() + npower, 0_kJ, get_max_power_level() ) );
         }
     }
 }

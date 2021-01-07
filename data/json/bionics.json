@@ -1224,6 +1224,7 @@
     "name": { "str": "Internal Battery Compartment" },
     "description": "Internal compartment that can hold a single light battery.  The battery contained extends the normal bionic power reserves.  The compartment is accessible from the inventory.",
     "occupied_bodyparts": [ [ "torso", 1 ] ],
-    "included_clothes": [ "internal_battery_compartment" ]
+    "included_clothes": [ "internal_battery_compartment" ],
+    "capacity": "3 kJ"
   }
 ]
