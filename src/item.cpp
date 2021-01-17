@@ -8846,9 +8846,6 @@ int item::fill_with( const item &contained, const int amount,
     if( amount <= 0 ) {
         return 0;
     }
-	if( amount == 14 ){
-		debugmsg( _( "BREAK" ) );
-	}
 
     item contained_item( contained );
     const bool count_by_charges = contained.count_by_charges();
