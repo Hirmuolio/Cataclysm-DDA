@@ -5728,31 +5728,33 @@ int item::spoilage_sort_order()
 
 /**
  * Food decay calculation.
- * Calculate how much food rots per hour, based on 10 = 1 minute of decay @ 65 F.
+ * Calculate how much food rots per hour, based on 1 = 1 second of decay @ 65 F.
  * IRL this tends to double every 10c a few degrees above freezing, but past a certain
  * point the rate decreases until even extremophiles find it too hot. Here we just stop
  * further acceleration at 105 F. This should only need to run once when the game starts.
  * @see calc_rot_array
  * @see rot_chart
  */
-static int calc_hourly_rotpoints_at_temp( const int temp )
+static int calc_hourly_rotpoints_at_temp( const float temp )
 {
     // default temp = 65, so generic->rotten() assumes 600 decay points per hour
-    const int dropoff = 38;     // ditch our fancy equation and do a linear approach to 0 rot at 31f
-    const int cutoff = 105;     // stop torturing the player at this temperature, which is
-    const int cutoffrot = 21240; // ..almost 6 times the base rate. bacteria hate the heat too
+    const float dropoff = 3; //38;     // ditch our fancy equation and do a linear approach to 0 rot at 32f
+    const float cutoff = 41;//105;     // stop torturing the player at this temperature, which is
+    const float cutoffrot = 21240; // ..almost 6 times the base rate. bacteria hate the heat too
 
-    const int dsteps = dropoff - temperatures::freezing;
-    const int dstep = ( 215.46 * std::pow( 2.0, static_cast<float>( dropoff ) / 16.0 ) / dsteps );
+    //const int dsteps = dropoff - temperatures::freezing;
+    //const int dstep = ( 215.46 * std::pow( 2.0, static_cast<float>( dropoff ) / 16.0 ) / dsteps );
+	//const int dstep = 35.91 * std::pow( 2.0, 2.375 );
+	const int dstep = 186;
 
-    if( temp < temperatures::freezing ) {
+    if( temp <= 273.15 ) {
         return 0;
     } else if( temp > cutoff ) {
         return cutoffrot;
     } else if( temp < dropoff ) {
-        return ( temp - temperatures::freezing ) * dstep;
+        return ( temp ) * 334.8;
     } else {
-        return std::lround( 215.46 * std::pow( 2.0, static_cast<float>( temp ) / 16.0 ) );
+        return std::lround( 1033.828519 * std::pow( 2.0, 18 / 10.0 ) );
     }
 }
 
@@ -5790,7 +5792,7 @@ int get_hourly_rotpoints_at_temp( const int temp )
     return rot_chart[temp];
 }
 
-void item::calc_rot( int temp, const float spoil_modifier,
+void item::calc_rot( float temp, const float spoil_modifier,
                      const time_duration &time_delta )
 {
     // Avoid needlessly calculating already rotten things.  Corpses should
