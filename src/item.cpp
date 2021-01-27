@@ -5735,17 +5735,18 @@ int item::spoilage_sort_order()
  */
 static float hourly_rotpoints_at_temp( const float temp )
 {
-    const float dropoff = 3; // ditch our fancy equation and do a linear approach to 0 rot from 3 C -> 0 C
+    const float dropoff =
+        3; // ditch our fancy equation and do a linear approach to 0 rot from 3 C -> 0 C
     const float max_rot_temp = 41; // Maximum rotting rate is at this temperature
-	const float safe_heat = 63; // Stop rotting above this temperature
+    const float safe_heat = 63; // Stop rotting above this temperature
 
-	// This multiplier makes sure the rot at 18 C is 3600 rot/hour (1 rot/second).
-	// The multiplier is approx 1033.8285
-	const float multiplier = 3600 / std::pow( 2.0, 18.0 / 10.0 );
-	
-	// stop torturing the player at 41 C. No higher rot at higher temp.
-	// This is approx 17728.47955 rot/hour
-	const float max_rot = multiplier * std::pow( 2.0, max_rot_temp / 10.0 );
+    // This multiplier makes sure the rot at 18 C is 3600 rot/hour (1 rot/second).
+    // The multiplier is approx 1033.8285
+    const float multiplier = 3600 / std::pow( 2.0, 18.0 / 10.0 );
+
+    // stop torturing the player at 41 C. No higher rot at higher temp.
+    // This is approx 17728.47955 rot/hour
+    const float max_rot = multiplier * std::pow( 2.0, max_rot_temp / 10.0 );
 
     if( temp <= 0 ) {
         return 0;
@@ -5753,7 +5754,7 @@ static float hourly_rotpoints_at_temp( const float temp )
         return max_rot;
     } else if( temp < dropoff ) {
         return temp  * 424;
-	} else if( temp > safe_heat ) {
+    } else if( temp > safe_heat ) {
         return 0;
     } else {
         return multiplier * std::pow( 2.0, temp / 10.0 );
@@ -5798,7 +5799,8 @@ void item::calc_rot( int temp, const float spoil_modifier,
         rot += rng( -spoil_variation, spoil_variation );
     }
 
-    rot += factor * time_delta / 1_hours * hourly_rotpoints_at_temp( temp_to_celsius(temp) ) * 1_turns;
+    rot += factor * time_delta / 1_hours * hourly_rotpoints_at_temp( temp_to_celsius(
+                temp ) ) * 1_turns;
 }
 
 void item::calc_rot_while_processing( time_duration processing_duration )
