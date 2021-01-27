@@ -19,8 +19,9 @@ TEST_CASE( "Rate of rotting" )
 {
     SECTION( "Passage of time" ) {
         // Item rot is a time duration.
-        // At 65 F (18,3 C) item rots at rate of 1h/1h
-        // So the level of rot should be about same as the item age
+		// At 18 C the item should rot at rate of 1h/1h 
+        // 65 F (18,3 C) is close to it so margin of 30
+        // The level of rot should be about same as the item age
         // In preserving containers and in freezer the item should not rot at all
         // Item in freezer should not be frozen.
 
@@ -57,7 +58,7 @@ TEST_CASE( "Rate of rotting" )
 
         // After 20 minutes the normal item should have 20 minutes of rot
         CHECK( to_turns<int>( normal_item.get_rot() )
-               == Approx( to_turns<int>( 20_minutes ) ).epsilon( 0.01 ) );
+               == Approx( to_turns<int>( 20_minutes ) ).margin( 30 ) );
         // Item in freezer and in preserving container should have no rot
         CHECK( sealed_item.get_rot() == 0_turns );
         CHECK( freeze_item.get_rot() == 0_turns );
