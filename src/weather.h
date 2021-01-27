@@ -184,9 +184,9 @@ class weather_manager
         /** temperature cache, cleared every turn, sparse map of map tripoints to temperatures */
         std::unordered_map< tripoint, int > temperature_cache;
         // Returns outdoor or indoor temperature of given location (in absolute (@ref map::getabs))
-        int get_temperature( const tripoint &location );
+        float get_temperature( const tripoint &location );
         // Returns outdoor or indoor temperature of given location
-        int get_temperature( const tripoint_abs_omt &location );
+        float get_temperature( const tripoint_abs_omt &location );
         void clear_temp_cache();
         void on_load();
         static void serialize_all( JsonOut &json );

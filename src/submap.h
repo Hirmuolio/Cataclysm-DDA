@@ -191,11 +191,11 @@ class submap : maptile_soa<SEEX, SEEY>
             cosmetics.push_back( ins );
         }
 
-        int get_temperature() const {
+        float get_temperature() const {
             return temperature;
         }
 
-        void set_temperature( int new_temperature ) {
+        void set_temperature( float new_temperature ) {
             temperature = new_temperature;
         }
 
@@ -251,7 +251,7 @@ class submap : maptile_soa<SEEX, SEEY>
     private:
         std::map<point, computer> computers;
         std::unique_ptr<computer> legacy_computer;
-        int temperature = 0;
+        float temperature = 0;
 
         void update_legacy_computer();
 

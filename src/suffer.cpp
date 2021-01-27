@@ -718,7 +718,7 @@ void Character::suffer_in_sunlight()
             const bool has_hat = wearing_something_on( bodypart_id( "head" ) );
             const float weather_factor = ( get_weather().weather_id->sun_intensity >=
                                            sun_intensity_type::normal ) ? 1.0 : 0.5;
-            const int player_local_temp = get_weather().get_temperature( pos() );
+            const float player_local_temp = get_weather().get_temperature( pos() );
             const int flux = ( player_local_temp - 65 ) / 2;
             if( !has_hat ) {
                 sunlight_nutrition += ( 100 + flux ) * weather_factor;

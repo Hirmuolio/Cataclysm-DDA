@@ -1034,10 +1034,10 @@ class map
 
         // Temperature
         // Temperature for submap
-        int get_temperature( const tripoint &p ) const;
+        float get_temperature( const tripoint &p ) const;
         // Set temperature for all four submap quadrants
-        void set_temperature( const tripoint &p, int temperature );
-        void set_temperature( const point &p, int new_temperature ) {
+        void set_temperature( const tripoint &p, float temperature );
+        void set_temperature( const point &p, float new_temperature ) {
             set_temperature( tripoint( p, abs_sub.z ), new_temperature );
         }
 

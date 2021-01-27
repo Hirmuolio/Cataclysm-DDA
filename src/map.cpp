@@ -4144,7 +4144,7 @@ void map::adjust_radiation( const tripoint &p, const int delta )
     current_submap->set_radiation( l, current_radiation + delta );
 }
 
-int map::get_temperature( const tripoint &p ) const
+float map::get_temperature( const tripoint &p ) const
 {
     if( !inbounds( p ) ) {
         return 0;
@@ -4159,7 +4159,7 @@ int map::get_temperature( const tripoint &p ) const
     return current_submap->get_temperature();
 }
 
-void map::set_temperature( const tripoint &p, int new_temperature )
+void map::set_temperature( const tripoint &p, float new_temperature )
 {
     if( !inbounds( p ) ) {
         return;

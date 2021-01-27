@@ -1094,7 +1094,7 @@ void weather_manager::set_nextweather( time_point t )
     update_weather();
 }
 
-int weather_manager::get_temperature( const tripoint &location )
+float weather_manager::get_temperature( const tripoint &location )
 {
     const auto &cached = temperature_cache.find( location );
     if( cached != temperature_cache.end() ) {
@@ -1102,21 +1102,21 @@ int weather_manager::get_temperature( const tripoint &location )
     }
 
     // local modifier
-    int temp_mod = 0;
+    float temp_mod = 0;
 
     if( !g->new_game ) {
         temp_mod += get_heat_radiation( location );
         temp_mod += get_convection_temperature( location );
     }
     //underground temperature = average New England temperature = 43F/6C rounded to int
-    const int temp = ( location.z < 0 ? AVERAGE_ANNUAL_TEMPERATURE : temperature ) +
+    const float temp = ( location.z < 0 ? AVERAGE_ANNUAL_TEMPERATURE : temperature ) +
                      ( g->new_game ? 0 : get_map().get_temperature( location ) + temp_mod );
 
     temperature_cache.emplace( std::make_pair( location, temp ) );
     return temp;
 }
 
-int weather_manager::get_temperature( const tripoint_abs_omt &location )
+float weather_manager::get_temperature( const tripoint_abs_omt &location )
 {
     return location.z() < 0 ? AVERAGE_ANNUAL_TEMPERATURE : temperature;
 }
