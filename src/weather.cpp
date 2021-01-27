@@ -1105,7 +1105,7 @@ int weather_manager::get_temperature( const tripoint &location )
     int temp_mod = 0;
 
     if( !g->new_game ) {
-        temp_mod += get_heat_radiation( location, false );
+        temp_mod += get_heat_radiation( location );
         temp_mod += get_convection_temperature( location );
     }
     //underground temperature = average New England temperature = 43F/6C rounded to int

@@ -1119,11 +1119,14 @@ class game
         bool slip_down( bool check_for_traps = false );
 };
 
-// Returns temperature modifier from direct heat radiation of nearby sources
+// Returns temperature modifier (fahrenheit) from direct heat radiation of nearby sources
+// @param location Location affected by heat sources
+int get_heat_radiation( const tripoint &location );
+// Returns temperature modifier (celsius) from direct heat radiation of nearby sources
 // @param location Location affected by heat sources
 // @param direct forces return of heat intensity (and not temperature modifier) of
 // adjacent hottest heat source
-int get_heat_radiation( const tripoint &location, bool direct );
+int get_best_fire( const tripoint &location );
 // Returns temperature modifier from hot air fields of given location
 int get_convection_temperature( const tripoint &location );
 

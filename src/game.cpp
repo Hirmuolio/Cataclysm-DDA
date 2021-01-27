@@ -1819,13 +1819,12 @@ static int maptile_field_intensity( maptile &mt, field_type_id fld )
     return field_ptr == nullptr ? 0 : field_ptr->get_field_intensity();
 }
 
-int get_heat_radiation( const tripoint &location, bool direct )
+int get_heat_radiation( const tripoint &location )
 {
     // Direct heat from fire sources
     // Cache fires to avoid scanning the map around us bp times
     // Stored as intensity-distance pairs
     int temp_mod = 0;
-    int best_fire = 0;
     Character &player_character = get_player_character();
     map &here = get_map();
     for( const tripoint &dest : here.points_in_radius( location, 6 ) ) {
@@ -1853,15 +1852,44 @@ int get_heat_radiation( const tripoint &location, bool direct )
         // Ensure fire_dist >= 1 to avoid divide-by-zero errors.
         const int fire_dist = std::max( 1, square_dist( dest, location ) );
         temp_mod += 6 * heat_intensity * heat_intensity / fire_dist;
-        if( fire_dist <= 1 ) {
-            // Extend limbs/lean over a single adjacent fire to warm up
-            best_fire = std::max( best_fire, heat_intensity );
-        }
-    }
-    if( direct ) {
-        return best_fire;
     }
     return temp_mod;
+}
+
+int get_best_fire( const tripoint &location )
+{
+    // Direct heat from fire sources
+    // Cache fires to avoid scanning the map around us bp times
+    // Stored as intensity-distance pairs
+    int best_fire = 0;
+    Character &player_character = get_player_character();
+    map &here = get_map();
+    for( const tripoint &dest : here.points_in_radius( location, 1 ) ) {
+        int heat_intensity = 0;
+
+        maptile mt = here.maptile_at( dest );
+
+        int ffire = maptile_field_intensity( mt, fd_fire );
+        if( ffire > 0 ) {
+            heat_intensity = ffire;
+        } else  {
+            heat_intensity = here.ter( dest )->heat_radiation;
+        }
+        if( heat_intensity == 0 ) {
+            // No heat source here
+            continue;
+        }
+        if( player_character.pos() == location ) {
+            if( !here.pl_line_of_sight( dest, -1 ) ) {
+                continue;
+            }
+        } else if( !here.sees( location, dest, -1 ) ) {
+            continue;
+        }
+        // Extend limbs/lean over a single adjacent fire to warm up
+        best_fire = std::max( best_fire, heat_intensity );
+    }
+    return best_fire;
 }
 
 int get_convection_temperature( const tripoint &location )
