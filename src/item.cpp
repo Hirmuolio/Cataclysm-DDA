@@ -5735,8 +5735,8 @@ int item::spoilage_sort_order()
  */
 static float hourly_rotpoints_at_temp( const float temp )
 {
-    const float dropoff =
-        3; // ditch our fancy equation and do a linear approach to 0 rot from 3 C -> 0 C
+    const float dropoff = 3;
+    // ditch our fancy equation and do a linear approach to 0 rot from 3 C -> 0 C
     const float max_rot_temp = 41; // Maximum rotting rate is at this temperature
     const float safe_heat = 63; // Stop rotting above this temperature
 
