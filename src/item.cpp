@@ -5817,8 +5817,8 @@ void item::calc_rot( float temp, const float spoil_modifier,
     if( has_own_flag( flag_COLD ) ) {
         temp = std::min( temperatures::fridge, temp );
     }
-	
-	int int_temp = static_cast<int>( temp + 0.5 );
+
+    int int_temp = static_cast<int>( temp + 0.5 );
 
     // simulation of different age of food at the start of the game and good/bad storage
     // conditions by applying starting variation bonus/penalty of +/- 20% of base shelf-life

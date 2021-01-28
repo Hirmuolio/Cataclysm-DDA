@@ -1257,13 +1257,13 @@ void cata_tiles::draw( const point &dest, const tripoint &center, int width, int
                 } else {
                     color = catacurses::blue + bold;
                 }
-				int temp_value;
+                int temp_value;
                 if( get_option<std::string>( "USE_CELSIUS" ) == "celsius" ) {
                     temp_value = temp_to_celsius( temp );
                 } else if( get_option<std::string>( "USE_CELSIUS" ) == "kelvin" ) {
                     temp_value = temp_to_kelvin( temp );
 
-                } else if( get_option<std::string>( "USE_CELSIUS" ) == "fahrenheit" ) {
+                } else {
                     temp_value = temp;
 
                 }
