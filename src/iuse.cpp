@@ -9285,7 +9285,18 @@ cata::optional<int> iuse::weather_tool( player *p, item *it, bool, const tripoin
 cata::optional<int> iuse::sextant( player *p, item *, bool, const tripoint & )
 {
     const float altitude = to_degrees( solar_altitude( calendar::turn ) );
-
+	const float azimuth = to_degrees( solar_azimuth( calendar::turn ) );
+	
+	const std::pair<units::angle, units::angle> azimuth_altitude =  sun_azimuth_altitude( calendar::turn );
+	const float altitude2 = to_degrees(azimuth_altitude.second);
+	float azimuth2 = to_degrees(azimuth_altitude.first);
+	if( azimuth2 > 180 ) {
+		azimuth2 = azimuth2 - 360;
+	}
+	
+	p->add_msg_if_player( m_neutral, _( "m1 alt %.1f° az %.1f." ), altitude, azimuth );
+	p->add_msg_if_player( m_neutral, _( "m2 alt %.1f° az %.1f." ), altitude2, azimuth2 );
+	return 0;
     if( debug_mode ) {
         // Debug mode allows measuring sun angle below hirozon
         p->add_msg_if_player( m_neutral, _( "The Sun is at altitude of %.1f°." ), altitude );

@@ -10,6 +10,7 @@
 
 class JsonIn;
 class JsonOut;
+struct rl_vec2d;
 class time_duration;
 class time_point;
 template<typename T> struct enum_traits;
@@ -587,6 +588,13 @@ units::angle solar_declination( const time_point &p );
 // This is the angle of sun relative to horizont
 units::angle solar_altitude( const time_point &p );
 
+// Returns sun azimuth at time_point
+// This is the angle of sun relative to south
+units::angle solar_azimuth( const time_point &p );
+
+// Returns azimuth and altitude of sun
+std::pair<units::angle, units::angle> sun_azimuth_altitude( time_point t );
+	
 // Returns true if sun reaches this altitude angle during the day.
 bool sun_reaches_angle( const units::angle &angle, const time_point &p );
 

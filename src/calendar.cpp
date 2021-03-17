@@ -9,11 +9,15 @@
 
 #include "cata_assert.h"
 #include "debug.h"
+#include "enum_conversions.h"
+#include "line.h"
+#include "optional.h"
 #include "options.h"
 #include "rng.h"
 #include "string_formatter.h"
 #include "translations.h"
 #include "units_fwd.h"
+#include "units_utility.h"
 
 /** How much light moon provides per lit-up quarter (Full-moon light is four times this value) */
 static constexpr double moonlight_per_quarter = 2.25;
@@ -176,6 +180,17 @@ units::angle solar_altitude( const time_point &p )
 
     return units::asin( units::sin( latitude ) * units::sin( declination ) + units::cos(
                             latitude ) * units::cos( declination ) * units::cos( hour_angle ) );
+}
+
+units::angle solar_azimuth( const time_point &p )
+{
+	const units::angle hour_angle = solar_hour_angle( p ) + 180_degrees;
+	const units::angle declination = solar_declination( p );
+	const units::angle altitude = solar_altitude( p );
+	
+    units::angle azimuth = units::asin(-units::sin(hour_angle) * units::cos(declination) / units::cos(altitude));
+	
+	return azimuth + 180_degrees;
 }
 
 bool sun_reaches_angle( const units::angle &angle, const time_point &p )
@@ -615,4 +630,92 @@ std::string to_string( const time_point &p )
 time_point::time_point()
 {
     turn_ = 0;
+}
+
+std::pair<units::angle, units::angle> sun_azimuth_altitude( time_point t )
+{
+	const units::angle longitude = 0_degrees;
+	const units::angle latitude = units::from_degrees( get_option<int>( "LATITUDE" ) );
+	const float timezone = 0;
+	
+    // This derivation mostly from
+    // https://en.wikipedia.org/wiki/Position_of_the_Sun
+    // https://en.wikipedia.org/wiki/Celestial_coordinate_system#Notes_on_conversion
+
+    // The computation is inspired by the derivation based on J2000 (Greenwich
+    // noon, 2000-01-01), but because we want to handle a different year length
+    // than the real Earth, we don't use the same exact values.
+    // Instead we use as our epoch Greenwich midnight on the vernal equinox
+    // (note that the vernal equinox happens to be Spring day 1 in the game
+    // calendar, which is convenient).
+    const double days_since_epoch =
+        to_days<double>( t - calendar::turn_zero ) + ( -timezone ) / 24.0;
+
+    // The angle per day the Earth moves around the Sun
+    const units::angle angle_per_day = 360_degrees / to_days<int>( calendar::year_length() );
+
+    // It turns out that we want mean longitude to be zero at the vernal
+    // equinox, which simplifies the calculations.
+    const units::angle mean_long = angle_per_day * days_since_epoch;
+    // Roughly 77 degrees offset between mean longitude and mean anomaly at
+    // J2000, so use that as our offset too.  The relative drift is slow, so we
+    // neglect it.
+    const units::angle mean_anomaly = 77_degrees + mean_long;
+    // The two arbitrary constants in the caclulation of ecliptic longitude
+    // relate to the non-circularity of the Earth's orbit.
+    const units::angle ecliptic_longitude =
+        mean_long + 1.915_degrees * sin( mean_anomaly ) + 0.020_degrees * sin( 2 * mean_anomaly );
+
+    // Obliquity does vary slightly, but for simplicity we'll keep it fixed at
+    // its J2000 value.
+    static constexpr units::angle obliquity = 23.439279_degrees;
+
+    // ecliptic rectangular coordinates
+    const rl_vec2d eclip( cos( ecliptic_longitude ), sin( ecliptic_longitude ) );
+    // rotate to equatorial coordinates
+    const rl_vec3d rot( eclip.x, eclip.y * cos( obliquity ), eclip.y * sin( obliquity ) );
+    const units::angle RA = atan2( rot.xy() );
+    const units::angle declination = units::asin( rot.z );
+
+    // Sidereal Time
+    //
+    // For the origin of sidereal time consider that at the epoch at Greenwich,
+    // it's midnight on the vernal equinox so sidereal time should be 180°.
+    // Timezone and longitude are both zero here, so L0 = 180°.
+    const units::angle L0 = 180_degrees;
+    // Sidereal time advances by 360° per day plus an additional 360° per year
+    const units::angle L1 = 360_degrees + angle_per_day;
+    const units::angle SIDTIME = L0 + L1 * days_since_epoch + longitude;
+
+    const units::angle hour_angle = SIDTIME - RA;
+
+    const rl_vec3d intermediate(
+        cos( hour_angle ) * cos( declination ),
+        sin( hour_angle ) * cos( declination ),
+        sin( declination ) );
+
+    const rl_vec3d hor(
+        -intermediate.x * sin( latitude ) +
+        intermediate.z * cos( latitude ),
+        intermediate.y,
+        intermediate.x * cos( latitude ) +
+        intermediate.z * sin( latitude )
+    );
+
+    // Azimuth is from the South, turning positive to the west
+    const units::angle azimuth = normalize( -atan2( hor.xy() ) + 180_degrees );
+    const units::angle altitude = units::asin( hor.z );
+
+    /*printf(
+        "\n"
+        "days_since_j2000 = %f, ecliptic_longitude = %f\n"
+        "RA = %f, declination = %f\n"
+        "SIDTIME = %f, hour_angle = %f\n"
+        "aziumth = %f, altitude = %f\n",
+        days_since_j2000, to_degrees( ecliptic_longitude ),
+        to_degrees( RA ), to_degrees( declination ),
+        to_degrees( SIDTIME ), to_degrees( hour_angle ),
+        to_degrees( azimuth ), to_degrees( altitude ) );*/
+
+    return std::make_pair( azimuth, altitude );
 }
