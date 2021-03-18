@@ -213,23 +213,19 @@ float sunlight( const time_point &p, const bool vision )
 
     const double moonlight = vision ? 1. + moonlight_per_quarter * current_phase : 0.;
 
-    // sunlight at sunrise (sun at 0 degree)
-    const float sunrise_light = 75;
-
     const float max_light = default_daylight_level() * 1.25;
 
     const units::angle solar_alt = solar_altitude( p );
 
-    if( solar_alt < units::from_degrees( -18 ) ) {
+    if( solar_alt < -18_degrees ) {
         return moonlight;
-    } else if( solar_alt < units::from_degrees( 4 ) ) {
-        // Sunlight increases/decreases linearly with sun angle during twilights.
-        // From -18 to 4 degrees light increases from 0 to 75 brightness.
-        float sunlight = 25.0 / 6 * to_degrees( solar_alt ) + sunrise_light;
+    } else if( solar_alt <= 0_degrees ) {
+        // Sunlight rises exponentially from 0 to 70 as sun rises from -18° to 0°
+        float sunlight = 70 * ( std::pow( 2, to_degrees( solar_alt ) / 18 + 1 ) - 1 );
         return moonlight + sunlight;
-    } else if( solar_alt < units::from_degrees( 50 ) ) {
-        // Linear increase from 0 to 50 degrees light increases from 75 to 125 brightness.
-        return  to_degrees( solar_alt ) + 75;
+    } else if( solar_alt < 30_degrees ) {
+        // Linear increase from 0° to 30° degrees light increases from 70 to 125 brightness.
+        return to_degrees( solar_alt ) * 11.0 / 6.0 + 70;
     } else {
         return max_light;
     }
@@ -465,7 +461,8 @@ std::string to_string_time_of_day( const time_point &p )
 int normalized_day_of_year( const time_point &p )
 {
     const float day_of_year = to_days<float>( ( p - calendar::turn_zero ) % calendar::year_length() );
-    return static_cast<int>(365 * day_of_year / to_days<float>( calendar::year_length() ) + 78.5) % 366;
+    return static_cast<int>( 365 * day_of_year / to_days<float>( calendar::year_length() ) + 78.5 ) %
+           366;
 }
 
 weekdays day_of_week( const time_point &p )
