@@ -465,7 +465,7 @@ std::string to_string_time_of_day( const time_point &p )
 int normalized_day_of_year( const time_point &p )
 {
     const float day_of_year = to_days<float>( ( p - calendar::turn_zero ) % calendar::year_length() );
-    return static_cast<int>(365 * day_of_year / to_days<float>( calendar::year_length() ) + 78.5) % 365;
+    return static_cast<int>(365 * day_of_year / to_days<float>( calendar::year_length() ) + 78.5) % 366;
 }
 
 weekdays day_of_week( const time_point &p )
