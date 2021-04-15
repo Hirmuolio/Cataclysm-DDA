@@ -1,7 +1,7 @@
 [
   {
     "id": "battery_car",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "category": "veh_parts",
     "name": { "str": "car battery", "str_pl": "car batteries" },
     "description": "A 12v lead-acid battery used to power car electrical systems.",
@@ -13,38 +13,35 @@
     "symbol": ":",
     "color": "light_cyan",
     "ammo_type": [ "battery" ],
-    "capacity": 2500,
+    "max_capacity": "2500 kJ",
     "//": "58Ah @ 12VDC. Could supply ~700 watts for an hour",
-    "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "RECHARGE" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 2500 } } ]
+    "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "RECHARGE" ]
   },
   {
     "id": "battery_motorbike",
     "copy-from": "battery_car",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "name": { "str": "motorbike battery", "str_pl": "motorbike batteries" },
     "description": "A 12v lead-acid battery used to power smaller vehicles' electrical systems.",
     "weight": "4000 g",
     "volume": "1250 ml",
     "price": 2000,
     "price_postapoc": 250,
-    "capacity": 500,
-    "//": "12Ah @ 12VDC. Could supply ~140 watts for an hour",
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 500 } } ]
+    "max_capacity": "500 kJ",
+    "//": "12Ah @ 12VDC. Could supply ~140 watts for an hour"
   },
   {
     "id": "battery_motorbike_small",
     "copy-from": "battery_car",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "name": { "str": "small motorbike battery", "str_pl": "small motorbike batteries" },
     "description": "A miniature 12v lead-acid battery used to power smaller vehicles' electrical systems.",
     "weight": "1500 g",
     "volume": "750 ml",
     "price": 20000,
     "price_postapoc": 100,
-    "capacity": 150,
-    "//": "~2.4Ah @ 12VDC. Could supply ~140 watts 10 minutes or so",
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 150 } } ]
+    "max_capacity": "150 kJ",
+    "//": "~2.4Ah @ 12VDC. Could supply ~140 watts 10 minutes or so"
   },
   {
     "type": "GENERIC",
@@ -65,7 +62,7 @@
   {
     "id": "large_storage_battery",
     "copy-from": "storage_battery",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "name": { "str": "large storage battery", "str_pl": "large storage batteries" },
     "description": "A huge storage battery containing many lithium-ion cells.  Holds a tremendous amount of energy.  Could be installed into a storage battery case for easy removal from a vehicle, or just welded straight in.",
     "weight": "400 kg",
@@ -73,13 +70,12 @@
     "price": 400000,
     "price_postapoc": 2500,
     "bashing": 40,
-    "capacity": 80000,
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 80000 } } ]
+    "max_capacity": "80000 kJ"
   },
   {
     "id": "medium_storage_battery",
     "copy-from": "storage_battery",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "name": { "str": "medium storage battery", "str_pl": "medium storage batteries" },
     "description": "A medium storage battery containing multiple lithium-ion cells.",
     "weight": "35000 g",
@@ -87,13 +83,12 @@
     "price": 50000,
     "price_postapoc": 750,
     "bashing": 14,
-    "capacity": 7000,
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 7000 } } ]
+    "max_capacity": "7000 kJ"
   },
   {
     "id": "small_storage_battery",
     "copy-from": "storage_battery",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "name": { "str": "small storage battery", "str_pl": "small storage batteries" },
     "description": "A small storage battery created with pre-Cataclysm lithium-ion technology.  Useful for crafting.",
     "weight": "2500 g",
@@ -101,12 +96,11 @@
     "price": 5000,
     "price_postapoc": 500,
     "bashing": 7,
-    "capacity": 500,
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 500 } } ]
+    "max_capacity": "500 kJ"
   },
   {
     "id": "storage_battery",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "category": "veh_parts",
     "name": { "str": "storage battery", "str_pl": "storage batteries" },
     "description": "A large storage battery containing many lithium-ion cells.  Could be installed into a storage battery case for easy removal from a vehicle, or just welded straight in.",
@@ -120,8 +114,7 @@
     "symbol": ":",
     "color": "light_cyan",
     "ammo_type": [ "battery" ],
-    "capacity": 40000,
-    "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "RECHARGE", "NO_REPAIR" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 40000 } } ]
+    "max_capacity": "40000 kJ",
+    "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "RECHARGE", "NO_REPAIR" ]
   }
 ]
