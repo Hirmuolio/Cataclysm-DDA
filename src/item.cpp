@@ -524,7 +524,7 @@ bool item::activate_thrown( const tripoint &pos )
     return type->invoke( get_avatar(), *this, pos ).value_or( 0 );
 }
 
-units::energy item::set_energy( const units::energy &qty )
+units::energy item::add_energy( const units::energy &qty )
 {
     if( !is_battery() ) {
         debugmsg( "Tried to set energy of non-battery item" );
