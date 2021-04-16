@@ -279,11 +279,17 @@
     "material": [ "steel" ],
     "symbol": ";",
     "color": "light_gray",
-   
-    "initial_charges": 3500,
-    "max_charges": 7000,
     "charges_per_use": 3500,
     "use_action": [ "JACKHAMMER" ],
+	"pocket_data": [
+      {
+        "pocket_type": "MAGAZINE_WELL",
+        "rigid": true,
+        "max_contains_volume": "20 L",
+        "max_contains_weight": "20 kg",
+        "item_restriction": [ "medium_storage_battery" ]
+      }
+    ],
     "flags": [ "STAB", "DIG_TOOL", "POWERED", "USE_UPS", "NO_UNLOAD", "NO_RELOAD" ]
   },
   {
@@ -900,6 +906,7 @@
       {
         "pocket_type": "MAGAZINE_WELL",
         "rigid": true,
+		"holster": true,
         "max_contains_volume": "20 L",
         "max_contains_weight": "20 kg",
         "item_restriction": [
