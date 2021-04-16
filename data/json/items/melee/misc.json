@@ -67,7 +67,7 @@
     "material": [ "plastic", "aluminum" ],
     "symbol": ";",
     "color": "dark_gray",
-    "ammo": [ "battery" ],
+   
     "charges_per_use": 100,
     "use_action": [ "TAZER" ],
     "pocket_data": [

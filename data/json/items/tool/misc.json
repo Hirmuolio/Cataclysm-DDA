@@ -99,7 +99,7 @@
     "price": 2500,
     "price_postapoc": 100,
     "material": [ "plastic" ],
-    "ammo": [ "battery" ],
+   
     "charges_per_use": 1,
     "max_charges": 100,
     "use_action": {
@@ -134,7 +134,7 @@
     "price": 2500,
     "price_postapoc": 100,
     "material": [ "plastic" ],
-    "ammo": [ "battery" ],
+   
     "power_draw": 9000,
     "revert_to": "dab_pen",
     "charges_per_use": 1,
@@ -378,7 +378,7 @@
     "material": [ "steel" ],
     "symbol": ";",
     "color": "brown",
-    "ammo": [ "battery" ],
+   
     "flags": [ "ALLOWS_REMOTE_USE" ],
     "use_action": {
       "target": "large_space_heater_on",
@@ -588,7 +588,7 @@
     "material": [ "steel" ],
     "symbol": ";",
     "color": "brown",
-    "ammo": [ "battery" ],
+   
     "flags": [ "ALLOWS_REMOTE_USE" ],
     "use_action": {
       "target": "small_space_heater_on",

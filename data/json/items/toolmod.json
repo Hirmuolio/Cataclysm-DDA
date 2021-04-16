@@ -35,8 +35,7 @@
         "max_contains_volume": "20 L",
         "max_contains_weight": "20 kg"
       }
-    ],
-    "magazine_adaptor": [ [ "battery", [ "small_storage_battery", "battery_car", "battery_motorbike" ] ] ]
+    ]
   },
   {
     "id": "magazine_battery_light_mod",
@@ -62,20 +61,6 @@
         "max_contains_volume": "20 L",
         "max_contains_weight": "20 kg"
       }
-    ],
-    "magazine_adaptor": [
-      [
-        "battery",
-        [
-          "light_minus_battery_cell",
-          "light_minus_atomic_battery_cell",
-          "light_minus_disposable_cell",
-          "light_battery_cell",
-          "light_plus_battery_cell",
-          "light_atomic_battery_cell",
-          "light_disposable_cell"
-        ]
-      ]
     ]
   },
   {
@@ -94,12 +79,6 @@
         "max_contains_volume": "20 L",
         "max_contains_weight": "20 kg"
       }
-    ],
-    "magazine_adaptor": [
-      [
-        "battery",
-        [ "medium_battery_cell", "medium_plus_battery_cell", "medium_atomic_battery_cell", "medium_disposable_cell" ]
-      ]
     ]
   },
   {
@@ -118,9 +97,6 @@
         "max_contains_volume": "20 L",
         "max_contains_weight": "20 kg"
       }
-    ],
-    "magazine_adaptor": [
-      [ "battery", [ "heavy_battery_cell", "heavy_plus_battery_cell", "heavy_atomic_battery_cell", "heavy_disposable_cell" ] ]
     ]
   }
 ]

@@ -2441,6 +2441,7 @@ struct weldrig_hack {
 
         item pseudo_magazine( pseudo.magazine_default() );
         pseudo.put_in( pseudo_magazine, item_pocket::pocket_type::MAGAZINE_WELL );
+		// TODO change to energy
         pseudo.ammo_set( itype_battery, part->vehicle().drain( itype_battery,
                          pseudo.ammo_capacity( ammotype( "battery" ) ) ) );
         return pseudo;

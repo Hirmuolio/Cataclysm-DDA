@@ -75,7 +75,7 @@
     "material": [ "plastic", "aluminum" ],
     "symbol": ";",
     "color": "yellow",
-    "ammo": [ "battery" ],
+   
     "charges_per_use": 10,
     "use_action": [ "HAIRKIT" ],
     "pocket_data": [

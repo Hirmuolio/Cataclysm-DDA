@@ -1028,7 +1028,7 @@ ret_val<item_pocket::contain_code> item_pocket::can_contain( const item &it ) co
             return ret_val<item_pocket::contain_code>::make_success();
         } else {
             return ret_val<item_pocket::contain_code>::make_failure(
-                       contain_code::ERR_NO_SPACE, _( "holster already contains an item" ) );
+                       contain_code::ERR_NO_SPACE, _( "holster already contains %s" ), contents.front().tname() );
         }
     }
 

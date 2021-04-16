@@ -73,7 +73,7 @@
     "material": [ "steel", "plastic" ],
     "symbol": "/",
     "color": "yellow",
-    "ammo": [ "battery" ],
+   
     "charges_per_use": 1,
     "use_action": { "target": "circsaw_on", "msg": "You turn on the circular saw.", "active": true, "type": "transform" },
     "flags": [ "NONCONDUCTIVE" ],
@@ -159,7 +159,7 @@
     "material": [ "steel", "plastic" ],
     "symbol": "/",
     "color": "red",
-    "ammo": [ "battery" ],
+   
     "charges_per_use": 5,
     "techniques": [ "SWEEP" ],
     "use_action": [ "ELEC_CHAINSAW_OFF" ],

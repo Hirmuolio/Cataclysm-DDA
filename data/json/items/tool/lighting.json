@@ -143,7 +143,7 @@
     "symbol": ";",
     "color": "green",
     "charges_per_use": 1,
-    "ammo": [ "battery" ],
+   
     "use_action": {
       "type": "transform",
       "target": "electric_lantern_on",
@@ -196,7 +196,7 @@
     "price": 500,
     "price_postapoc": 100,
     "charges_per_use": 1,
-    "ammo": [ "battery" ],
+   
     "flags": [ "BELT_CLIP" ],
     "use_action": {
       "type": "transform",
@@ -385,7 +385,7 @@
     "symbol": ";",
     "color": "blue",
     "charges_per_use": 1,
-    "ammo": [ "battery" ],
+   
     "flags": [ "BELT_CLIP" ],
     "use_action": {
       "type": "transform",
@@ -462,7 +462,7 @@
     "copy-from": "lightstrip_base",
     "description": "This is a light-emitting circuit that can be wired directly to a battery.  It provides some weak light and can't be turned off until the battery dies.",
     "color": "white",
-    "ammo": [ "battery" ],
+   
     "use_action": {
       "target": "lightstrip",
       "msg": "You irreversibly activate the lightstrip.",
@@ -584,7 +584,7 @@
     "material": [ "plastic", "aluminum" ],
     "symbol": ";",
     "color": "white",
-    "ammo": [ "battery" ],
+   
     "charges_per_use": 1,
     "use_action": {
       "target": "reading_light_on",
@@ -630,7 +630,7 @@
     "material": [ "plastic", "aluminum" ],
     "symbol": "&",
     "color": "blue",
-    "ammo": [ "battery" ],
+   
     "charges_per_use": 1,
     "use_action": {
       "target": "smart_lamp_on",

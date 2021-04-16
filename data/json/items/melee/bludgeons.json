@@ -565,7 +565,7 @@
     "material": [ "superalloy", "steel" ],
     "symbol": "/",
     "color": "light_gray",
-    "ammo": [ "battery" ],
+   
     "charges_per_use": 1,
     "techniques": [ "WBLOCK_1", "RAPID" ],
     "use_action": {
@@ -1022,7 +1022,7 @@
     "material": [ "wood", "iron" ],
     "symbol": "/",
     "color": "brown",
-    "ammo": [ "battery" ],
+   
     "charges_per_use": 100,
     "qualities": [ [ "HAMMER", 1 ] ],
     "techniques": [ "WBLOCK_2", "RAPID", "SWEEP" ],
@@ -1055,7 +1055,7 @@
     "material": [ "plastic", "steel" ],
     "symbol": "/",
     "color": "dark_gray",
-    "ammo": [ "battery" ],
+   
     "charges_per_use": 1,
     "techniques": [ "WBLOCK_2", "RAPID" ],
     "use_action": [ "SHOCKTONFA_OFF" ],

@@ -34,7 +34,7 @@
     "flags": [ "ALLOWS_REMOTE_USE" ],
     "power_draw": 1500000,
     "looks_like": "microwave",
-    "ammo": [ "battery" ],
+   
     "pocket_data": [
       {
         "pocket_type": "MAGAZINE_WELL",

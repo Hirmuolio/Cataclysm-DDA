@@ -16,7 +16,7 @@
     "initial_charges": 100,
     "max_charges": 100,
     "charges_per_use": 1,
-    "ammo": [ "battery" ],
+   
     "use_action": {
       "target": "plastic_jack_o_lantern_lit",
       "msg": "You flip the switch in the jack o'lantern.",
@@ -124,11 +124,13 @@
     "name": { "str": "inflatable dragon" },
     "description": "A battery powered inflatable dragon from the Halloween before the end.  It might be fun to display it somewhere.",
     "ammo": "battery",
-    "magazines": [
-      [
-        "battery",
-        [ "medium_battery_cell", "medium_plus_battery_cell", "medium_atomic_battery_cell", "medium_disposable_cell" ]
-      ]
+	"pocket_data": [
+      {
+        "pocket_type": "MAGAZINE_WELL",
+        "max_contains_volume": "60 ml",
+        "max_contains_weight": "1 kg",
+        "item_restriction": [ "medium_battery_cell", "medium_plus_battery_cell", "medium_atomic_battery_cell", "medium_disposable_cell" ]
+      }
     ],
     "use_action": { "type": "cast_spell", "spell_id": "dragon_inflatable", "no_fail": true, "level": 1 }
   },
@@ -139,11 +141,14 @@
     "name": { "str": "inflatable ghost" },
     "description": "A battery powered inflatable ghost from the Halloween before the end.  It might be fun to display it somewhere.",
     "ammo": "battery",
-    "magazines": [
-      [
-        "battery",
-        [ "medium_battery_cell", "medium_plus_battery_cell", "medium_atomic_battery_cell", "medium_disposable_cell" ]
-      ]
+    "pocket_data": [
+      {
+        "pocket_type": "MAGAZINE_WELL",
+        "rigid": true,
+        "max_contains_volume": "20 L",
+        "max_contains_weight": "20 kg",
+        "item_restriction": [ "medium_battery_cell", "medium_plus_battery_cell", "medium_atomic_battery_cell", "medium_disposable_cell" ]
+      }
     ],
     "use_action": { "type": "cast_spell", "spell_id": "ghost_inflatable", "no_fail": true, "level": 1 }
   },
@@ -154,11 +159,14 @@
     "name": { "str": "fog machine" },
     "description": "A battery powered fog machine.  It would be great for setting ambience.",
     "ammo": "battery",
-    "magazines": [
-      [
-        "battery",
-        [ "medium_battery_cell", "medium_plus_battery_cell", "medium_atomic_battery_cell", "medium_disposable_cell" ]
-      ]
+    "pocket_data": [
+      {
+        "pocket_type": "MAGAZINE_WELL",
+        "rigid": true,
+        "max_contains_volume": "20 L",
+        "max_contains_weight": "20 kg",
+        "item_restriction": [ "medium_battery_cell", "medium_plus_battery_cell", "medium_atomic_battery_cell", "medium_disposable_cell" ]
+      }
     ],
     "use_action": { "type": "cast_spell", "spell_id": "fog_machine", "no_fail": true, "level": 1 }
   }

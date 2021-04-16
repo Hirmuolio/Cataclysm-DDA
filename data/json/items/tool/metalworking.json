@@ -158,7 +158,7 @@
     "material": [ "steel", "plastic" ],
     "symbol": ";",
     "color": "light_gray",
-    "ammo": [ "battery" ],
+   
     "flags": [ "ALLOWS_REMOTE_USE" ],
     "pocket_data": [
       {

@@ -40,7 +40,7 @@ class item_pocket
         enum class pocket_type : int {
             CONTAINER,
             MAGAZINE,
-            MAGAZINE_WELL, //holds magazines
+            MAGAZINE_WELL, //holds magazines and batteries
             MOD, // the gunmods or toolmods
             CORPSE, // the "corpse" pocket - bionics embedded in a corpse
             SOFTWARE, // software put into usb or some such

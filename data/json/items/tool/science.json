@@ -49,7 +49,7 @@
     "material": [ "glass", "cotton" ],
     "symbol": ";",
     "color": "light_gray",
-    "ammo": [ "battery" ],
+   
     "sub": "hotplate",
     "charges_per_use": 1,
     "qualities": [ [ "DISTILL", 1 ], [ "CHEM", 3 ], [ "BOIL", 1 ] ],
@@ -93,7 +93,7 @@
     "price_postapoc": 750,
     "material": [ "steel", "copper", "plastic" ],
     "symbol": ";",
-    "ammo": [ "battery" ],
+   
     "pocket_data": [
       {
         "pocket_type": "MAGAZINE_WELL",
@@ -112,7 +112,7 @@
     "description": "A small 0.9 cubic foot vacuum oven used to purge residual solvents out of liquids and solid.  Looks kind of like a microwave.",
     "looks_like": "microwave",
     "weight": "40860 g",
-    "ammo": [ "battery" ],
+   
     "charges_per_use": 1,
     "volume": "27 L",
     "price": 100000,
@@ -145,7 +145,7 @@
     "to_hit": -10,
     "bashing": 10,
     "material": [ "steel" ],
-    "ammo": [ "battery" ],
+   
     "charges_per_use": 1,
     "symbol": "E",
     "color": "dark_gray",
@@ -180,7 +180,7 @@
     "price": 100000,
     "to_hit": -10,
     "bashing": 10,
-    "ammo": [ "battery" ],
+   
     "power_draw": 120000,
     "revert_to": "vac_oven_small_full",
     "charges_per_use": 1,
@@ -219,7 +219,7 @@
     "price": 100000,
     "to_hit": -10,
     "bashing": 10,
-    "ammo": [ "battery" ],
+   
     "charges_per_use": 1,
     "material": [ "steel" ],
     "symbol": "E",
@@ -251,7 +251,7 @@
     "bashing": 40,
     "material": [ "steel" ],
     "flags": [ "ALLOWS_REMOTE_USE" ],
-    "ammo": [ "battery" ],
+   
     "power_draw": 1500000,
     "charges_per_use": 1,
     "use_action": {
@@ -303,7 +303,7 @@
     "bashing": 40,
     "material": [ "steel" ],
     "flags": [ "ALLOWS_REMOTE_USE", "TRADER_AVOID" ],
-    "ammo": [ "battery" ],
+   
     "power_draw": 1500000,
     "revert_to": "closed_loop_extractor_small",
     "charges_per_use": 1,
@@ -355,7 +355,7 @@
     "symbol": "E",
     "color": "dark_gray",
     "flags": [ "ALLOWS_REMOTE_USE", "TRADER_AVOID" ],
-    "ammo": [ "battery" ],
+   
     "charges_per_use": 1,
     "use_action": {
       "target": "closed_loop_extractor_large_on",
@@ -406,7 +406,7 @@
     "symbol": "E",
     "color": "dark_gray",
     "flags": [ "ALLOWS_REMOTE_USE", "TRADER_AVOID" ],
-    "ammo": [ "battery" ],
+   
     "power_draw": 1500000,
     "revert_to": "closed_loop_extractor_large",
     "charges_per_use": 1,
@@ -506,7 +506,7 @@
     "bashing": 10,
     "material": [ "iron" ],
     "flags": [ "ALLOWS_REMOTE_USE" ],
-    "ammo": [ "battery" ],
+   
     "charges_per_use": 1,
     "use_action": {
       "target": "vac_pump_on",
@@ -555,7 +555,7 @@
     "to_hit": -5,
     "bashing": 10,
     "material": [ "iron" ],
-    "ammo": [ "battery" ],
+   
     "power_draw": 600000,
     "charges_per_use": 1,
     "flags": [ "TRADER_AVOID", "ALLOWS_REMOTE_USE" ],
@@ -805,7 +805,7 @@
     "material": [ "plastic", "aluminum" ],
     "symbol": ";",
     "color": "light_gray",
-    "ammo": [ "battery" ],
+   
     "charges_per_use": 5,
     "use_action": [ "WEATHER_TOOL" ],
     "flags": [ "THERMOMETER", "HYGROMETER", "BAROMETER" ],
@@ -838,7 +838,7 @@
     "volume": "5 L",
     "price": 25000,
     "price_postapoc": 1000,
-    "ammo": [ "battery" ],
+   
     "to_hit": -5,
     "bashing": 2,
     "material": [ "plastic", "steel" ],
@@ -882,7 +882,7 @@
     "volume": "2 L",
     "price": 8000,
     "price_postapoc": 500,
-    "ammo": [ "battery" ],
+   
     "to_hit": -5,
     "bashing": 2,
     "material": [ "plastic", "steel" ],
@@ -925,7 +925,7 @@
     "volume": "1500 ml",
     "price": 6000,
     "price_postapoc": 250,
-    "ammo": [ "battery" ],
+   
     "to_hit": -5,
     "bashing": 2,
     "material": [ "plastic", "glass" ],
@@ -960,7 +960,7 @@
     "volume": "1500 ml",
     "price": 6000,
     "price_postapoc": 250,
-    "ammo": [ "battery" ],
+   
     "to_hit": -5,
     "bashing": 2,
     "material": [ "plastic" ],
@@ -995,7 +995,7 @@
     "volume": "1500 ml",
     "price": 6000,
     "price_postapoc": 250,
-    "ammo": [ "battery" ],
+   
     "to_hit": -5,
     "bashing": 2,
     "material": [ "plastic", "glass" ],
@@ -1221,7 +1221,7 @@
     "looks_like": "f_centrifuge",
     "symbol": "n",
     "color": "white",
-    "ammo": [ "battery" ],
+   
     "qualities": [ [ "CONCENTRATE", 1 ] ],
     "pocket_data": [
       {
