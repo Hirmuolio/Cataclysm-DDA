@@ -268,7 +268,7 @@
     "type": "TOOL",
     "name": { "str": "electric jackhammer" },
     "description": "This is a construction tool for drilling through hard rock or other surfaces.  It runs on a cell compatible with UPS.  Use it to blast a hole in adjacent solid terrain.",
-    "weight": "40000 g",
+    "weight": "5000 g",
     "volume": "5 L",
     "longest_side": "71 cm",
     "price": 40000,
@@ -286,7 +286,7 @@
         "pocket_type": "MAGAZINE_WELL",
         "rigid": true,
         "max_contains_volume": "20 L",
-        "max_contains_weight": "20 kg",
+        "max_contains_weight": "40 kg",
         "item_restriction": [ "medium_storage_battery" ]
       }
     ],

@@ -529,9 +529,18 @@
     "looks_like": "cell_phone",
     "symbol": ";",
     "color": "light_gray",
-   
-    "initial_charges": 110,
-    "max_charges": 120,
+    "pocket_data": [
+      {
+        "pocket_type": "MAGAZINE_WELL",
+		"holster": true,
+        "rigid": true,
+        "max_contains_volume": "20 L",
+        "max_contains_weight": "20 kg",
+        "item_restriction": [
+          "light_battery_cell"
+        ]
+      }
+    ],
     "charges_per_use": 1,
     "use_action": [
       {

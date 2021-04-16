@@ -196,7 +196,6 @@
     "price": 500,
     "price_postapoc": 100,
     "charges_per_use": 1,
-   
     "flags": [ "BELT_CLIP" ],
     "use_action": {
       "type": "transform",
