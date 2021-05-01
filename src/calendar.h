@@ -6,6 +6,8 @@
 #include <utility>
 #include <vector>
 
+#include "units_fwd.h"
+
 class JsonIn;
 class JsonOut;
 class time_duration;
@@ -540,26 +542,54 @@ std::string to_string_time_of_day( const time_point &p );
 time_duration lunar_month();
 /** Returns the current phase of the moon. */
 moon_phase get_moon_phase( const time_point &p );
-/** Returns the current sunrise time based on the time of year. */
+
+/** Returns the next time point in which the sun is at specified angle
+*  @param angle the wanted angle
+*  @param p current time (the returned time point is after it)
+*  @param evening wether to return the evening angle or morning angle (each angle happens twice per day)
+*  @return time point at which the specified angle occurs **/
+time_point sun_at_angle( const units::angle &angle, const time_point &p, const bool &evening );
+
+/** Returns the time of sunrise (0 degrees). Special case of sun_at_angle() */
 time_point sunrise( const time_point &p );
-/** Returns the current sunset time based on the time of year. */
+/** Returns the time of sunset (0 degrees). Special case of sun_at_angle() */
 time_point sunset( const time_point &p );
-/** Returns the time it gets light based on sunrise */
+/** Returns the start of nautical dawn (-12 degrees). Special case of sun_at_angle() */
 time_point daylight_time( const time_point &p );
-/** Returns the time it gets dark based on sunset */
+/** Returns the end of nautical dusk (-12 degrees). Special case of sun_at_angle() */
 time_point night_time( const time_point &p );
-/** Returns true if it's currently night time - after dusk and before dawn. */
+/** Returns true if it's currently night time (below -12 degrees) */
 bool is_night( const time_point &p );
-/** Returns true if it's currently day time - after dawn and before dusk. */
+/** Returns true if it's currently day time (above 0 degrees) */
 bool is_day( const time_point &p );
-/** Returns true if it's currently dusk - between sunset and and twilight_duration after sunset. */
+/** Returns true if it's currently twilight (between 1 and -18 degrees) */
+bool is_twilight( const time_point &p );
+/** Returns true if it's currently dusk - Twilight during evening. */
 bool is_dusk( const time_point &p );
-/** Returns true if it's currently dawn - between sunrise and twilight_duration after sunrise. */
+/** Returns true if it's currently dawn - Twilight during dawn. */
 bool is_dawn( const time_point &p );
-/** Returns the current seasonally-adjusted maximum daylight level */
-double current_daylight_level( const time_point &p );
 /** How much light is provided in full daylight */
 double default_daylight_level();
+
+
+// Returns solar hour angle at time_point.
+// 0 degrees at noon (12:00)
+// negative before noon, positive after noon
+// +- 180 degrees at midnight (24:00, 00:00)
+// When far from equator this is almost same as azimuth (Sun south at 0 degrees in north)
+units::angle solar_hour_angle( const time_point &p );
+
+// Returns declination of sun at time_poit
+// This is the angle of sun relative to equator plane
+units::angle solar_declination( const time_point &p );
+
+// Returns sun altitude at time_point
+// This is the angle of sun relative to horizont
+units::angle solar_altitude( const time_point &p );
+
+// Returns true if sun reaches this altitude angle during the day.
+bool sun_reaches_angle( const units::angle &angle, const time_point &p );
+
 /** Returns the current sunlight or moonlight level through the preceding functions.
  *  By default, returns sunlight level for vision, with moonlight providing a measurable amount
  *  of light.  with vision == false, returns sunlight for solar panel purposes, and moonlight
@@ -575,6 +605,10 @@ enum class weekdays : int {
     FRIDAY,
     SATURDAY,
 };
+
+// Returns day of year normalized to 365 day year.
+// Day 1 of year = Spring equinox (march 20, 79th day of year)
+int normalized_day_of_year( const time_point &p );
 
 weekdays day_of_week( const time_point &p );
 

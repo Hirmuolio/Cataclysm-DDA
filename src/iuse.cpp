@@ -9215,6 +9215,23 @@ cata::optional<int> iuse::weather_tool( player *p, item *it, bool, const tripoin
     return 0;
 }
 
+
+cata::optional<int> iuse::sextant( player *p, item *, bool, const tripoint & )
+{
+    const float altitude = to_degrees( solar_altitude( calendar::turn ) );
+
+    if( debug_mode ) {
+        // Debug mode allows measuring sun angle below hirozon
+        p->add_msg_if_player( m_neutral, _( "The Sun is at altitude of %.1f°." ), altitude );
+    } else if( altitude > 0 ) {
+        p->add_msg_if_player( m_neutral, _( "The Sun is at altitude of %.1f°." ), altitude );
+    } else {
+        p->add_msg_if_player( m_neutral, _( "The Sun is below horizon." ) );
+    }
+
+    return 0;
+}
+
 cata::optional<int> iuse::directional_hologram( player *p, item *it, bool, const tripoint &pos )
 {
     if( it->is_armor() &&  !( p->is_worn( *it ) ) ) {

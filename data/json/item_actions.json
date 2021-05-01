@@ -946,6 +946,11 @@
   },
   {
     "type": "item_action",
+    "id": "SEXTANT",
+    "name": { "str": "Measure Sun altitude" }
+  },
+  {
+    "type": "item_action",
     "id": "WEED_CAKE",
     "name": { "str": "Consume" }
   },
