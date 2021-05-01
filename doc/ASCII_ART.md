@@ -11,4 +11,4 @@ You can change the font in REXPaint by pressing `Ctrl-wheel`.
 Now you can draw your art. It's strongly advised to check the manual for descriptions of all tools. Note that art for CDDA can't be wider than 41 characters, therefore it's advised to set `defaultImageWidth` to 41 in `REXPaint.cfg`. If you use different colors than those found in CDDA palette, they'll be exported as white.
 ### Exporting 
 Once you've finished making your art you can export it by pressing `Ctrl-j`. This will produce a text file ready to be pasted into the corresponding `[ITEM_CATEGORY]_ascii.json` in the `data/json/ascii_art` folder, complete with color tags. Make sure that the canvas isn't wider that 41 characters before exporting. For more information about adding your art to the game read `JSON_INFO.md`.
-a
+aa
