@@ -7296,7 +7296,7 @@ units::volume item::max_containable_volume() const
     return contents.max_containable_volume();
 }
 
-bool item::can_contain( const item &it ) const
+bool item::can_contain( const item &it, const bool ignore_fullness ) const
 {
     if( this == &it ) {
         // does the set of all sets contain itself?
@@ -7313,12 +7313,12 @@ bool item::can_contain( const item &it ) const
         }
     }
 
-    return contents.can_contain( it ).success();
+    return contents.can_contain( it, ignore_fullness ).success();
 }
 
-bool item::can_contain( const itype &tp ) const
+bool item::can_contain( const itype &tp, const bool ignore_fullness ) const
 {
-    return can_contain( item( &tp ) );
+    return can_contain( item( &tp ), ignore_fullness );
 }
 
 bool item::can_contain_partial( const item &it ) const
@@ -7793,11 +7793,11 @@ int item::ammo_consume( int qty, const tripoint &pos )
         return 0;
     }
 
-    if( is_magazine() ) {
+    if( is_magazine() || uses_magazine() ) {
         return contents.ammo_consume( qty, pos );
 
     } else if( is_tool() || is_gun() ) {
-        if( !contents.has_pocket_type( item_pocket::pocket_type::MAGAZINE ) ||
+        if( !is_magazine() ||
             ( is_tool() && type->tool->ammo_id.empty() ) ) {
             qty = std::min( qty, charges );
             Character &player_character = get_player_character();

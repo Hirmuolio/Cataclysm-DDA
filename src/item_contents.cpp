@@ -581,7 +581,7 @@ ret_val<bool> item_contents::can_contain_rigid( const item &it ) const
     return ret;
 }
 
-ret_val<bool> item_contents::can_contain( const item &it ) const
+ret_val<bool> item_contents::can_contain( const item &it, const bool ignore_fullness ) const
 {
     ret_val<bool> ret = ret_val<bool>::make_failure( _( "is not a container" ) );
     for( const item_pocket &pocket : contents ) {
@@ -589,7 +589,8 @@ ret_val<bool> item_contents::can_contain( const item &it ) const
         if( !pocket.is_standard_type() ) {
             continue;
         }
-        const ret_val<item_pocket::contain_code> pocket_contain_code = pocket.can_contain( it );
+        const ret_val<item_pocket::contain_code> pocket_contain_code = pocket.can_contain( it,
+                ignore_fullness );
         if( pocket_contain_code.success() ) {
             return ret_val<bool>::make_success();
         }
