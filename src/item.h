@@ -1267,13 +1267,13 @@ class item : public visitable
         fuel_explosion_data get_explosion_data();
 
         /**
-         * Can this item have given item/itype as content?
-         *
-         * For example, airtight for gas, acidproof for acid etc.
+         * Can the pocket contain the specified item?
+         * @param it the item being put in
+         * @param ignore_fullness ignore already contained items from blocking the new item. Also ignores the count of new items being too high
          */
         /*@{*/
-        bool can_contain( const item &it ) const;
-        bool can_contain( const itype &tp ) const;
+        bool can_contain( const item &it, const bool ignore_fullness = false ) const;
+        bool can_contain( const itype &tp, const bool ignore_fullness = false ) const;
         bool can_contain_partial( const item &it ) const;
         /*@}*/
         std::pair<item_location, item_pocket *> best_pocket( const item &it, item_location &parent,
@@ -1881,17 +1881,19 @@ class item : public visitable
         /** Does item have an integral magazine (as opposed to allowing detachable magazines) */
         bool magazine_integral() const;
 
+        /** Does item have magazine well */
+        bool uses_magazine() const;
+
         /** Get the default magazine type (if any) for the current effective ammo type
          *  @param conversion whether to include the effect of any flags or mods which convert item's ammo type
          *  @return magazine type or "null" if item has integral magazine or no magazines for current ammo type */
         itype_id magazine_default( bool conversion = true ) const;
 
         /** Get compatible magazines (if any) for this item
-         *  @param conversion whether to include the effect of any flags or mods which convert item's ammo type
          *  @return magazine compatibility which is always empty if item has integral magazine
          *  @see item::magazine_integral
          */
-        std::set<itype_id> magazine_compatible( bool conversion = true ) const;
+        std::set<itype_id> magazine_compatible() const;
 
         /** Currently loaded magazine (if any)
          *  @return current magazine or nullptr if either no magazine loaded or item has integral magazine
