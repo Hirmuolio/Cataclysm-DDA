@@ -1989,5 +1989,23 @@
     "id": "HARD",
     "type": "json_flag",
     "context": [  ]
+  },
+  {
+    "id": "BATTERY_LIGHT",
+    "type": "json_flag",
+    "context": [  ],
+    "info": "Light battery"
+  },
+  {
+    "id": "BATTERY_MEDIUM",
+    "type": "json_flag",
+    "context": [  ],
+    "info": "Light battery"
+  },
+  {
+    "id": "BATTERY_HEAVY",
+    "type": "json_flag",
+    "context": [  ],
+    "info": "Light battery"
   }
 ]
