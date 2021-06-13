@@ -5804,44 +5804,49 @@ int item::spoilage_sort_order() const
 
 /**
  * Food decay calculation.
- * Calculate how much food rots per hour, based on 10 = 1 minute of decay @ 65 F.
- * IRL this tends to double every 10c a few degrees above freezing, but past a certain
- * point the rate decreases until even extremophiles find it too hot. Here we just stop
- * further acceleration at 105 F. This should only need to run once when the game starts.
- * @see calc_rot_array
- * @see rot_chart
+ * Calculate how much food rots per hour, based on 3600 rot/hour at 65 F (18.3 C).
+ * Rate of rot doubles every 16 F (~8.8888 C) increase in temperature
+ * Rate of rot halves every 16 F decrease in temperature
+ * Rot maxes out at 105 F
+ * Rot stops below 32 F (0C) and above 145 F (63 C)
  */
-static int calc_hourly_rotpoints_at_temp( const int temp )
+static float calc_hourly_rotpoints_at_temp( const double temp )
 {
-    // default temp = 65, so generic->rotten() assumes 600 decay points per hour
-    const int dropoff = 38;     // ditch our fancy equation and do a linear approach to 0 rot at 31f
-    const int cutoff = 105;     // stop torturing the player at this temperature, which is
-    const int cutoffrot = 21240; // ..almost 6 times the base rate. bacteria hate the heat too
+    const double dropoff =
+        38;  // ~3 C ditch our fancy equation and do a linear approach to 0 rot from 3 C -> 0 C
+    const double max_rot_temp = 105; // ~41 C Maximum rotting rate is at this temperature
+    const double safe_temp = 145; // ~63 C safe temperature above which food stops rotting
+    // temperatures::freezing = 32 F ( 0 C)
 
-    const int dsteps = dropoff - temperatures::freezing;
-    const int dstep = ( 215.46 * std::pow( 2.0, static_cast<float>( dropoff ) / 16.0 ) / dsteps );
+    // This multiplier makes sure the rot at 65 F (18.3 C) C is 3600 rot/hour (1 rot/second).
+    // This is approximately 215.5
+    const double multiplier = 3600.0 / std::pow( 2.0, 65.0 / 16.0 );
 
-    if( temp < temperatures::freezing ) {
-        return 0;
-    } else if( temp > cutoff ) {
-        return cutoffrot;
+    if( temp <= temperatures::freezing || temp > safe_temp ) {
+        return 0.0;
     } else if( temp < dropoff ) {
-        return ( temp - temperatures::freezing ) * dstep;
+        // Linear progress from 32 F (0 C) to 38 F (3 C)
+        // Constant makes sure that rot function is continuous at 38 F
+        // The constand 186.28 = ( multiplier * 2^( 38F / 16F ) ) / 6
+        return 186.27867 * ( temp - temperatures::freezing );
+    } else if( temp < max_rot_temp ) {
+        return multiplier * std::pow( 2.0, temp / 16.0 );
     } else {
-        return std::lround( 215.46 * std::pow( 2.0, static_cast<float>( temp ) / 16.0 ) );
+        // stop torturing the player at max_rot_temp (105 F, 41 C). No higher rot at higher temp.
+        // This is approximately 20364.67 rot/hour
+        return multiplier * std::pow( 2.0, max_rot_temp / 16.0 );
     }
 }
 
-/**
- * Initialize the rot table.
- * @see rot_chart
- */
-static std::vector<int> calc_rot_array( const size_t cap )
+
+static std::vector<float> calc_rot_array()
 {
-    std::vector<int> ret;
-    ret.reserve( cap );
-    for( size_t i = 0; i < cap; ++i ) {
-        ret.push_back( calc_hourly_rotpoints_at_temp( static_cast<int>( i ) ) );
+    // Array with precalculated rot rates
+    // Includes temperatures from 0 F ( -18C) to 145 F (63 F)
+    std::vector<float> ret;
+    ret.reserve( 146 );
+    for( size_t i = 0; i < 146; ++i ) {
+        ret.push_back( calc_hourly_rotpoints_at_temp( i ) );
     }
     return ret;
 }
@@ -5850,19 +5855,16 @@ static std::vector<int> calc_rot_array( const size_t cap )
  * Get the hourly rot for a given temperature from the precomputed table.
  * @see rot_chart
  */
-int get_hourly_rotpoints_at_temp( const int temp )
+float item::get_hourly_rotpoints_at_temp( const int temp ) const
 {
+    if( temp <= 32 || temp > 145 ) {
+        return 0.0;
+    }
+
     /**
      * Precomputed rot lookup table.
      */
-    static const std::vector<int> rot_chart = calc_rot_array( 200 );
-
-    if( temp < 0 ) {
-        return 0;
-    }
-    if( temp > 150 ) {
-        return 21240;
-    }
+    static const std::vector<float> rot_chart = calc_rot_array();
     return rot_chart[temp];
 }
 
@@ -7400,7 +7402,8 @@ void item::mark_chapter_as_read( const Character &u )
     set_var( var, remain );
 }
 
-std::vector<std::pair<const recipe *, int>> item::get_available_recipes( const Character &u ) const
+std::vector<std::pair<const recipe *, int>> item::get_available_recipes(
+            const Character &u ) const
 {
     std::vector<std::pair<const recipe *, int>> recipe_entries;
     if( is_book() ) {
