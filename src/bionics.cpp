@@ -2187,10 +2187,10 @@ bool Character::uninstall_bionic( const bionic_id &b_id, player &installer, bool
     int pl_skill = bionics_pl_skill( autodoc, skill_level );
     int chance_of_success = bionic_success_chance( autodoc, skill_level, difficulty + 2, installer );
 
-    // Surgery is imminent, retract claws or blade if active
+    // Surgery is imminent, turn off any toggled bionic
     for( size_t i = 0; i < installer.my_bionics->size(); i++ ) {
         const bionic &bio = ( *installer.my_bionics )[ i ];
-        if( bio.powered && bio.info().has_flag( json_flag_BIONIC_WEAPON ) ) {
+        if( bio.powered && bio.info().has_flag( json_flag_BIONIC_TOGGLED ) ) {
             installer.deactivate_bionic( i );
         }
     }

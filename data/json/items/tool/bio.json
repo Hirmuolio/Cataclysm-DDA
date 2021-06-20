@@ -7,7 +7,7 @@
 	"description": "Bionic toolset",
 	"volume": "1 ml",
     "symbol": ";",
-    "flags": [ "TRADER_AVOID", "USES_BIONIC_POWER", "ZERO_WEIGHT" ],
+    "flags": [ "TRADER_AVOID", "USES_BIONIC_POWER", "ZERO_WEIGHT", "NO_TAKEOFF" ],
     "use_action": [ "HAMMER", "CROWBAR" ],
     "qualities": [
       [ "HAMMER", 3 ],
