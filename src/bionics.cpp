@@ -178,7 +178,6 @@ static const bionic_id bio_time_freeze( "bio_time_freeze" );
 static const bionic_id bio_tools( "bio_tools" );
 static const bionic_id bio_torsionratchet( "bio_torsionratchet" );
 static const bionic_id bio_water_extractor( "bio_water_extractor" );
-static const bionic_id bio_tools_extend( "bio_tools_extend" );
 // Aftershock stuff!
 static const bionic_id afs_bio_dopamine_stimulators( "afs_bio_dopamine_stimulators" );
 
@@ -193,6 +192,7 @@ static const trait_id trait_THRESH_MEDICAL( "THRESH_MEDICAL" );
 
 static const json_character_flag json_flag_BIONIC_GUN( "BIONIC_GUN" );
 static const json_character_flag json_flag_BIONIC_WEAPON( "BIONIC_WEAPON" );
+static const json_character_flag json_flag_BIONIC_EQUIPMENT( "BIONIC_EQUIPMENT" );
 static const json_character_flag json_flag_BIONIC_TOGGLED( "BIONIC_TOGGLED" );
 
 static const std::string flag_SEALED( "SEALED" );
@@ -660,6 +660,11 @@ bool Character::activate_bionic( int b, bool eff_only, bool *close_bionics_ui )
             weapon.ammo_set( bio.ammo_loaded, bio.ammo_count );
             avatar_action::fire_wielded_weapon( player_character );
         }
+    } else if( bio.info().has_flag( json_flag_BIONIC_EQUIPMENT ) ) {
+        add_msg_activate();
+        item equipment = item( bio.info().fake_item );
+        equipment.invlet = '#';
+        wear_item( equipment, false );
     } else if( bio.id == bio_ears && has_active_bionic( bio_earplugs ) ) {
         add_msg_activate();
         for( bionic &bio : *my_bionics ) {
@@ -1134,6 +1139,21 @@ bool Character::deactivate_bionic( int b, bool eff_only )
             weapon = item();
             invalidate_crafting_inventory();
         }
+    } else if( bio.info().has_flag( json_flag_BIONIC_EQUIPMENT ) ) {
+        for( item_location it : top_items_loc() ) {
+            if( it->typeId() == bio.info().fake_item ) {
+                add_msg_if_player( _( "You withdraw your %s." ), it->tname() );
+                // Drop contained items
+                for( item *contained : it->contents.all_items_top() ) {
+                    get_map().add_item_or_charges( pos(), *contained );
+                }
+
+                //worn_loc( *this, &it ).remove_item();
+                it.remove_item();
+                invalidate_crafting_inventory();
+                continue;
+            }
+        }
     } else if( bio.id == bio_cqb ) {
         martial_arts_data->selected_style_check();
     } else if( bio.id == bio_remote ) {
@@ -1157,12 +1177,6 @@ bool Character::deactivate_bionic( int b, bool eff_only )
     // Also reset crafting inventory cache if this bionic spawned a fake item
     if( !bio.info().fake_item.is_empty() ) {
         invalidate_crafting_inventory();
-    }
-
-    // Compatibility with old saves without the toolset hammerspace
-    if( !eff_only && bio.id == bio_tools && !has_bionic( bio_tools_extend ) ) {
-        // E X T E N D    T O O L S
-        add_bionic( bio_tools_extend );
     }
 
     return true;

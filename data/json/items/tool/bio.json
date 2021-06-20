@@ -1,0 +1,29 @@
+[
+  
+  {
+    "id": "toolset",
+    "type": "ARMOR",
+    "name": { "str": "bio integrated toolset" },
+	"description": "Bionic toolset",
+	"volume": "1 ml",
+    "symbol": ";",
+    "flags": [ "TRADER_AVOID", "USES_BIONIC_POWER", "ZERO_WEIGHT" ],
+    "use_action": [ "HAMMER", "CROWBAR" ],
+    "qualities": [
+      [ "HAMMER", 3 ],
+      [ "HAMMER_FINE", 1 ],
+      [ "SAW_W", 1 ],
+      [ "SAW_M", 2 ],
+      [ "SAW_M_FINE", 1 ],
+      [ "WRENCH", 2 ],
+      [ "WRENCH_FINE", 1 ],
+      [ "WHEEL_FAST", 1 ],
+      [ "SCREW", 1 ],
+      [ "SCREW_FINE", 1 ],
+      [ "CUT", 1 ],
+      [ "PRY", 1 ],
+      [ "DRILL", 3 ],
+      [ "BUTCHER", -38 ]
+    ]
+  }
+]
