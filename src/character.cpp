@@ -6449,7 +6449,7 @@ void Character::update_bodytemp()
         return;
     }
     /* Cache calls to g->get_temperature( player position ), used in several places in function */
-    const int player_local_temp = g->weather.get_temperature( pos() );
+    const float player_local_temp = g->weather.get_temperature( pos() );
     // NOTE : visit weather.h for some details on the numbers used
     // Converts temperature to Celsius/10
     int Ctemperature = static_cast<int>( 100 * temp_to_celsius( player_local_temp ) );
@@ -6503,7 +6503,7 @@ void Character::update_bodytemp()
                                   sun_intensity_type::high ?
                                   1000 :
                                   500 ) : 0;
-    const int best_fire = get_heat_radiation( pos(), true );
+    const int best_fire = get_best_fire( pos() );
 
     const int lying_warmth = use_floor_warmth ? floor_warmth( pos() ) : 0;
     const int water_temperature =
@@ -6516,7 +6516,7 @@ void Character::update_bodytemp()
     // Difference between high and low is the "safe" heat - one we only apply if it's beneficial
     const int mutation_heat_bonus = mutation_heat_high - mutation_heat_low;
 
-    const int h_radiation = get_heat_radiation( pos(), false );
+    const int h_radiation = get_heat_radiation( pos() );
     // Current temperature and converging temperature calculations
     for( const bodypart_id &bp : get_all_body_parts() ) {
 
@@ -11516,7 +11516,7 @@ int Character::heartrate_bpm() const
         average_heartbeat *= 1.1;
     }
     //COLDBLOOD dependencies, works almost same way as temperature effect for speed.
-    const int player_local_temp = get_weather().get_temperature( pos() );
+    const float player_local_temp = get_weather().get_temperature( pos() );
     float temperature_modifier = 0.0f;
     if( has_trait( trait_COLDBLOOD ) ) {
         temperature_modifier = 0.002f;

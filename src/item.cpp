@@ -5972,7 +5972,7 @@ int get_hourly_rotpoints_at_temp( const int temp )
     return rot_chart[temp];
 }
 
-void item::calc_rot( int temp, const float spoil_modifier,
+void item::calc_rot( float temp, const float spoil_modifier,
                      const time_duration &time_delta )
 {
     // Avoid needlessly calculating already rotten things.  Corpses should
@@ -6000,6 +6000,8 @@ void item::calc_rot( int temp, const float spoil_modifier,
         temp = std::min( temperatures::fridge, temp );
     }
 
+    int int_temp = static_cast<int>( temp + 0.5 );
+
     // simulation of different age of food at the start of the game and good/bad storage
     // conditions by applying starting variation bonus/penalty of +/- 20% of base shelf-life
     // positive = food was produced some time before calendar::start and/or bad storage
@@ -6009,7 +6011,7 @@ void item::calc_rot( int temp, const float spoil_modifier,
         rot += rng( -spoil_variation, spoil_variation );
     }
 
-    rot += factor * time_delta / 1_hours * get_hourly_rotpoints_at_temp( temp ) * 1_turns;
+    rot += factor * time_delta / 1_hours * get_hourly_rotpoints_at_temp( int_temp ) * 1_turns;
 }
 
 void item::calc_rot_while_processing( time_duration processing_duration )
@@ -9568,7 +9570,7 @@ bool item::process_temperature_rot( float insulation, const tripoint &pos,
         return false;
     }
 
-    int temp = get_weather().get_temperature( pos );
+    float temp = get_weather().get_temperature( pos );
 
     switch( flag ) {
         case temperature_flag::NORMAL:
@@ -9611,7 +9613,7 @@ bool item::process_temperature_rot( float insulation, const tripoint &pos,
         int enviroment_mod;
         // Toilets and vending machines will try to get the heat radiation and convection during mapgen and segfault.
         if( !g->new_game ) {
-            enviroment_mod = get_heat_radiation( pos, false );
+            enviroment_mod = get_heat_radiation( pos );
             enviroment_mod += get_convection_temperature( pos );
         } else {
             enviroment_mod = 0;

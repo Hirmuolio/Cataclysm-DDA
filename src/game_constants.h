@@ -84,22 +84,22 @@ static constexpr int PLUTONIUM_CHARGES = 500;
 namespace temperatures
 {
 // temperature at which something starts is considered HOT.
-constexpr int hot = 100; // ~ 38 Celsius
+constexpr float hot = 100; // ~ 38 Celsius
 
 // the "normal" temperature midpoint between cold and hot.
-constexpr int normal = 70; // ~ 21 Celsius
+constexpr float normal = 70; // ~ 21 Celsius
 
 // Temperature inside an active fridge in Fahrenheit.
-constexpr int fridge = 37; // ~ 2.7 Celsius
+constexpr float fridge = 37; // ~ 2.7 Celsius
 
 // Temperature at which things are considered "cold".
-constexpr int cold = 40; // ~4.4 C
+constexpr float cold = 40; // ~4.4 C
 
 // Temperature inside an active freezer in Fahrenheit.
-constexpr int freezer = 23; // -5 Celsius
+constexpr float freezer = 23; // -5 Celsius
 
 // Temperature in which water freezes in Fahrenheit.
-constexpr int freezing = 32; // 0 Celsius
+constexpr float freezing = 32; // 0 Celsius
 } // namespace temperatures
 
 // Slowest speed at which a gun can be aimed.
