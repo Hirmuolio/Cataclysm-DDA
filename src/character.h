@@ -2055,6 +2055,21 @@ class Character : public Creature, public visitable
         bool use_charges_if_avail( const itype_id &it, int quantity );
 
         /**
+        * Available ups from all sources
+        * Sum of mech, bionic UPS and UPS
+        * @return amount of UPS available
+        */
+        int available_ups() const;
+
+        /**
+        * Consume UPS charges.
+        * Consume order: mech, Bionic UPS, UPS.
+        * @param qty Number of charges (kJ)
+        * @return amount of UPS consumed which will be between 0 and qty
+        */
+        int consume_ups( int qty, int radius = -1 );
+
+        /**
         * Use charges in character inventory.
         * @param what itype_id of item using charges
         * @param qty Number of charges
