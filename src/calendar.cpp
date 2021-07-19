@@ -36,17 +36,17 @@ time_point calendar::turn = calendar::turn_zero;
 season_type calendar::initial_season = SPRING;
 
 // The solar altitudes at which light changes in various ways
-static constexpr units::angle min_sun_angle_for_day = -12_degrees;
-static constexpr units::angle max_sun_angle_for_night = 0_degrees;
-static constexpr units::angle min_sun_angle_for_twilight = -18_degrees;
-static constexpr units::angle max_sun_angle_for_twilight = 1_degrees;
+static constexpr units::angle nautical_dawn = -12_degrees;
+static constexpr units::angle astronomical_dawn = -18_degrees;
+static constexpr units::angle civil_dawn = -6_degrees;
+static constexpr units::angle sunrise_angle = 0_degrees;
 
-static_assert( min_sun_angle_for_day <= max_sun_angle_for_night, "day and night must overlap" );
-static_assert( min_sun_angle_for_day <= max_sun_angle_for_twilight,
+static_assert( nautical_dawn <= sunrise_angle, "day and night must overlap" );
+static_assert( nautical_dawn <= sunrise_angle,
                "day and twilight must overlap" );
-static_assert( min_sun_angle_for_twilight <= max_sun_angle_for_night,
+static_assert( astronomical_dawn <= sunrise_angle,
                "twilight and night must overlap" );
-static_assert( min_sun_angle_for_twilight <= max_sun_angle_for_twilight, "twilight must exist" );
+static_assert( astronomical_dawn <= sunrise_angle, "twilight must exist" );
 
 double default_daylight_level()
 {
@@ -328,17 +328,17 @@ time_point sunset( const time_point &p )
 
 time_point night_time( const time_point &p )
 {
-    return sun_at_altitude( min_sun_angle_for_day, location_boston.longitude, p, true );
+    return sun_at_altitude( nautical_dawn, location_boston.longitude, p, true );
 }
 
 time_point daylight_time( const time_point &p )
 {
-    return sun_at_altitude( min_sun_angle_for_day, location_boston.longitude, p, false );
+    return sun_at_altitude( nautical_dawn, location_boston.longitude, p, false );
 }
 
 bool is_night( const time_point &p )
 {
-    return sun_altitude( p ) <= min_sun_angle_for_day;
+    return sun_altitude( p ) <= nautical_dawn;
 }
 
 bool is_day( const time_point &p )
@@ -349,7 +349,7 @@ bool is_day( const time_point &p )
 static bool is_twilight( const time_point &p )
 {
     units::angle altitude = sun_altitude( p );
-    return altitude >= min_sun_angle_for_twilight && altitude <= max_sun_angle_for_twilight;
+    return altitude >= astronomical_dawn && altitude <= sunrise_angle;
 }
 
 bool is_dusk( const time_point &p )
@@ -377,22 +377,86 @@ static float moon_light_at( const time_point &p )
 float sun_light_at( const time_point &p )
 {
     const units::angle solar_alt = sun_altitude( p );
-    // For ~Boston: solstices are +/- 25% sunlight intensity from equinoxes.
-    // These values yield roughly that range (see sun_test.cpp)
-    static constexpr double light_at_zero_altitude = 60;
-    static constexpr double max_light = 125;
 
-    if( solar_alt < min_sun_angle_for_twilight ) {
-        return 0;
-    } else if( solar_alt <= max_sun_angle_for_night ) {
-        // Sunlight rises exponentially from 0 to 60 as sun rises from -18° to 0°
-        return light_at_zero_altitude *
-               ( std::exp2( 1 - solar_alt / min_sun_angle_for_twilight ) - 1 );
-    } else {
-        // Linear increase from 0° to 70° degrees light increases from 60 to 125 brightness.
-        const double lerp_param = solar_alt / 70_degrees;
-        return lerp_clamped( light_at_zero_altitude, max_light, lerp_param );
-    }
+	// Source: http://stjarnhimlen.se/comp/radfaq.html#10
+    std::map <float, float> angle_to_lux = {
+        { 90.0, 129000 },
+        { 80.0, 122000 },
+        { 70.0, 114000 },
+        { 60.0, 103000 },
+        { 50.0, 87400 },
+        { 45.0, 77800 },
+        { 40.0, 67500 },
+        { 35.0, 56900 },
+        { 30.0, 46300 },
+        { 25.0, 36300 },
+        { 20.0, 27400 },
+        { 15.0, 19200 },
+        { 14.0, 17600 },
+        { 13.0, 15900 },
+        { 12.0, 14300 },
+        { 11.0, 12700 },
+        { 10.0, 11100 },
+        { 9.5, 10400 },
+        { 9.0, 9610 },
+        { 8.5, 8880 },
+        { 8.0, 8170 },
+        { 7.5, 7490 },
+        { 7.0, 6840 },
+        { 6.5, 6220 },
+        { 6.0, 5620 },
+        { 5.5, 5060 },
+        { 5.0, 4540 },
+        { 4.5, 4010 },
+        { 4.0, 3550 },
+        { 3.5, 3110 },
+        { 3.0, 2690 },
+        { 2.5, 2290 },
+        { 2.0, 1920 },
+        { 1.5, 1580 },
+        { 1.0, 1270 },
+        { 0.5, 994 },
+        { 0.0, 759 },
+        { -0.5, 562 },
+        { -1.0, 405 },
+        { -1.5, 281 },
+        { -2.0, 189 },
+        { -2.5, 124 },
+        { -3.0, 79.1 },
+        { -3.5, 49.2 },
+        { -4.0, 29.9 },
+        { -4.5, 17.8 },
+        { -5.0, 10.4 },
+        { -5.5, 5.99 },
+        { -6.0, 3.41 },
+        { -6.5, 1.93 },
+        { -7.0, 1.09 },
+        { -7.5, 0.613 },
+        { -8.0, 0.348 },
+        { -8.5, 0.200 },
+        { -9.0, 0.116 },
+        { -9.5, 0.0692 },
+        { -10.0, 0.0421 },
+        { -10.5, 0.0264 },
+        { -11.0, 0.0171 },
+        { -11.5, 0.0115 },
+        { -12.0, 0.00806 },
+        { -12.5, 0.00597 },
+        { -13.0, 0.00456 },
+        { -13.5, 0.00360 },
+        { -14.0, 0.00292 },
+        { -14.5, 0.00241 },
+        { -15.0, 0.00202 },
+        { -15.5, 0.00171 },
+        { -16.0, 0.00144 },
+        { -16.5, 0.00121 },
+        { -17.0, 0.00100 },
+        { -17.5, 0.000815 },
+        { -18.0, 0.000645 }
+    };
+    auto it = angle_to_lux.lower_bound( to_degrees( solar_alt ) );
+    return (*it).second;
+    //return angle_to_lux[ angle_round ];
 }
 
 float sun_moon_light_at( const time_point &p )
