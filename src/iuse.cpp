@@ -9236,6 +9236,14 @@ cata::optional<int> iuse::weather_tool( player *p, item *it, bool, const tripoin
     return 0;
 }
 
+cata::optional<int> iuse::lux_meter( player *p, item *, bool, const tripoint &pos )
+{
+    p->add_msg_if_player( m_neutral, _( "The illumination is %.1f lux" ),
+                          sun_light_at( calendar::turn ) );
+
+    return 0;
+}
+
 cata::optional<int> iuse::directional_hologram( player *p, item *it, bool, const tripoint &pos )
 {
     if( it->is_armor() &&  !( p->is_worn( *it ) ) ) {

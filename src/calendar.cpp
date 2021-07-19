@@ -378,7 +378,7 @@ float sun_light_at( const time_point &p )
 {
     const units::angle solar_alt = sun_altitude( p );
 
-	// Source: http://stjarnhimlen.se/comp/radfaq.html#10
+    // Source: http://stjarnhimlen.se/comp/radfaq.html#10
     std::map <float, float> angle_to_lux = {
         { 90.0, 129000 },
         { 80.0, 122000 },
@@ -455,7 +455,7 @@ float sun_light_at( const time_point &p )
         { -18.0, 0.000645 }
     };
     auto it = angle_to_lux.lower_bound( to_degrees( solar_alt ) );
-    return (*it).second;
+    return ( *it ).second;
     //return angle_to_lux[ angle_round ];
 }
 
