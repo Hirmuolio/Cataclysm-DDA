@@ -378,6 +378,10 @@ float sun_light_at( const time_point &p )
 {
     const units::angle solar_alt = sun_altitude( p );
 
+    if( solar_alt <= 18_degrees ) {
+        return 0;
+    }
+
     // Source: http://stjarnhimlen.se/comp/radfaq.html#10
     std::map <float, float> angle_to_lux = {
         { 90.0, 129000 },
@@ -454,9 +458,18 @@ float sun_light_at( const time_point &p )
         { -17.5, 0.000815 },
         { -18.0, 0.000645 }
     };
-    auto it = angle_to_lux.lower_bound( to_degrees( solar_alt ) );
-    return ( *it ).second;
-    //return angle_to_lux[ angle_round ];
+
+    // Linear interpolation of the two closest angles.
+    std::map<float, float>::iterator it = angle_to_lux.lower_bound( to_degrees( solar_alt ) );
+
+    const float angle_greater = ( *it ).first;
+    const float lux_greater = ( *it ).second;
+    it--;
+    const float angle_smaller = ( *it ).first;
+    const float lux_smaller = ( *it ).second;
+
+    return lux_greater + ( to_degrees( solar_alt ) - angle_smaller ) * ( lux_greater - lux_smaller ) /
+           ( angle_greater - angle_smaller );
 }
 
 float sun_moon_light_at( const time_point &p )

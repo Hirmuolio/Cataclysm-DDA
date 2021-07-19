@@ -9238,8 +9238,10 @@ cata::optional<int> iuse::weather_tool( player *p, item *it, bool, const tripoin
 
 cata::optional<int> iuse::lux_meter( player *p, item *, bool, const tripoint &pos )
 {
-    p->add_msg_if_player( m_neutral, _( "The illumination is %.1f lux" ),
-                          sun_light_at( calendar::turn ) );
+    const std::pair<units::angle, units::angle> sun_position = sun_azimuth_altitude( calendar::turn,
+            location_boston );
+    p->add_msg_if_player( m_neutral, _( "The illumination is %.1f lux. Sun at %.1f°" ),
+                          sun_light_at( calendar::turn ), to_degrees( sun_position.second ) );
 
     return 0;
 }
