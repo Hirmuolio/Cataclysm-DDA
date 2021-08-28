@@ -890,14 +890,13 @@ class item : public visitable
          * Update temperature for things like food
          * Update rot for things that perish
          * All items that rot also have temperature
-         * @param insulation Amount of insulation item has from surroundings
          * @param pos The current position
          * @param carrier The current carrier
          * @param flag to specify special temperature situations
          * @return true if the item is fully rotten and is ready to be removed
          */
-        bool process_temperature_rot( float insulation, const tripoint &pos, Character *carrier,
-                                      temperature_flag flag = temperature_flag::NORMAL, float spoil_modifier = 1.0f );
+        bool process_temperature_rot( const tripoint &pos, Character *carrier,
+                                      temperature_flag flag = temperature_flag::NORMAL );
 
         /** Set the item to HOT and resets last_temp_check */
         void heat_up();
@@ -1201,15 +1200,12 @@ class item : public visitable
          * @param pos The location of the item on the map, same system as
          * @ref player::pos used. If the item is carried, it should be the
          * location of the carrier.
-         * @param activate Whether the item should be activated (true), or
-         * processed as an active item.
-         * @param spoil_multiplier_parent is the spoilage multiplier passed down from any parent item
          * @return true if the item has been destroyed by the processing. The caller
          * should than delete the item wherever it was stored.
          * Returns false if the item is not destroyed.
          */
-        bool process( Character *carrier, const tripoint &pos, float insulation = 1,
-                      temperature_flag flag = temperature_flag::NORMAL, float spoil_multiplier_parent = 1.0f );
+        bool process( Character *carrier, const tripoint &pos,
+                      temperature_flag flag = temperature_flag::NORMAL );
 
         /**
          * Gets the point (vehicle tile) the cable is connected to.
@@ -1293,6 +1289,9 @@ class item : public visitable
         float get_specific_heat_solid() const;
         float get_latent_heat() const;
         float get_freeze_point() const; // Celsius
+		
+		float get_spoil_modifier();
+		float get_thermal_insulation();
 
         // If this is food, returns itself.  If it contains food, return that
         // contents.  Otherwise, returns nullptr.
@@ -2378,8 +2377,8 @@ class item : public visitable
         bool use_amount_internal( const itype_id &it, int &quantity, std::list<item> &used,
                                   const std::function<bool( const item & )> &filter = return_true<item> );
         const use_function *get_use_internal( const std::string &use_name ) const;
-        bool process_internal( Character *carrier, const tripoint &pos, float insulation = 1,
-                               temperature_flag flag = temperature_flag::NORMAL, float spoil_modifier = 1.0f );
+        bool process_internal( Character *carrier, const tripoint &pos,
+                               temperature_flag flag = temperature_flag::NORMAL );
         void iterate_covered_body_parts_internal( side s,
                 std::function<void( const bodypart_str_id & )> cb ) const;
         /**

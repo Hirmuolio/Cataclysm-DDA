@@ -26,7 +26,7 @@ TEST_CASE( "Item spawns with right thermal attributes" )
     CHECK( D.specific_energy == -10 );
 
     set_map_temperature( 122 );
-    D.process_temperature_rot( 1, tripoint_zero, nullptr );
+    D.process_temperature_rot( tripoint_zero, nullptr );
 
     CHECK( D.temperature == Approx( 323.15 * 100000 ).margin( 1 ) );
 }
@@ -62,8 +62,8 @@ TEST_CASE( "Rate of temperature change" )
 
         set_map_temperature( 131 ); // 55 C
 
-        water1.process_temperature_rot( 1, tripoint_zero, nullptr );
-        water2.process_temperature_rot( 1, tripoint_zero, nullptr );
+        water1.process_temperature_rot( tripoint_zero, nullptr );
+        water2.process_temperature_rot( tripoint_zero, nullptr );
 
         // 55 C
         CHECK( water1.temperature == Approx( 328.15 * 100000 ).margin( 1 ) );
@@ -71,18 +71,18 @@ TEST_CASE( "Rate of temperature change" )
         set_map_temperature( 68 ); // 20C
 
         calendar::turn += 11_minutes;
-        water1.process_temperature_rot( 1, tripoint_zero, nullptr );
+        water1.process_temperature_rot( tripoint_zero, nullptr );
 
         calendar::turn += 20_minutes;
-        water1.process_temperature_rot( 1, tripoint_zero, nullptr );
+        water1.process_temperature_rot(  tripoint_zero, nullptr );
 
         calendar::turn += 29_minutes;
-        water1.process_temperature_rot( 1, tripoint_zero, nullptr );
-        water2.process_temperature_rot( 1, tripoint_zero, nullptr );
+        water1.process_temperature_rot( tripoint_zero, nullptr );
+        water2.process_temperature_rot( tripoint_zero, nullptr );
 
         calendar::turn += 15_minutes;
-        water1.process_temperature_rot( 1, tripoint_zero, nullptr );
-        water2.process_temperature_rot( 1, tripoint_zero, nullptr );
+        water1.process_temperature_rot( tripoint_zero, nullptr );
+        water2.process_temperature_rot( tripoint_zero, nullptr );
 
         // about 29.6 C
         CHECK( water1.temperature == Approx( 30271802 ).margin( 1 ) );
@@ -102,8 +102,8 @@ TEST_CASE( "Rate of temperature change" )
 
         set_map_temperature( 122 ); //50 C
 
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
-        meat2.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
+        meat2.process_temperature_rot( tripoint_zero, nullptr );
 
         // 50 C
         CHECK( meat1.temperature == Approx( 323.15 * 100000 ).margin( 1 ) );
@@ -112,24 +112,24 @@ TEST_CASE( "Rate of temperature change" )
         set_map_temperature( -4 ); // -20 C
 
         calendar::turn += 15_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
-        meat2.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
+        meat2.process_temperature_rot( tripoint_zero, nullptr );
 
         // about 34.6 C
         CHECK( meat1.temperature == Approx( 30778338 ).margin( 1 ) );
         CHECK( !meat1.has_own_flag( flag_HOT ) );
 
         calendar::turn += 11_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
         calendar::turn += 11_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
 
         calendar::turn += 30_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
-        meat2.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
+        meat2.process_temperature_rot( tripoint_zero, nullptr );
         calendar::turn += 11_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
-        meat2.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
+        meat2.process_temperature_rot( tripoint_zero, nullptr );
 
         // 0C
         // not frozen
@@ -139,11 +139,11 @@ TEST_CASE( "Rate of temperature change" )
         CHECK( !meat2.has_own_flag( flag_FROZEN ) );
 
         calendar::turn += 60_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
-        meat2.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
+        meat2.process_temperature_rot( tripoint_zero, nullptr );
         calendar::turn += 60_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
-        meat2.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
+        meat2.process_temperature_rot( tripoint_zero, nullptr );
 
         // 0C
         // frozen
@@ -154,16 +154,16 @@ TEST_CASE( "Rate of temperature change" )
         CHECK( meat1.specific_energy == Approx( meat2.specific_energy ).margin( 1 ) );
 
         calendar::turn += 11_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
         calendar::turn += 20_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
 
         calendar::turn += 20_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
-        meat2.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
+        meat2.process_temperature_rot( tripoint_zero, nullptr );
         calendar::turn += 50_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
-        meat2.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
+        meat2.process_temperature_rot( tripoint_zero, nullptr );
 
         // about -5.2 C
         // frozen
@@ -189,8 +189,8 @@ TEST_CASE( "Rate of temperature change" )
 
         set_map_temperature( -4 ); // -20 C
 
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
-        meat2.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
+        meat2.process_temperature_rot( tripoint_zero, nullptr );
 
         // -20 C
         CHECK( meat1.temperature == Approx( 253.15 * 100000 ).margin( 1 ) );
@@ -199,19 +199,19 @@ TEST_CASE( "Rate of temperature change" )
         set_map_temperature( 68 ); // 20 C
 
         calendar::turn += 11_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
         // about -9.3 C
         CHECK( meat1.temperature == Approx( 26389390 ).margin( 1 ) );
 
         calendar::turn += 11_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
 
         calendar::turn += 11_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
 
         calendar::turn += 20_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
-        meat2.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
+        meat2.process_temperature_rot( tripoint_zero, nullptr );
 
         // 0C
         // same temp
@@ -222,12 +222,12 @@ TEST_CASE( "Rate of temperature change" )
         CHECK( meat2.has_own_flag( flag_FROZEN ) );
 
         calendar::turn += 45_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
-        meat2.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
+        meat2.process_temperature_rot( tripoint_zero, nullptr );
 
         calendar::turn += 45_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
-        meat2.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
+        meat2.process_temperature_rot( tripoint_zero, nullptr );
 
         // 0C
         // same temp
@@ -237,16 +237,16 @@ TEST_CASE( "Rate of temperature change" )
         CHECK( !meat1.has_own_flag( flag_FROZEN ) );
 
         calendar::turn += 11_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
         calendar::turn += 20_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
 
         calendar::turn += 20_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
-        meat2.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
+        meat2.process_temperature_rot( tripoint_zero, nullptr );
         calendar::turn += 50_minutes;
-        meat1.process_temperature_rot( 1, tripoint_zero, nullptr );
-        meat2.process_temperature_rot( 1, tripoint_zero, nullptr );
+        meat1.process_temperature_rot( tripoint_zero, nullptr );
+        meat2.process_temperature_rot( tripoint_zero, nullptr );
 
         // about 2.2 C
         CHECK( meat1.temperature == Approx( 27532468 ).margin( 1 ) );
@@ -265,21 +265,21 @@ TEST_CASE( "Temperature controlled location" )
 
         set_map_temperature( 0 ); // -17 C
 
-        water1.process_temperature_rot( 1, tripoint_zero, nullptr,
+        water1.process_temperature_rot( tripoint_zero, nullptr,
                                         temperature_flag::HEATER );
 
         CHECK( water1.temperature == Approx( 100000 * temp_to_kelvin( temperatures::normal ) ).margin(
                    1 ) );
 
         calendar::turn += 15_minutes;
-        water1.process_temperature_rot( 1, tripoint_zero, nullptr,
+        water1.process_temperature_rot( tripoint_zero, nullptr,
                                         temperature_flag::HEATER );
 
         CHECK( water1.temperature == Approx( 100000 * temp_to_kelvin( temperatures::normal ) ).margin(
                    1 ) );
 
         calendar::turn += 2_hours + 3_minutes;
-        water1.process_temperature_rot( 1, tripoint_zero, nullptr,
+        water1.process_temperature_rot( tripoint_zero, nullptr,
                                         temperature_flag::HEATER );
 
         CHECK( water1.temperature == Approx( 100000 * temp_to_kelvin( temperatures::normal ) ).margin(
