@@ -1451,6 +1451,7 @@ ret_val<item_pocket::contain_code> item_pocket::insert_item( const item &it )
             ret_val<item_pocket::contain_code>::make_success() : can_contain( it );
     if( ret.success() ) {
         contents.push_back( it );
+		it.parent_item = 
     }
     restack();
     return ret;

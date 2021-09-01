@@ -2450,6 +2450,8 @@ class item : public visitable
 
     private:
         item_contents contents;
+		item *parent_item = nullptr;
+		
         /** `true` if item has any of the flags that require processing in item::process_internal.
          * This flag is reset to `true` if item tags are changed.
          */
@@ -2522,6 +2524,8 @@ class item : public visitable
         // encumbrance depending on their content.
         // This not part serialized or compared on purpose!
         bool encumbrance_update_ = false;
+		
+		const item *get_parent() const;
 
         item_contents &get_contents() {
             return contents;

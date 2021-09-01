@@ -8894,6 +8894,12 @@ void item::reload_option::qty( int val )
     qty_ = std::max( qty_, 1 );
 
 }
+
+const item *item::get_parent() const
+{
+    return parent_item;
+}
+
 const item *item::reload_option::getParent() const
 {
     return parent;
