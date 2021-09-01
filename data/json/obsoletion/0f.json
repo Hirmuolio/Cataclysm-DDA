@@ -83,5 +83,421 @@
     "id": "adv_UPS_off",
     "type": "MIGRATION",
     "replace": "UPS_off"
+  },
+  {
+    "id": "leaf_spring",
+    "type": "MIGRATION",
+    "replace": "scrap"
+  },
+  {
+    "id": "mre_accessory",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_dessert",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_chilibeans_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_bbqbeef_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_chickennoodle_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_spaghetti_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_chicken_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_beeftaco_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_beef_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_meatball_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_beefstew_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_chilimac_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_veggy_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_macaronimarinara_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_sfettuccine_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_ratatouille_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_cheesetort_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_mushroomfettuccine_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_mexicanchickenstew_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_chickenburritobowl_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_maplesausage_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_ravioli_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_pepperjackbeef_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_hashbrownbacon_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_lemontuna_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_asianbeef_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_chickenpesto_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_southwestbeef_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_hotdog_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "mre_smallbox",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "survival_kit",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "premium_survival_kit",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "radio_car_box",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "makeshift_grenade",
+    "type": "MIGRATION",
+    "replace": "homemade_bomb"
+  },
+  {
+    "id": "makeshift_grenade_act",
+    "type": "MIGRATION",
+    "replace": "homemade_bomb_act"
+  },
+  {
+    "id": "ifak",
+    "type": "MIGRATION",
+    "replace": "box_small"
+  },
+  {
+    "id": "matchbomb",
+    "type": "MIGRATION",
+    "replace": "homemade_bomb"
+  },
+  {
+    "id": "matchbomb_act",
+    "type": "MIGRATION",
+    "replace": "homemade_bomb_act"
+  },
+  {
+    "id": "tool_black_powder_bomb",
+    "type": "MIGRATION",
+    "replace": "homemade_bomb"
+  },
+  {
+    "id": "tool_black_powder_bomb_act",
+    "type": "MIGRATION",
+    "replace": "homemade_bomb_act"
+  },
+  {
+    "id": "hydrangea_flower",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "hydrangea_bud",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "tulip_flower",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "tulip_bud",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "spurge_flower",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "spurge_bud",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "black_eyed_susan_flower",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "black_eyed_susan_bud",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "lily_flower",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "lily_bud",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "lotus_flower",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "lotus_bud",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "lilac_flower",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "lilac_bud",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "rose_bud",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "dahlia_bud",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "rose_flower",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "bluebell_flower",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "dahlia_flower",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "poppy_flower",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "bluebell_bud",
+    "type": "MIGRATION",
+    "replace": "raw_dandelion"
+  },
+  {
+    "id": "hobo_stove_on",
+    "type": "MIGRATION",
+    "replace": "hobo_stove",
+    "//": "complains about tinder not fitting in"
+  },
+  {
+    "id": "40mm_flare",
+    "type": "MIGRATION",
+    "replace": "40x46mm_m433"
+  },
+  {
+    "id": "40mm_flashbang",
+    "type": "MIGRATION",
+    "replace": "40x46mm_m433"
+  },
+  {
+    "id": "40mm_incendiary",
+    "type": "MIGRATION",
+    "replace": "40x46mm_m433"
+  },
+  {
+    "id": "40mm_smoke",
+    "type": "MIGRATION",
+    "replace": "40x46mm_m433"
+  },
+  {
+    "id": "40mm_slug",
+    "type": "MIGRATION",
+    "replace": "40x46mm_m433"
+  },
+  {
+    "id": "schematics_chickenbot",
+    "type": "MIGRATION",
+    "replace": "ZSG"
+  },
+  {
+    "id": "schematics_tankbot",
+    "type": "MIGRATION",
+    "replace": "ZSG"
+  },
+  {
+    "id": "schematics_tripod",
+    "type": "MIGRATION",
+    "replace": "ZSG"
+  },
+  {
+    "id": "bot_chickenbot",
+    "type": "MIGRATION",
+    "replace": "scrap"
+  },
+  {
+    "id": "bot_tankbot",
+    "type": "MIGRATION",
+    "replace": "scrap"
+  },
+  {
+    "id": "broken_chickenbot",
+    "type": "MIGRATION",
+    "replace": "scrap"
+  },
+  {
+    "id": "bot_tripod",
+    "type": "MIGRATION",
+    "replace": "scrap"
+  },
+  {
+    "id": "broken_tripod",
+    "type": "MIGRATION",
+    "replace": "scrap"
+  },
+  {
+    "id": "broken_tankbot",
+    "type": "MIGRATION",
+    "replace": "scrap"
+  },
+  {
+    "id": "tripod_chassis",
+    "type": "MIGRATION",
+    "replace": "scrap"
+  },
+  {
+    "id": "chickenbot_chassis",
+    "type": "MIGRATION",
+    "replace": "scrap"
+  },
+  {
+    "id": "tankbot_chassis",
+    "type": "MIGRATION",
+    "replace": "scrap"
+  },
+  {
+    "id": "spidery_legs_big",
+    "type": "MIGRATION",
+    "replace": "scrap"
+  },
+  {
+    "id": "rock_pot",
+    "type": "MIGRATION",
+    "replace": "iron_pot"
   }
 ]
