@@ -1,0 +1,7 @@
+[
+  {
+    "id": "toolbox",
+    "type": "MIGRATION",
+    "replace": "toolbox_empty"
+  }
+]
