@@ -475,7 +475,7 @@
   {
     "id": "1st_aid_survivor",
     "type": "MIGRATION",
-    "replace": "1st_aid"
+    "replace": "adhesive_bandages"
   },
   {
     "id": "mushroom_poison",

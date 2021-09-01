@@ -3,5 +3,85 @@
     "id": "toolbox",
     "type": "MIGRATION",
     "replace": "toolbox_empty"
+  },
+  {
+    "id": "1st_aid",
+    "type": "MIGRATION",
+    "replace": "adhesive_bandages"
+  },
+  {
+    "id": "tool_rdx_charge",
+    "type": "MIGRATION",
+    "replace": "military_explosive_half_barrel_bomb"
+  },
+  {
+    "id": "tool_rdx_charge_act",
+    "type": "MIGRATION",
+    "replace": "military_explosive_half_barrel_bomb_act"
+  },
+  {
+    "id": "nail_bomb",
+    "type": "MIGRATION",
+    "replace": "homemade_bomb"
+  },
+  {
+    "id": "nail_bomb_act",
+    "type": "MIGRATION",
+    "replace": "homemade_bomb_act"
+  },
+  {
+    "id": "fragment_bomb",
+    "type": "MIGRATION",
+    "replace": "homemade_bomb"
+  },
+  {
+    "id": "fragment_bomb_act",
+    "type": "MIGRATION",
+    "replace": "homemade_bomb_act"
+  },
+  {
+    "id": "tool_anfo_charge",
+    "type": "MIGRATION",
+    "replace": "military_explosive_half_barrel_bomb"
+  },
+  {
+    "id": "tool_anfo_charge_act",
+    "type": "MIGRATION",
+    "replace": "military_explosive_half_barrel_bomb_act"
+  },
+  {
+    "id": "fertilizer_bomb",
+    "type": "MIGRATION",
+    "replace": "homemade_bomb"
+  },
+  {
+    "id": "fertilizer_bomb_act",
+    "type": "MIGRATION",
+    "replace": "homemade_bomb_act"
+  },
+  {
+    "id": "washcloth",
+    "type": "MIGRATION",
+    "replace": "rag"
+  },
+  {
+    "id": "tool_black_powder_charge",
+    "type": "MIGRATION",
+    "replace": "homemade_bomb"
+  },
+  {
+    "id": "tool_black_powder_charge_act",
+    "type": "MIGRATION",
+    "replace": "homemade_bomb_act"
+  },
+  {
+    "id": "toolbox_workshop",
+    "type": "MIGRATION",
+    "replace": "toolbox_workshop_empty"
+  },
+  {
+    "id": "adv_UPS_off",
+    "type": "MIGRATION",
+    "replace": "UPS_off"
   }
 ]

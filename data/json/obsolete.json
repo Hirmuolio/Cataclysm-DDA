@@ -229,22 +229,6 @@
     "pocket_data": [ { "pocket_type": "MAGAZINE", "ammo_restriction": { "223": 1 } } ]
   },
   {
-    "id": "1st_aid",
-    "type": "GENERIC",
-    "category": "drugs",
-    "name": { "str": "first aid kit" },
-    "description": "A typical universal first aid kit, one you'd see in a car or in a household.  It contains a variety of common medical items stored in case of accidents and injuries.  Disassemble to get its content.",
-    "weight": "1750 g",
-    "volume": "1250 ml",
-    "price": 3000,
-    "price_postapoc": 3000,
-    "material": "plastic",
-    "symbol": "!",
-    "color": "red",
-    "use_action": "DISASSEMBLE",
-    "flags": [ "NO_REPAIR" ]
-  },
-  {
     "id": "bio_furnace",
     "type": "bionic",
     "name": { "str": "Internal Furnace" },
@@ -272,227 +256,6 @@
     "rating": "good"
   },
   {
-    "id": "tool_rdx_charge",
-    "type": "TOOL",
-    "category": "weapons",
-    "name": { "str": "RDX charge" },
-    "description": "This is a metal keg, filled with 50 liters worth of RDX and scrap metal.  Contains a core of primary explosive to ensure that the charge detonates completely and delivers its entire destructive power to everything in sight.",
-    "weight": "106600 g",
-    "volume": "50 L",
-    "price": 90000,
-    "to_hit": -5,
-    "bashing": 20,
-    "material": [ "steel", "plastic" ],
-    "symbol": "(",
-    "color": "red",
-    "explode_in_fire": true,
-    "explosion": {
-      "power": 6700,
-      "shrapnel": { "casing_mass": 50000, "fragment_mass": 0.1, "drop": "scrap", "recovery": 1 },
-      "//": "Fire exposure would destroy most of the RDX before the HMTD core triggered, resulting in a far smaller blast (relatively speaking)."
-    },
-    "use_action": {
-      "target": "tool_rdx_charge_act",
-      "msg": "You light the fuse on the explosive charge.  Clear the area!",
-      "target_charges": 100,
-      "active": true,
-      "menu_text": "Light fuse",
-      "type": "transform"
-    },
-    "flags": [ "RADIO_MODABLE", "RADIO_INVOKE_PROC", "BOMB" ]
-  },
-  {
-    "id": "nail_bomb",
-    "type": "TOOL",
-    "name": { "str": "nail bomb" },
-    "description": "A crude and bulky improvised bomb.  Made from a container, an explosive surrounded by nails and a fuse.  Use this item to light the fuse.  You will then have five turns before it explodes; throwing it would be a good idea.",
-    "category": "weapons",
-    "weight": "470 g",
-    "volume": "500 ml",
-    "bashing": 4,
-    "to_hit": 1,
-    "price": 900,
-    "price_postapoc": 500,
-    "material": [ "aluminum", "iron" ],
-    "symbol": "*",
-    "color": "green",
-    "explode_in_fire": true,
-    "explosion": { "power": 175, "shrapnel": { "casing_mass": 160, "fragment_mass": 0.4, "drop": "nail", "recovery": 16 } },
-    "use_action": {
-      "target": "nail_bomb_act",
-      "msg": "You light the fuse on the %s.",
-      "target_charges": 5,
-      "active": true,
-      "need_fire": 1,
-      "menu_text": "Light fuse",
-      "type": "transform"
-    },
-    "flags": [ "RADIO_MODABLE", "RADIO_INVOKE_PROC", "BOMB", "NO_REPAIR" ]
-  },
-  {
-    "id": "nail_bomb_act",
-    "copy-from": "nail_bomb",
-    "type": "TOOL",
-    "name": { "str": "active nail bomb" },
-    "description": "A crude and bulky improvised bomb.  Made from a container, an explosive surrounded by nails and a fuse.  The fuse has been lit, you should throw it.",
-    "price": 0,
-    "price_postapoc": 0,
-    "initial_charges": 5,
-    "max_charges": 5,
-    "turns_per_charge": 1,
-    "use_action": {
-      "type": "explosion",
-      "no_deactivate_msg": "You've already lit the fuse - what are you waiting for?",
-      "sound_volume": 0,
-      "sound_msg": "ssss…",
-      "explosion": { "power": 175, "shrapnel": { "casing_mass": 160, "fragment_mass": 0.4, "drop": "nail", "recovery": 16 } }
-    },
-    "flags": [ "BOMB", "TRADER_AVOID", "NO_REPAIR" ]
-  },
-  {
-    "id": "fragment_bomb",
-    "type": "TOOL",
-    "name": { "str": "fragment bomb" },
-    "description": "A crude and bulky improvised bomb.  Made from a container, an explosive surrounded by small pieces of metal and a fuse.  Use this item to light the fuse.  You will then have five turns before it explodes; throwing it would be a good idea.",
-    "category": "weapons",
-    "weight": "470 g",
-    "volume": "500 ml",
-    "bashing": 4,
-    "to_hit": 1,
-    "price": 900,
-    "price_postapoc": 750,
-    "material": [ "aluminum", "iron" ],
-    "symbol": "*",
-    "color": "green",
-    "explode_in_fire": true,
-    "explosion": { "power": 175, "shrapnel": { "casing_mass": 240, "fragment_mass": 0.4 } },
-    "use_action": {
-      "target": "fragment_bomb_act",
-      "msg": "You light the fuse on the %s.",
-      "target_charges": 5,
-      "active": true,
-      "need_fire": 1,
-      "menu_text": "Light fuse",
-      "type": "transform"
-    },
-    "flags": [ "RADIO_MODABLE", "RADIO_INVOKE_PROC", "BOMB", "NO_REPAIR" ]
-  },
-  {
-    "id": "fragment_bomb_act",
-    "copy-from": "fragment_bomb",
-    "type": "TOOL",
-    "name": { "str": "active fragment bomb" },
-    "description": "A crude and bulky improvised bomb.  Made from a container, an explosive surrounded by small pieces of metal and a fuse.  The fuse has been lit, you should throw it.",
-    "price": 0,
-    "price_postapoc": 0,
-    "initial_charges": 5,
-    "max_charges": 5,
-    "turns_per_charge": 1,
-    "use_action": {
-      "type": "explosion",
-      "no_deactivate_msg": "You've already lit the fuse - what are you waiting for?",
-      "sound_volume": 0,
-      "sound_msg": "ssss…",
-      "explosion": { "power": 175, "shrapnel": { "casing_mass": 240, "fragment_mass": 0.4 } }
-    },
-    "flags": [ "BOMB", "TRADER_AVOID", "NO_REPAIR" ]
-  },
-  {
-    "id": "tool_rdx_charge_act",
-    "type": "TOOL",
-    "category": "weapons",
-    "name": { "str": "active RDX charge" },
-    "description": "This is a metal keg, filled with 50 liters worth of RDX and scrap metal.  The fuse has been lit and once it ignites the primary explosive, the charge will detonate and rain fire and steel on everything in sight.",
-    "weight": "106600 g",
-    "volume": "50 L",
-    "price": 0,
-    "to_hit": -5,
-    "bashing": 20,
-    "material": [ "steel", "plastic" ],
-    "symbol": "(",
-    "color": "light_red",
-    "initial_charges": 100,
-    "max_charges": 100,
-    "turns_per_charge": 1,
-    "explode_in_fire": true,
-    "explosion": {
-      "power": 6700,
-      "shrapnel": { "casing_mass": 50000, "fragment_mass": 0.1, "drop": "scrap", "recovery": 1 },
-      "//": "Fire exposure would destroy most of the RDX before the HMTD core triggered, resulting in a far smaller blast (relatively speaking)."
-    },
-    "use_action": {
-      "type": "explosion",
-      "sound_volume": 0,
-      "sound_msg": "Kshhh.",
-      "no_deactivate_msg": "You've already lit the fuse - clear the area immediately!",
-      "explosion": { "power": 67000, "shrapnel": { "casing_mass": 50000, "fragment_mass": 0.1, "drop": "shrapnel", "recovery": 1 } }
-    },
-    "flags": [ "BOMB", "TRADER_AVOID" ]
-  },
-  {
-    "id": "tool_anfo_charge",
-    "type": "TOOL",
-    "category": "weapons",
-    "name": { "str": "ANFO charge" },
-    "description": "This is a large metal keg filled with ANFO pellets and equipped with a dynamite primer.  Use this item to light the fuse.  You will then have twenty turns before it explodes and creates a large fireball.",
-    "weight": "77800 g",
-    "volume": "50 L",
-    "price": 75000,
-    "to_hit": -5,
-    "bashing": 12,
-    "material": [ "steel", "plastic" ],
-    "symbol": "*",
-    "color": "red",
-    "explode_in_fire": true,
-    "explosion": {
-      "power": 25000,
-      "//": "Fire would burn away/degrade some of the ANFO before the detonator would trigger.",
-      "shrapnel": 12600
-    },
-    "use_action": {
-      "target": "tool_anfo_charge_act",
-      "msg": "You light the fuse on the ANFO charge.  Run survivor, run!",
-      "target_charges": 100,
-      "active": true,
-      "need_fire": 1,
-      "menu_text": "Light fuse",
-      "type": "transform"
-    },
-    "flags": [ "RADIO_MODABLE", "RADIO_INVOKE_PROC", "BOMB" ]
-  },
-  {
-    "id": "tool_anfo_charge_act",
-    "type": "TOOL",
-    "category": "weapons",
-    "name": { "str": "active ANFO charge" },
-    "description": "This is a large metal keg filled with ANFO pellets and equipped with a dynamite primer.  The fuse has been lit - better run like hell!",
-    "weight": "77800 g",
-    "volume": "50 L",
-    "price": 0,
-    "to_hit": -5,
-    "bashing": 12,
-    "material": [ "steel", "plastic" ],
-    "symbol": "*",
-    "color": "light_red",
-    "initial_charges": 100,
-    "max_charges": 100,
-    "turns_per_charge": 1,
-    "explode_in_fire": true,
-    "explosion": { "power": 25000, "shrapnel": 12600 },
-    "use_action": {
-      "type": "explosion",
-      "sound_volume": 0,
-      "sound_msg": "Tick.",
-      "no_deactivate_msg": "You've already lit the fuse - run!",
-      "explosion": {
-        "power": 48900,
-        "//": "Fire exposure would burn away/degrade some of the ANFO before the detonator would trigger.",
-        "shrapnel": 12600
-      }
-    },
-    "flags": [ "BOMB", "TRADER_AVOID" ]
-  },
-  {
     "id": "bio_blaster",
     "copy-from": "bionic_general",
     "type": "BIONIC_ITEM",
@@ -500,32 +263,6 @@
     "description": "Your left arm has been replaced by a heavy-duty fusion blaster!  You may use your energy banks to fire a damaging heat ray.  However, you are unable to use or carry two-handed items, and your strength limits what you can use with your one hand.",
     "price": 220000,
     "difficulty": 3
-  },
-  {
-    "id": "fertilizer_bomb",
-    "type": "TOOL",
-    "category": "weapons",
-    "name": { "str": "fertilizer bomb" },
-    "description": "This is a volatile homemade explosive.  Use this item to light the fuse.  You will, of course, need a lighter or matches in your inventory to do this.  Shortly after lighting the fuse, this item will explode, so get away!",
-    "weight": "1133 g",
-    "volume": "750 ml",
-    "price": 0,
-    "to_hit": -3,
-    "bashing": 4,
-    "material": [ "plastic", "powder" ],
-    "symbol": "*",
-    "color": "red",
-    "explode_in_fire": true,
-    "explosion": { "power": 125 },
-    "use_action": {
-      "target": "fertilizer_bomb_act",
-      "msg": "You light the %s.",
-      "target_charges": 10,
-      "active": true,
-      "need_fire": 1,
-      "menu_text": "Light fuse",
-      "type": "transform"
-    }
   },
   {
     "id": "fertilizer_bomb_act",
@@ -799,19 +536,6 @@
     "damage_reduction": { "all": 18 }
   },
   {
-    "id": "washcloth",
-    "type": "TOOL",
-    "name": { "str": "washcloth" },
-    "description": "A piece of cloth that can be used for cleaning impervious surfaces.",
-    "weight": "80 g",
-    "volume": "250 ml",
-    "price": 0,
-    "material": [ "cotton" ],
-    "symbol": ",",
-    "color": "white",
-    "use_action": [ "WASH_HARD_ITEMS" ]
-  },
-  {
     "id": "fault_gun_clogged",
     "type": "fault",
     "name": { "str": "Dusty" },
@@ -842,57 +566,6 @@
     "color": "dark_gray",
     "acceptable_ammo": [ "plutonium" ],
     "capacity_multiplier": 2.0
-  },
-  {
-    "id": "tool_black_powder_charge",
-    "type": "TOOL",
-    "category": "weapons",
-    "name": { "str": "black gunpowder charge" },
-    "description": "This is a home-made explosive device, consisting of a large plastic jug filled with black gunpowder and scrap metal, equipped with a long fuse.  Use this item to light the fuse.  Should explode in a few minutes…",
-    "weight": "6500 g",
-    "volume": "4 L",
-    "price": 20000,
-    "to_hit": -2,
-    "material": [ "steel", "plastic" ],
-    "symbol": "*",
-    "color": "red",
-    "explode_in_fire": true,
-    "explosion": { "power": 2250, "shrapnel": { "casing_mass": 2000, "fragment_mass": 1, "drop": "scrap", "recovery": 20 } },
-    "use_action": {
-      "target": "tool_black_powder_charge_act",
-      "msg": "You light the fuse on the black gunpowder charge.  Get rid of it quickly!",
-      "target_charges": 20,
-      "active": true,
-      "menu_text": "Light fuse",
-      "type": "transform"
-    },
-    "flags": [ "RADIO_MODABLE", "RADIO_INVOKE_PROC", "BOMB" ]
-  },
-  {
-    "id": "tool_black_powder_charge_act",
-    "type": "TOOL",
-    "category": "weapons",
-    "name": { "str": "active black gunpowder charge" },
-    "description": "This is a home-made explosive device, consisting of a large plastic jug filled with black gunpowder and scrap metal, whose fuse has been lit, its final countdown starting.",
-    "weight": "6500 g",
-    "volume": "4 L",
-    "price": 0,
-    "to_hit": -2,
-    "material": [ "steel", "plastic" ],
-    "symbol": "*",
-    "color": "light_red",
-    "initial_charges": 20,
-    "max_charges": 20,
-    "turns_per_charge": 1,
-    "explode_in_fire": true,
-    "explosion": { "power": 2250, "shrapnel": { "casing_mass": 2000, "fragment_mass": 1, "drop": "scrap", "recovery": 20 } },
-    "use_action": {
-      "type": "explosion",
-      "sound_volume": 0,
-      "sound_msg": "Kshhh.",
-      "no_deactivate_msg": "You've already lit the fuse - run!",
-      "explosion": { "power": 2250, "shrapnel": { "casing_mass": 2000, "fragment_mass": 1, "drop": "scrap", "recovery": 20 } }
-    }
   },
   {
     "id": "bio_scent_vision",
@@ -1436,41 +1109,6 @@
     "obsolete": true
   },
   {
-    "id": "toolbox_workshop",
-    "type": "TOOL",
-    "name": { "str": "workshop toolbox", "str_pl": "workshop toolboxes" },
-    "description": "This is a stout metal box containing a complete tool kit suitable for most household maintenance and construction activities, as well as additional tools used in workshops for advanced fabrication jobs.",
-    "looks_like": "toolbox",
-    "weight": "3994 g",
-    "volume": "2500 ml",
-    "price": 14099,
-    "price_postapoc": 3250,
-    "to_hit": -2,
-    "bashing": 8,
-    "material": [ "steel" ],
-    "symbol": ";",
-    "color": "red",
-    "qualities": [
-      [ "CUT", 1 ],
-      [ "HAMMER", 3 ],
-      [ "SAW_M", 2 ],
-      [ "SAW_W", 2 ],
-      [ "AXE", 1 ],
-      [ "WRENCH", 2 ],
-      [ "SCREW", 1 ],
-      [ "PRY", 1 ],
-      [ "HAMMER_FINE", 1 ],
-      [ "SAW_M_FINE", 1 ],
-      [ "WRENCH_FINE", 1 ],
-      [ "SCREW_FINE", 1 ],
-      [ "BUTCHER", 11 ],
-      [ "FILE", 2 ],
-      [ "REAM", 2 ],
-      [ "VISE", 1 ]
-    ],
-    "use_action": [ "HAMMER", "CROWBAR" ]
-  },
-  {
     "id": "bio_shock_absorber",
     "type": "bionic",
     "name": { "str": "Kinetic Shock Absorbers" },
@@ -1509,32 +1147,6 @@
     ],
     "tools": [ [ [ "tongs", -1 ] ], [ [ "swage", -1 ] ], [ [ "surface_heat", 1, "LIST" ], [ "forge", 1 ], [ "oxy_torch", 1 ] ] ],
     "components": [ [ [ "copper", 1 ] ], [ [ "duct_tape", 1 ] ] ]
-  },
-  {
-    "id": "adv_UPS_off",
-    "type": "TOOL",
-    "name": { "str": "advanced UPS", "str_pl": "advanced UPS's" },
-    "description": "This is an advanced version of the unified power supply, or UPS.  This device has been significantly redesigned to provide better efficiency as well as to consume plutonium fuel batteries rather than regular batteries.  Sadly, its plutonium reactor can't be charged in UPS charging station.",
-    "weight": "453 g",
-    "volume": "2 L",
-    "price": 560000,
-    "price_postapoc": 3000,
-    "to_hit": -1,
-    "bashing": 8,
-    "material": [ "aluminum", "plastic" ],
-    "symbol": ";",
-    "color": "light_green",
-    "ammo": [ "battery" ],
-    "pocket_data": [
-      {
-        "pocket_type": "MAGAZINE_WELL",
-        "holster": true,
-        "max_contains_volume": "20 L",
-        "max_contains_weight": "20 kg",
-        "item_restriction": [ "heavy_atomic_battery_cell" ]
-      }
-    ],
-    "flags": [ "IS_UPS" ]
   },
   {
     "type": "GENERIC",
