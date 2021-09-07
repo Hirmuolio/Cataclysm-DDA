@@ -1290,8 +1290,8 @@ class item : public visitable
         float get_latent_heat() const;
         float get_freeze_point() const; // Celsius
 
-        float get_spoil_modifier();
-        float get_thermal_insulation();
+        float get_spoil_modifier() const;
+        float get_thermal_insulation() const;
 
         // If this is food, returns itself.  If it contains food, return that
         // contents.  Otherwise, returns nullptr.

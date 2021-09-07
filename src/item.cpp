@@ -7294,9 +7294,9 @@ float item::get_freeze_point() const
     return made_of_types()[0]->freeze_point();
 }
 
-float get_spoil_modifier()
+float item::get_spoil_modifier() const
 {
-    return 1;
+    return 1.f;
     // item parent =
     // if( parent ) {
     //spoil multipliers on pockets are not additive or multiplicative, they choose the best
@@ -7305,9 +7305,9 @@ float get_spoil_modifier()
     // return spoil_multiplier();
 }
 
-float get_thermal_insulation()
+float item::get_thermal_insulation() const
 {
-    return 1;
+    return 1.f;
     // item parent =
     // if( parent ) {
     // return type.insulation_factor * parent.get_thermal_insulation();
@@ -9895,12 +9895,8 @@ bool item::process_temperature_rot( const tripoint &pos,
         return false;
     }
 
-    float insulation = 1.f;
-    float spoil_modifier = 1.f;
-    // if( parent ) {
-    // insulation = parent.get_thermal_insulation();
-    // spoil_modifier = parent.get_spoil_modifier();
-    // }
+    float insulation = get_thermal_insulation();
+    float spoil_modifier = get_spoil_modifier();
 
     int temp = get_weather().get_temperature( pos );
 
