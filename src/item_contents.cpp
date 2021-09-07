@@ -1479,13 +1479,13 @@ void item_contents::remove_internal( const std::function<bool( item & )> &filter
     }
 }
 
-void item_contents::process( Character *carrier, const tripoint &pos, float insulation,
-                             temperature_flag flag, float spoil_multiplier_parent )
+void item_contents::process( Character *carrier, const tripoint &pos,
+                             temperature_flag flag )
 {
     for( item_pocket &pocket : contents ) {
         // no reason to check mods, they won't rot
         if( !pocket.is_type( item_pocket::pocket_type::MOD ) ) {
-            pocket.process( carrier, pos, insulation, flag, spoil_multiplier_parent );
+            pocket.process( carrier, pos, flag );
         }
     }
 }

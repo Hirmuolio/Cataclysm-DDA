@@ -7294,6 +7294,27 @@ float item::get_freeze_point() const
     return made_of_types()[0]->freeze_point();
 }
 
+float get_spoil_modifier()
+{
+    return 1;
+    // item parent =
+    // if( parent ) {
+    //spoil multipliers on pockets are not additive or multiplicative, they choose the best
+    // return std::min(spoil_multiplier(), parent.get_spoil_modifier());
+    // }
+    // return spoil_multiplier();
+}
+
+float get_thermal_insulation()
+{
+    return 1;
+    // item parent =
+    // if( parent ) {
+    // return type.insulation_factor * parent.get_thermal_insulation();
+    // }
+    // return type.insulation_factor;
+}
+
 template<typename Item>
 static Item *get_food_impl( Item *it )
 {
@@ -9855,8 +9876,8 @@ void item::apply_freezerburn()
     set_flag( flag_MUSHY );
 }
 
-bool item::process_temperature_rot( float insulation, const tripoint &pos,
-                                    Character *carrier, const temperature_flag flag, float spoil_modifier )
+bool item::process_temperature_rot( const tripoint &pos,
+                                    Character *carrier, const temperature_flag flag )
 {
     const time_point now = calendar::turn;
 
@@ -9873,6 +9894,13 @@ bool item::process_temperature_rot( float insulation, const tripoint &pos,
     if( now - last_temp_check < smallest_interval && specific_energy > 0 ) {
         return false;
     }
+
+    float insulation = 1.f;
+    float spoil_modifier = 1.f;
+    // if( parent ) {
+    // insulation = parent.get_thermal_insulation();
+    // spoil_modifier = parent.get_spoil_modifier();
+    // }
 
     int temp = get_weather().get_temperature( pos );
 
@@ -10688,13 +10716,12 @@ bool item::process_blackpowder_fouling( Character *carrier )
     return false;
 }
 
-bool item::process( Character *carrier, const tripoint &pos, float insulation,
-                    temperature_flag flag, float spoil_multiplier_parent )
+bool item::process( Character *carrier, const tripoint &pos,
+                    temperature_flag flag )
 {
     process_relic( carrier, pos );
-    contents.process( carrier, pos, type->insulation_factor * insulation, flag,
-                      spoil_multiplier_parent );
-    return process_internal( carrier, pos, insulation, flag, spoil_multiplier_parent );
+    contents.process( carrier, pos, flag );
+    return process_internal( carrier, pos, flag );
 }
 
 void item::set_last_temp_check( const time_point &pt )
@@ -10702,8 +10729,7 @@ void item::set_last_temp_check( const time_point &pt )
     last_temp_check = pt;
 }
 
-bool item::process_internal( Character *carrier, const tripoint &pos,
-                             float insulation, const temperature_flag flag, float spoil_modifier )
+bool item::process_internal( Character *carrier, const tripoint &pos, const temperature_flag flag )
 {
     if( ethereal ) {
         if( !has_var( "ethereal" ) ) {
@@ -10802,7 +10828,7 @@ bool item::process_internal( Character *carrier, const tripoint &pos,
         }
         // All foods that go bad have temperature
         if( has_temperature() &&
-            process_temperature_rot( insulation, pos, carrier, flag, spoil_modifier ) ) {
+            process_temperature_rot( pos, carrier, flag ) ) {
             if( is_comestible() ) {
                 here.rotten_item_spawn( *this, pos );
             }
