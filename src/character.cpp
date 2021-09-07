@@ -10267,11 +10267,11 @@ void Character::process_items()
     }
 
     std::vector<item_location> removed_items;
-    for( item_location it : top_items_loc() ) {
+    for( item_location it : all_items_loc() ) {
         if( !it ) {
             continue;
         }
-        if( it->needs_processing() ) {
+        if( it->needs_processing() && it.get_item() != &weapon ) {
             if( it->process( this, pos() ) ) {
                 it->spill_contents( pos() );
                 removed_items.push_back( it );
