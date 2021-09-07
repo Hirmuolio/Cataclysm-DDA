@@ -4529,7 +4529,7 @@ static bool process_map_items( item_stack &items, safe_reference<item> &item_ref
                                const float spoil_multiplier )
 {
     if( item_ref->process( nullptr, location, flag ) ) {
-		// TODO: FIX INSULATION FROM MAP SOURCES
+        // TODO: FIX INSULATION FROM MAP SOURCES
         // Item is to be destroyed so erase it from the map stack
         // unless it was already destroyed by processing.
         if( item_ref ) {
