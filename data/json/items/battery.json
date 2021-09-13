@@ -18,7 +18,7 @@
   },
   {
     "id": "light_minus_battery_cell",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "category": "spare_parts",
     "name": { "str": "ultra-light battery", "str_pl": "ultra-light batteries" },
     "description": "This is a light battery cell designed for small size over everything else.  It retains its universal compatibility, though.",
@@ -34,11 +34,11 @@
     "capacity": 50,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "RECHARGE", "BATTERY_ULTRA_LIGHT" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 50 } } ]
+    "max_capacity": "50 kJ"
   },
   {
     "id": "light_minus_atomic_battery_cell",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "category": "spare_parts",
     "name": { "str": "ultra-light plutonium fuel battery", "str_pl": "ultra-light plutonium fuel batteries" },
     "description": "This battery uses a thin plutonium-244 rod to stabilize an exotic nanocompound.  It is universally compatible with small devices.  Although it stores a huge amount of power, it cannot be recharged.",
@@ -55,11 +55,11 @@
     "capacity": 500,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "LEAK_DAM", "RADIOACTIVE", "BATTERY_ULTRA_LIGHT" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 500 } } ]
+    "max_capacity": "500 kJ"
   },
   {
     "id": "light_minus_disposable_cell",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "category": "spare_parts",
     "name": { "str": "ultra-light disposable battery", "str_pl": "ultra-light disposable batteries" },
     "description": "This is a light battery cell designed for small size over everything else.  It retains its universal compatibility, though.  The battery's chemistry means that it has a very high capacity, but cannot be recharged.",
@@ -75,11 +75,11 @@
     "capacity": 100,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "BATTERY_ULTRA_LIGHT" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 100 } } ]
+    "max_capacity": "100 kJ"
   },
   {
     "id": "light_battery_cell",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "category": "spare_parts",
     "name": { "str": "light battery", "str_pl": "light batteries" },
     "description": "This is a light battery cell, universally compatible with all kinds of small devices.",
@@ -95,11 +95,11 @@
     "capacity": 100,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "RECHARGE", "BATTERY_LIGHT" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 100 } } ]
+    "max_capacity": "100 kJ"
   },
   {
     "id": "light_plus_battery_cell",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "category": "spare_parts",
     "name": { "str": "light battery (high-capacity)", "str_pl": "light batteries (high-capacity)" },
     "description": "This is a high-capacity light battery cell, universally compatible with all kinds of small devices.",
@@ -114,11 +114,11 @@
     "capacity": 150,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "RECHARGE", "BATTERY_LIGHT" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 150 } } ]
+    "max_capacity": "150 kJ"
   },
   {
     "id": "light_atomic_battery_cell",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "category": "spare_parts",
     "name": { "str": "light plutonium fuel battery", "str_pl": "light plutonium fuel batteries" },
     "description": "This battery uses a thin plutonium-244 rod to stabilize an exotic nanocompound.  It is universally compatible with all kinds of personal electronic devices.  Although it stores a huge amount of power, it cannot be recharged.",
@@ -135,11 +135,11 @@
     "capacity": 1000,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "LEAK_DAM", "RADIOACTIVE", "BATTERY_LIGHT" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 1000 } } ]
+    "max_capacity": "1000 kJ"
   },
   {
     "id": "light_disposable_cell",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "category": "spare_parts",
     "name": { "str": "light disposable battery", "str_pl": "light disposable batteries" },
     "description": "This is a light battery cell, universally compatible with all kinds of small devices.  The battery's chemistry means that it has a very high capacity, but cannot be recharged.",
@@ -155,11 +155,11 @@
     "capacity": 300,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "BATTERY_LIGHT" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 300 } } ]
+    "max_capacity": "300 kJ"
   },
   {
     "id": "medium_battery_cell",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "category": "spare_parts",
     "name": { "str": "medium battery", "str_pl": "medium batteries" },
     "description": "This is a medium battery cell, universally compatible with all kinds of appliances and power tools.",
@@ -175,11 +175,11 @@
     "capacity": 500,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "RECHARGE", "BATTERY_MEDIUM" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 500 } } ]
+    "max_capacity": "500 kJ"
   },
   {
     "id": "medium_plus_battery_cell",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "category": "spare_parts",
     "name": { "str": "medium battery (high-capacity)", "str_pl": "medium batteries (high-capacity)" },
     "description": "This is a high-capacity medium battery cell, universally compatible with all kinds of appliances and power tools.",
@@ -194,11 +194,11 @@
     "capacity": 600,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "RECHARGE", "BATTERY_MEDIUM" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 600 } } ]
+    "max_capacity": "600 kJ"
   },
   {
     "id": "medium_atomic_battery_cell",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "category": "spare_parts",
     "name": { "str": "medium plutonium fuel battery", "str_pl": "medium plutonium fuel batteries" },
     "description": "This battery uses a thin plutonium-244 rod to stabilize an exotic nanocompound.  It is universally compatible with all kinds of appliances and power tools.  Although it stores a huge amount of power, it cannot be recharged.",
@@ -215,11 +215,11 @@
     "capacity": 5000,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "LEAK_DAM", "RADIOACTIVE", "BATTERY_MEDIUM" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 5000 } } ]
+    "max_capacity": "5000 kJ"
   },
   {
     "id": "medium_disposable_cell",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "category": "spare_parts",
     "name": { "str": "medium disposable battery", "str_pl": "medium disposable batteries" },
     "description": "This is a medium battery cell, universally compatible with all kinds of appliances and power tools.  The battery's chemistry means that it has a very high capacity, but cannot be recharged.",
@@ -235,11 +235,11 @@
     "capacity": 1200,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "BATTERY_MEDIUM" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 1200 } } ]
+    "max_capacity": "1200 kJ"
   },
   {
     "id": "heavy_battery_cell",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "category": "spare_parts",
     "name": { "str": "heavy battery", "str_pl": "heavy batteries" },
     "description": "This is a heavy battery cell, universally compatible with all kinds of industrial-grade equipment and large tools.",
@@ -255,11 +255,11 @@
     "capacity": 1000,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "RECHARGE", "BATTERY_HEAVY" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 1000 } } ]
+    "max_capacity": "1000 kJ"
   },
   {
     "id": "heavy_plus_battery_cell",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "category": "spare_parts",
     "name": { "str": "heavy battery (high-capacity)", "str_pl": "heavy batteries (high-capacity)" },
     "description": "This is a high-capacity heavy battery cell, universally compatible with all kinds of industrial-grade equipment and large tools.",
@@ -274,11 +274,11 @@
     "capacity": 1250,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "RECHARGE", "BATTERY_HEAVY" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 1250 } } ]
+    "max_capacity": "1250 kJ"
   },
   {
     "id": "heavy_atomic_battery_cell",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "category": "spare_parts",
     "name": { "str": "heavy plutonium fuel battery", "str_pl": "heavy plutonium fuel batteries" },
     "description": "This battery uses a thin plutonium-244 rod to stabilize an exotic nanocompound.  It is universally compatible with all kinds of industrial-grade equipment and large tools.  Although it stores a huge amount of power, it cannot be recharged.",
@@ -295,11 +295,11 @@
     "capacity": 10000,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "LEAK_DAM", "RADIOACTIVE", "BATTERY_HEAVY" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 10000 } } ]
+    "max_capacity": "10000 kJ"
   },
   {
     "id": "huge_atomic_battery_cell",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "category": "spare_parts",
     "name": { "str": "military plutonium fuel cell" },
     "description": "This battery uses a huge plutonium-244 rod to stabilize an exotic nanocompound.  It was used in military mech-suits, was highly experimental, and had no civilian applications.  Although it stores a stupendous amount of power, it cannot be recharged.",
@@ -315,11 +315,11 @@
     "capacity": 100000,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "MECH_BAT", "LEAK_DAM", "RADIOACTIVE" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 100000 } } ]
+    "max_capacity": "100000 kJ"
   },
   {
     "id": "heavy_disposable_cell",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "category": "spare_parts",
     "name": { "str": "heavy disposable battery", "str_pl": "heavy disposable batteries" },
     "description": "This is a heavy battery cell, universally compatible with all kinds of industrial-grade equipment and large tools.  The battery's chemistry means that it has a very high capacity, but cannot be recharged.",
@@ -335,6 +335,6 @@
     "capacity": 2500,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "BATTERY_HEAVY" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 2500 } } ]
+    "max_capacity": "2500 kJ"
   }
 ]
