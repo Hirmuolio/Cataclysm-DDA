@@ -4619,7 +4619,7 @@ static void process_vehicle_items( vehicle &cur_veh, int part )
                             if( n.is_battery() ) {
                                 n.set_energy( 1_kJ );
                             } else {
-                                n.ammo_set( itype_battery, n.ammo_remaining() + 1 );
+                                n.add_energy( itype_battery, n.ammo_remaining() + 1 );
                             }
                         }
                         power -= 1000;
