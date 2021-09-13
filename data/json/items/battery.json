@@ -30,8 +30,6 @@
     "material": [ "iron", "plastic" ],
     "symbol": "=",
     "color": "yellow",
-    "ammo_type": [ "battery" ],
-    "capacity": 50,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "RECHARGE", "BATTERY_ULTRA_LIGHT" ],
     "max_capacity": "50 kJ"
@@ -50,9 +48,6 @@
     "material": [ "iron", "plastic" ],
     "symbol": "=",
     "color": "green",
-    "ammo_type": [ "battery" ],
-    "count": 500,
-    "capacity": 500,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "LEAK_DAM", "RADIOACTIVE", "BATTERY_ULTRA_LIGHT" ],
     "max_capacity": "500 kJ"
@@ -70,9 +65,6 @@
     "material": [ "iron", "plastic" ],
     "symbol": "=",
     "color": "yellow",
-    "ammo_type": [ "battery" ],
-    "count": 100,
-    "capacity": 100,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "BATTERY_ULTRA_LIGHT" ],
     "max_capacity": "100 kJ"
@@ -91,8 +83,6 @@
     "material": [ "iron", "plastic" ],
     "symbol": "=",
     "color": "yellow",
-    "ammo_type": [ "battery" ],
-    "capacity": 100,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "RECHARGE", "BATTERY_LIGHT" ],
     "max_capacity": "100 kJ"
@@ -110,8 +100,6 @@
     "material": [ "iron", "plastic" ],
     "symbol": "=",
     "color": "yellow",
-    "ammo_type": [ "battery" ],
-    "capacity": 150,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "RECHARGE", "BATTERY_LIGHT" ],
     "max_capacity": "150 kJ"
@@ -130,9 +118,6 @@
     "material": [ "iron", "plastic" ],
     "symbol": "=",
     "color": "green",
-    "ammo_type": [ "battery" ],
-    "count": 1000,
-    "capacity": 1000,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "LEAK_DAM", "RADIOACTIVE", "BATTERY_LIGHT" ],
     "max_capacity": "1000 kJ"
@@ -150,9 +135,6 @@
     "material": [ "iron", "plastic" ],
     "symbol": "=",
     "color": "yellow",
-    "ammo_type": [ "battery" ],
-    "count": 300,
-    "capacity": 300,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "BATTERY_LIGHT" ],
     "max_capacity": "300 kJ"
@@ -171,8 +153,6 @@
     "material": [ "iron", "plastic" ],
     "symbol": "=",
     "color": "yellow",
-    "ammo_type": [ "battery" ],
-    "capacity": 500,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "RECHARGE", "BATTERY_MEDIUM" ],
     "max_capacity": "500 kJ"
@@ -190,8 +170,6 @@
     "material": [ "iron", "plastic" ],
     "symbol": "=",
     "color": "yellow",
-    "ammo_type": [ "battery" ],
-    "capacity": 600,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "RECHARGE", "BATTERY_MEDIUM" ],
     "max_capacity": "600 kJ"
@@ -210,9 +188,6 @@
     "material": [ "iron", "plastic" ],
     "symbol": "=",
     "color": "green",
-    "ammo_type": [ "battery" ],
-    "count": 5000,
-    "capacity": 5000,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "LEAK_DAM", "RADIOACTIVE", "BATTERY_MEDIUM" ],
     "max_capacity": "5000 kJ"
@@ -230,9 +205,6 @@
     "material": [ "iron", "plastic" ],
     "symbol": "=",
     "color": "yellow",
-    "ammo_type": [ "battery" ],
-    "count": 1200,
-    "capacity": 1200,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "BATTERY_MEDIUM" ],
     "max_capacity": "1200 kJ"
@@ -251,8 +223,6 @@
     "material": [ "iron", "plastic" ],
     "symbol": "=",
     "color": "yellow",
-    "ammo_type": [ "battery" ],
-    "capacity": 1000,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "RECHARGE", "BATTERY_HEAVY" ],
     "max_capacity": "1000 kJ"
@@ -270,8 +240,6 @@
     "material": [ "iron", "plastic" ],
     "symbol": "=",
     "color": "yellow",
-    "ammo_type": [ "battery" ],
-    "capacity": 1250,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "RECHARGE", "BATTERY_HEAVY" ],
     "max_capacity": "1250 kJ"
@@ -290,9 +258,6 @@
     "material": [ "iron", "plastic" ],
     "symbol": "=",
     "color": "green",
-    "ammo_type": [ "battery" ],
-    "count": 10000,
-    "capacity": 10000,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "LEAK_DAM", "RADIOACTIVE", "BATTERY_HEAVY" ],
     "max_capacity": "10000 kJ"
@@ -310,9 +275,6 @@
     "material": [ "superalloy", "plastic" ],
     "symbol": "=",
     "color": "red",
-    "ammo_type": [ "battery" ],
-    "count": 100000,
-    "capacity": 100000,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "MECH_BAT", "LEAK_DAM", "RADIOACTIVE" ],
     "max_capacity": "100000 kJ"
@@ -330,9 +292,6 @@
     "material": [ "iron", "plastic" ],
     "symbol": "=",
     "color": "yellow",
-    "ammo_type": [ "battery" ],
-    "count": 2500,
-    "capacity": 2500,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "BATTERY_HEAVY" ],
     "max_capacity": "2500 kJ"

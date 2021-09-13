@@ -4617,9 +4617,9 @@ static void process_vehicle_items( vehicle &cur_veh, int part )
                         // Around 85% efficient; a few of the discharges don't actually recharge
                         if( missing == 0 && !one_in( 7 ) ) {
                             if( n.is_battery() ) {
-                                n.set_energy( 1_kJ );
+                                n.add_energy( 1_kJ );
                             } else {
-                                n.add_energy( itype_battery, n.ammo_remaining() + 1 );
+                                n.ammo_set( itype_battery, n.ammo_remaining() + 1 );
                             }
                         }
                         power -= 1000;
