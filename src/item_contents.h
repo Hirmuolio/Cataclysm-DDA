@@ -197,6 +197,8 @@ class item_contents
         void clear_items();
         // clears all items from magazine type pockets
         void clear_magazines();
+        // clears all items from specific pocket types
+        void clear_pockets( item_pocket::pocket_type pk_type );
         void update_open_pockets();
 
         /**

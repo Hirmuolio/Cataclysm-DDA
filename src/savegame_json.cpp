@@ -2698,6 +2698,18 @@ void item::migrate_content_item( const item &contained )
     }
 }
 
+void item::migrate_battery()
+{
+    // Battery charges from old batteries go into corpse pocket.
+    std::list<item *> items = all_items_top( item_pocket::pocket_type::CORPSE );
+    if( items.size() != 1 ) {
+        debugmsg( "Failing migrating old battery. It has many items in its corpse pocket.", tname() );
+        return;
+    }
+    add_energy( units::from_kilojoule( items.front()->charges ) );
+    contents.clear_pockets( item_pocket::pocket_type::CORPSE );
+}
+
 void item::deserialize( const JsonObject &data )
 {
     data.allow_omitted_members();
@@ -2763,6 +2775,10 @@ void item::deserialize( const JsonObject &data )
         } else {
             select_itype_variant();
         }
+    }
+
+    if( is_battery() ) {
+        migrate_battery();
     }
 }
 

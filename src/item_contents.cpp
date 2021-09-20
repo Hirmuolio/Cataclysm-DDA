@@ -900,6 +900,15 @@ void item_contents::clear_magazines()
     }
 }
 
+void item_contents::clear_pockets( item_pocket::pocket_type pk_type )
+{
+    for( item_pocket &pocket : contents ) {
+        if( pocket.is_type( pk_type ) ) {
+            pocket.clear_items();
+        }
+    }
+}
+
 void item_contents::update_open_pockets()
 {
     for( item_pocket &pocket : contents ) {
