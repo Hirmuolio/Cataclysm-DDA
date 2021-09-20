@@ -7345,7 +7345,12 @@ bool item::is_bionic() const
 
 bool item::is_magazine() const
 {
-    return !!type->magazine || contents.has_pocket_type( item_pocket::pocket_type::MAGAZINE ) || is_battery();
+    return !!type->magazine || contents.has_pocket_type( item_pocket::pocket_type::MAGAZINE );
+}
+
+bool item::act_as_magazine() const
+{
+    return is_magazine() || is_battery();
 }
 
 bool item::is_battery() const
