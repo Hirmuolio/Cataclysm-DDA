@@ -8377,11 +8377,11 @@ int item::ammo_remaining( const Character *carrier ) const
             ret += e->charges;
         }
     }
-	
-	// Batteries
-	if( is_battery() ){
-		ret += units::to_kilojoule( energy_remaining() );
-	}
+
+    // Batteries
+    if( is_battery() ) {
+        ret += units::to_kilojoule( energy_remaining() );
+    }
     return ret;
 }
 
