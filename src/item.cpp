@@ -9358,9 +9358,14 @@ int item::getlight_emit() const
     }
     if( has_flag( flag_CHARGEDIM ) && is_tool() && !has_flag( flag_USE_UPS ) ) {
         // Falloff starts at 1/5 total charge and scales linearly from there to 0.
-        const ammotype &loaded_ammo = ammo_data()->ammo->type;
-        if( ammo_capacity( loaded_ammo ) && ammo_remaining() < ( ammo_capacity( loaded_ammo ) / 5 ) ) {
-            lumint *= ammo_remaining() * 5.0 / ammo_capacity( loaded_ammo );
+        if( magazine_current()->is_battery() ) {
+            lumint *= std::min( magazine_current()->energy_remaining() * 5.0 /
+                                magazine_current()->type->battery->max_capacity, 1.0 );
+        } else {
+            const ammotype &loaded_ammo = ammo_data()->ammo->type;
+            if( ammo_capacity( loaded_ammo ) && ammo_remaining() < ( ammo_capacity( loaded_ammo ) / 5 ) ) {
+                lumint *= ammo_remaining() * 5.0 / ammo_capacity( loaded_ammo );
+            }
         }
     }
     return lumint;
