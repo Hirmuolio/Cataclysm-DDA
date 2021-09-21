@@ -2702,11 +2702,11 @@ void item::migrate_battery()
 {
     // Battery charges from old batteries go into corpse pocket.
     std::list<item *> items = all_items_top( item_pocket::pocket_type::CORPSE );
-    if( items.size() == 0 ) {
+    if( items.empty() ) {
         // Already migrated
         return;
     } else if( items.size() > 1 ) {
-        debugmsg( "Failing migrating old battery.  It has many items in its corpse pocket.", tname() );
+        debugmsg( "Failing migrating old battery %s.  It has many items in its corpse pocket.", tname() );
         return;
     }
     add_energy( units::from_kilojoule( items.front()->charges ) );
