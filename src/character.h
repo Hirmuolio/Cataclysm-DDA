@@ -2328,7 +2328,7 @@ class Character : public Creature, public visitable
         * Sum of mech, bionic UPS and UPS
         * @return amount of UPS available
         */
-        int available_ups() const;
+        units::energy available_ups() const;
 
         /**
         * Consume UPS charges.
@@ -2336,7 +2336,7 @@ class Character : public Creature, public visitable
         * @param qty Number of charges (kJ)
         * @return amount of UPS consumed which will be between 0 and qty
         */
-        int consume_ups( int64_t qty, int radius = -1 );
+        units::energy consume_ups( units::energy qty, int radius = -1 );
 
         /**
         * Use charges in character inventory.

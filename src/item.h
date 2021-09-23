@@ -1883,7 +1883,7 @@ class item : public visitable
         void clear_itype_variant();
 
         /** Quantity of energy currently loaded in tool or battery */
-        units::energy energy_remaining() const;
+        units::energy energy_remaining( const Character *carrier = nullptr ) const;
 
         /**
          * Quantity of ammunition currently loaded in tool, gun or auxiliary gunmod. Can include UPS and bionic
@@ -2220,7 +2220,7 @@ class item : public visitable
         time_point birthday() const;
         void set_birthday( const time_point &bday );
         void handle_pickup_ownership( Character &c );
-        int get_gun_ups_drain() const;
+        units::energy get_gun_ups_drain() const;
         void validate_ownership() const;
         inline void set_old_owner( const faction_id &temp_owner ) {
             old_owner = temp_owner;

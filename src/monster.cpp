@@ -2552,14 +2552,14 @@ void monster::die( Creature *nkiller )
     }
 }
 
-bool monster::use_mech_power( int amt )
+bool monster::use_mech_power( units::energy amt )
 {
     if( is_hallucination() || !has_flag( MF_RIDEABLE_MECH ) || !battery_item ) {
         return false;
     }
     amt = -amt;
-    battery_item->ammo_consume( amt, pos(), nullptr );
-    return battery_item->ammo_remaining() > 0;
+    battery_item->electric_consume( amt, pos(), nullptr );
+    return battery_item->energy_remaining() > 0_J;
 }
 
 int monster::mech_str_addition() const
@@ -2572,11 +2572,11 @@ bool monster::check_mech_powered() const
     if( is_hallucination() || !has_flag( MF_RIDEABLE_MECH ) || !battery_item ) {
         return false;
     }
-    if( battery_item->ammo_remaining() <= 0 ) {
+    if( battery_item->energy_remaining() <= 0_J ) {
         return false;
     }
     const itype &type = *battery_item->type;
-    if( battery_item->ammo_remaining() <= type.magazine->capacity / 10 && one_in( 10 ) ) {
+    if( battery_item->energy_remaining() <= type.battery->max_capacity / 10 && one_in( 10 ) ) {
         add_msg( m_bad, _( "Your %s emits a beeping noise as its batteries start to get low." ),
                  get_name() );
     }

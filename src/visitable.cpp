@@ -894,11 +894,11 @@ int Character::charges_of( const itype_id &what, int limit,
                            const std::function<void( int )> &visitor ) const
 {
     if( what == itype_UPS ) {
-        int ups_power = available_ups();
+        units::energy ups_power = available_ups();
         if( has_active_bionic( bio_ups ) ) {
-            ups_power -= units::to_kilojoule( get_power_level() );
+            ups_power -= get_power_level();
         }
-        return std::min( ups_power, limit );
+        return std::min( static_cast<int>( units::to_kilojoule( ups_power ) ), limit );
     }
     return charges_of_internal( *this, *this, what, limit, filter, visitor );
 }

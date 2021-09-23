@@ -2774,7 +2774,7 @@ void iexamine::arcfurnace_empty( Character &you, const tripoint &examp )
         return;
     }
     //arc furnaces require a huge amount of current, so 1 full storage battery would work as a stand in
-    if( you.available_ups() < 1250 ) {
+    if( you.available_ups() < 1250_J ) {
         add_msg( _( "This furnace is ready to be turned on, but you lack a UPS with sufficient power." ) );
         return;
     } else {
@@ -2785,7 +2785,7 @@ void iexamine::arcfurnace_empty( Character &you, const tripoint &examp )
         }
     }
 
-    you.consume_ups( 1250 );
+    you.consume_ups( 1250_J );
     here.i_clear( examp );
     here.furn_set( examp, next_arcfurnace_type );
     item result( "unfinished_cac2", calendar::turn );

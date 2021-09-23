@@ -242,8 +242,8 @@ turret_data::status turret_data::query() const
         if( veh->fuel_left( ammo_current() ) < part->base.ammo_required() ) {
             return status::no_ammo;
         }
-    } else if( part->base.get_gun_ups_drain() ) {
-        int ups = part->base.get_gun_ups_drain() * part->base.gun_current_mode().qty;
+    } else if( part->base.get_gun_ups_drain() > 0_J ) {
+        int ups = units::to_kilojoule( part->base.get_gun_ups_drain() * part->base.gun_current_mode().qty );
         if( ups > veh->fuel_left( fuel_type_battery ) ) {
             return status::no_power;
         }
@@ -288,7 +288,7 @@ void turret_data::post_fire( Character &you, int shots )
         mode->ammo_unset();
     }
 
-    veh->drain( fuel_type_battery, mode->get_gun_ups_drain() * shots );
+    veh->drain( fuel_type_battery, units::to_kilojoule( mode->get_gun_ups_drain() ) * shots );
 }
 
 int turret_data::fire( Character &c, const tripoint &target )

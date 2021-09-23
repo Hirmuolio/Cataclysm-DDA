@@ -599,7 +599,7 @@ void npc::check_or_use_weapon_cbm( const bionic_id &cbm_id )
         }
 
         int ammo_count = weapon.ammo_remaining( this );
-        const int ups_drain = weapon.get_gun_ups_drain();
+        const int ups_drain = units::to_kilojoule( weapon.get_gun_ups_drain() );
         if( ups_drain > 0 ) {
             ammo_count = ammo_count / ups_drain;
         }

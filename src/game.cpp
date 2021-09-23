@@ -8973,7 +8973,7 @@ bool game::walk_move( const tripoint &dest_loc, const bool via_ramp, const bool 
         const double base_moves = u.run_cost( mcost, diag ) * 100.0 / crit->get_speed();
         const double encumb_moves = u.get_weight() / 4800.0_gram;
         u.moves -= static_cast<int>( std::ceil( base_moves + encumb_moves ) );
-        crit->use_mech_power( -u.current_movement_mode()->mech_power_use() );
+        crit->use_mech_power( units::from_kilojoule( -u.current_movement_mode()->mech_power_use() ) );
     } else {
         u.moves -= u.run_cost( mcost, diag );
         /**
@@ -10311,7 +10311,7 @@ void game::vertical_move( int movez, bool force, bool peeking )
     if( u.is_mounted() ) {
         monster *crit = u.mounted_creature.get();
         if( crit->has_flag( MF_RIDEABLE_MECH ) ) {
-            crit->use_mech_power( -u.current_movement_mode()->mech_power_use() - 1 );
+            crit->use_mech_power( units::from_kilojoule( -u.current_movement_mode()->mech_power_use() - 1 ) );
         }
     } else {
         u.moves -= move_cost;

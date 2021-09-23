@@ -41,9 +41,9 @@ int Character::ammo_count_for( const item &gun )
         ret = std::min( ret, total_ammo / required );
     }
 
-    int ups_drain = gun.get_gun_ups_drain();
-    if( ups_drain > 0 ) {
-        ret = std::min( ret, available_ups() / ups_drain );
+    int ups_drain = units::to_kilojoule( gun.get_gun_ups_drain() );
+    if( ups_drain ) {
+        ret = std::min( ret, static_cast<int>( units::to_kilojoule( available_ups() ) / ups_drain ) );
     }
 
     return ret;

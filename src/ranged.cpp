@@ -738,8 +738,10 @@ int Character::fire_gun( const tripoint &target, int shots, item &gun )
     }
 
     // cap our maximum burst size by the amount of UPS power left
-    if( !gun.has_flag( flag_VEHICLE ) && gun.get_gun_ups_drain() > 0 ) {
-        shots = std::min( shots, static_cast<int>( available_ups() / gun.get_gun_ups_drain() ) );
+    if( !gun.has_flag( flag_VEHICLE ) && gun.get_gun_ups_drain() > 0_J ) {
+        int ups = units::to_kilojoule( available_ups() );
+        int drain = units::to_kilojoule( gun.get_gun_ups_drain() );
+        shots = std::min( shots, ups / drain );
     }
 
     if( shots <= 0 ) {
@@ -984,7 +986,7 @@ static cata::optional<int> character_throw_assist( const Character &guy )
         auto *mons = guy.mounted_creature.get();
         if( mons->mech_str_addition() != 0 ) {
             throw_assist = mons->mech_str_addition();
-            mons->use_mech_power( -3 );
+            mons->use_mech_power( -3_J );
         }
     }
     return throw_assist;
@@ -3586,8 +3588,8 @@ bool gunmode_checks_weapon( avatar &you, const map &m, std::vector<std::string> 
         result = false;
     }
 
-    if( gmode->get_gun_ups_drain() > 0 ) {
-        const int ups_drain = gmode->get_gun_ups_drain();
+    if( gmode->get_gun_ups_drain() > 0_J ) {
+        const units::energy ups_drain = gmode->get_gun_ups_drain();
         bool is_mech_weapon = false;
         if( you.is_mounted() ) {
             monster *mons = get_player_character().mounted_creature.get();
@@ -3599,7 +3601,7 @@ bool gunmode_checks_weapon( avatar &you, const map &m, std::vector<std::string> 
             if( you.available_ups() < ups_drain ) {
                 messages.push_back( string_format(
                                         _( "You need a UPS with at least %2$d charges to fire the %1$s!" ),
-                                        gmode->tname(), ups_drain ) );
+                                        gmode->tname(), units::to_kilojoule( ups_drain ) ) );
                 result = false;
             }
         } else {

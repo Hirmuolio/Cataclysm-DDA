@@ -1477,10 +1477,10 @@ void npc::decide_needs()
         elem = 20;
     }
     if( weapon.is_gun() ) {
-        int ups_drain = weapon.get_gun_ups_drain();
-        if( ups_drain > 0 ) {
-            int ups_charges = available_ups();
-            needrank[need_ammo] = static_cast<double>( ups_charges ) / ups_drain;
+        units::energy ups_drain = weapon.get_gun_ups_drain();
+        if( ups_drain > 0_J ) {
+            units::energy ups_charges = available_ups();
+            needrank[need_ammo] = static_cast<double>( ups_charges / ups_drain );
         } else {
             const ammotype ammo_type = weapon.ammo_type();
             if( ammo_type != ammotype::NULL_ID() ) {

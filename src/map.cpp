@@ -5053,7 +5053,7 @@ std::list<item> map::use_charges( const tripoint &origin, const int range,
     return ret;
 }
 
-int map::consume_ups( const tripoint &origin, const int range, int qty )
+units::energy map::consume_ups( const tripoint &origin, const int range, units::energy qty )
 {
     // populate a grid of spots that can be reached
     std::vector<tripoint> reachable_pts;
@@ -5065,8 +5065,8 @@ int map::consume_ups( const tripoint &origin, const int range, int qty )
             map_stack items = i_at( p );
             for( auto &elem : items ) {
                 if( elem.has_flag( flag_IS_UPS ) ) {
-                    qty -= elem.ammo_consume( qty, p, nullptr );
-                    if( qty == 0 ) {
+                    qty -= elem.electric_consume( qty, p, nullptr );
+                    if( qty == 0_J ) {
                         break;
                     }
                 }

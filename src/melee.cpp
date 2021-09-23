@@ -524,7 +524,7 @@ bool Character::melee_attack_abstract( Creature &t, bool allow_special,
                          mons->get_name() );
                 mattack::smash_specific( mons, &t );
             } else {
-                mons->use_mech_power( -2 );
+                mons->use_mech_power( -2_J );
                 mons->melee_attack( t );
             }
             mod_moves( -mons->type->attack_cost );

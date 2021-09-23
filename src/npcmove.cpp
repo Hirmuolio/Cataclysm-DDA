@@ -1435,7 +1435,7 @@ void npc::evaluate_best_weapon( const Creature *target )
 
     // punching things is always available
     compare( std::make_shared<npc_attack_melee>( null_item_reference() ) );
-    const int ups_charges = available_ups();
+    const units::energy ups_charges = available_ups();
     visit_items( [&compare, &ups_charges, this]( item * it, item * ) {
         // you can theoretically melee with anything.
         compare( std::make_shared<npc_attack_melee>( *it ) );
@@ -2342,7 +2342,7 @@ void npc::move_to( const tripoint &pt, bool no_bashing, std::set<tripoint> *nomo
             const double encumb_moves = get_weight() / 4800.0_gram;
             moves -= static_cast<int>( std::ceil( base_moves + encumb_moves ) );
             if( mounted_creature->has_flag( MF_RIDEABLE_MECH ) ) {
-                mounted_creature->use_mech_power( -1 );
+                mounted_creature->use_mech_power( -1_J );
             }
         } else {
             moves -= run_cost( here.combined_movecost( pos(), p ), diag );
@@ -3346,7 +3346,7 @@ bool npc::wield_better_weapon()
     item *best = &weapon;
     double best_value = -100.0;
 
-    const int ups_charges = available_ups();
+    const int ups_charges = units::to_kilojoule( available_ups() );
 
     const auto compare_weapon =
     [this, &best, &best_value, ups_charges, can_use_gun, use_silent]( const item & it ) {
@@ -3356,7 +3356,7 @@ bool npc::wield_better_weapon()
             val = weapon_value( it, 0 );
         } else {
             int ammo_count = it.ammo_remaining();
-            int ups_drain = it.get_gun_ups_drain();
+            int ups_drain = units::to_kilojoule( it.get_gun_ups_drain() );
             if( ups_drain > 0 ) {
                 ammo_count = std::min( ammo_count, ups_charges / ups_drain );
             }
