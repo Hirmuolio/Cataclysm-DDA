@@ -543,6 +543,9 @@ units::energy item::add_energy( const units::energy &qty )
     units::energy limited_qty = std::min( qty, remaining_capacity );
     // We can't remove more than current capacity, so get the maximum of the two
     limited_qty = std::max( qty, -energy_remaining() );
+
+    energy += limited_qty;
+    return limited_qty;
 }
 
 item &item::ammo_set( const itype_id &ammo, int qty )
@@ -8492,6 +8495,12 @@ int item::ammo_consume( int qty, const tripoint &pos, Character *carrier )
         qty -= contents.ammo_consume( qty, pos );
     }
 
+    // Consume charges from itself
+    if( is_battery() ) {
+        units::energy consumed = add_energy( units::from_kilojoule( qty ) );
+        qty -= units::to_kilojoule( consumed );
+    }
+
     // Some weird internal non-item charges (used by grenades)
     if( is_tool() && type->tool->ammo_id.empty() ) {
         int charg_used = std::min( charges, qty );
@@ -8521,7 +8530,7 @@ units::energy item::electric_consume( units::energy qty, const tripoint &pos, Ch
 
     // Consume charges from itself
     if( is_battery() ) {
-        qty -= add_energy( qty );
+        qty -= -add_energy( -qty );
     }
 
     // Consume old battery items from itself
@@ -8545,6 +8554,8 @@ units::energy item::electric_consume( units::energy qty, const tripoint &pos, Ch
         carrier->mod_power_level( -bio_used );
         qty -= bio_used;
     }
+
+    return wanted_qty - qty;
 }
 
 const itype *item::ammo_data() const
@@ -10838,22 +10849,21 @@ bool item::process_tool( Character *carrier, const tripoint &pos )
         return false;
     }
 
-    int energy = 0;
+    bool out_of_charges = false;
     if( type->tool->turns_per_charge > 0 &&
         to_turn<int>( calendar::turn ) % type->tool->turns_per_charge == 0 ) {
-        energy = std::max( ammo_required(), 1 );
+        int drain = std::max( ammo_required(), 1 );
+        drain -= ammo_consume( drain, pos, carrier );
+        out_of_charges = drain > 0;
     } else if( type->tool->power_draw > 0 ) {
-        // power_draw in mW / 1000000 to give kJ (battery unit) per second
-        energy = type->tool->power_draw / 1000000;
-        // energy_bat remainder results in chance at additional charge/discharge
-        energy += x_in_y( type->tool->power_draw % 1000000, 1000000 ) ? 1 : 0;
+        units::energy drain = units::from_millijoule( type->tool->power_draw );
+        drain -= electric_consume( drain, pos, carrier );
+        out_of_charges = drain > 0_J;
     }
-
-    energy -= ammo_consume( energy, pos, carrier );
 
     avatar &player_character = get_avatar();
     // if insufficient available charges shutdown the tool
-    if( energy > 0 ) {
+    if( out_of_charges ) {
         if( carrier && has_flag( flag_USE_UPS ) ) {
             carrier->add_msg_if_player( m_info, _( "You need an UPS to run the %s!" ), tname() );
         }
