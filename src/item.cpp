@@ -537,15 +537,12 @@ units::energy item::add_energy( const units::energy &qty )
         return 0_J;
     }
 
-    units::energy val = energy_remaining() + qty;
-    if( val < 0_J ) {
-        return val;
-    } else if( val > type->battery->max_capacity ) {
-        energy = type->battery->max_capacity;
-    } else {
-        energy = val;
-    }
-    return 0_J;
+    // Remaining capacity between current and maximum power levels we can make use of.
+    const units::energy remaining_capacity = type->battery->max_capacity - energy_remaining();
+    // We can't add more than remaining capacity, so get the minimum of the two
+    units::energy limited_qty = std::min( qty, remaining_capacity );
+    // We can't remove more than current capacity, so get the maximum of the two
+    limited_qty = std::max( qty, -energy_remaining() );
 }
 
 item &item::ammo_set( const itype_id &ammo, int qty )
@@ -8381,6 +8378,7 @@ int item::ammo_remaining( const Character *carrier ) const
     // Batteries
     if( is_battery() ) {
         ret += units::to_kilojoule( energy_remaining() );
+        // This can overflow if battery holds more than 2147483 kJ of energy.
     }
     return ret;
 }
@@ -8508,13 +8506,45 @@ int item::ammo_consume( int qty, const tripoint &pos, Character *carrier )
 
     // Consume bio pwr directly
     if( carrier != nullptr && has_flag( flag_USES_BIONIC_POWER ) ) {
-        int bio_used = std::min( static_cast < int>( units::to_kilojoule( carrier->get_power_level() ) ),
+        int bio_used = std::min( static_cast<int>( units::to_kilojoule( carrier->get_power_level() ) ),
                                  qty );
         carrier->mod_power_level( -units::from_kilojoule( bio_used ) );
         qty -= bio_used;
     }
 
     return wanted_qty - qty;
+}
+
+units::energy item::electric_consume( units::energy qty, const tripoint &pos, Character *carrier )
+{
+    const units::energy wanted_qty = qty;
+
+    // Consume charges from itself
+    if( is_battery() ) {
+        qty -= add_energy( qty );
+    }
+
+    // Consume old battery items from itself
+    if( is_magazine() && ammo_current() == itype_battery ) {
+        qty -= units::from_kilojoule( contents.ammo_consume( units::to_kilojoule( qty ), pos ) );
+    }
+
+    // Consume contained magazine
+    if( uses_magazine() ) {
+        qty -= contents.electric_consume( qty, pos );
+    }
+
+    // Consume UPS power from various sources
+    if( carrier != nullptr && has_flag( flag_USE_UPS ) ) {
+        qty -= units::from_kilojoule( carrier->consume_ups( units::to_kilojoule( qty ) ) );
+    }
+
+    // Consume bio pwr directly
+    if( carrier != nullptr && has_flag( flag_USES_BIONIC_POWER ) ) {
+        units::energy bio_used = std::min( carrier->get_power_level(), qty );
+        carrier->mod_power_level( -bio_used );
+        qty -= bio_used;
+    }
 }
 
 const itype *item::ammo_data() const

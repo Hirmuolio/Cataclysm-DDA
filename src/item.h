@@ -250,10 +250,8 @@ class item : public visitable
          * Add or remove energy from a battery.
          * If adding the specified energy quantity would go over the battery's capacity fill
          * the battery and ignore the remainder.
-         * If adding the specified energy quantity would reduce the battery's charge level
-         * below 0 do nothing and return how far below 0 it would have gone.
          * @param qty energy quantity to add (can be negative)
-         * @return 0 valued energy quantity on success
+         * @return returns the amount of energy added/consumed
          */
         units::energy add_energy( const units::energy &qty );
 
@@ -1945,6 +1943,16 @@ class item : public visitable
          * @return amount of ammo consumed which will be between 0 and qty
          */
         int ammo_consume( int qty, const tripoint &pos, Character *carrier );
+
+        /**
+         * Consume electricity (if available) and return the amount of electricity that was consumed
+         * Consume order: battery(new), battery(old), UPS, bionic
+         * @param qty maximum amount of electricity that should be consumed
+         * @param pos current location of item, used for ejecting magazines and similar effects
+         * @param carrier holder of the item, used for getting UPS and bionic power
+         * @return amount of electricity consumed which will be between 0 and qty
+         */
+        units::energy electric_consume( units::energy qty, const tripoint &pos, Character *carrier );
 
         /** Specific ammo data, returns nullptr if item is neither ammo nor loaded with any */
         const itype *ammo_data() const;

@@ -757,6 +757,33 @@ int item_contents::ammo_consume( int qty, const tripoint &pos )
     return consumed;
 }
 
+units::energy item_contents::electric_consume( units::energy qty, const tripoint &pos )
+{
+    units::energy consumed = 0_J;
+    for( item_pocket &pocket : contents ) {
+        if( pocket.is_type( item_pocket::pocket_type::MAGAZINE_WELL ) ) {
+            // we are assuming only one magazine per well
+            if( pocket.empty() ) {
+                return 0_J;
+            }
+            // assuming only one mag
+            item &mag = pocket.front();
+            const units::energy res = mag.electric_consume( qty, pos, nullptr );
+            if( res > 0_J && mag.energy_remaining() == 0_J ) {
+                if( mag.has_flag( STATIC( flag_id( "MAG_DESTROY" ) ) ) ) {
+                    pocket.remove_item( mag );
+                } else if( mag.has_flag( STATIC( flag_id( "MAG_EJECT" ) ) ) ) {
+                    get_map().add_item( pos, mag );
+                    pocket.remove_item( mag );
+                }
+            }
+            qty -= res;
+            consumed += res;
+        }
+    }
+    return consumed;
+}
+
 item *item_contents::magazine_current()
 {
     for( item_pocket &pocket : contents ) {
