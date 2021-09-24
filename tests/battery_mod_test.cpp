@@ -194,8 +194,8 @@ TEST_CASE( "battery and tool properties", "[battery][tool][properties]" )
     const itype_id bat_ammo( "battery" );
 
     SECTION( "battery cell" ) {
-        SECTION( "is a magazine" ) {
-            CHECK( bat_cell.is_magazine() );
+        SECTION( "is a battery" ) {
+            CHECK( bat_cell.is_battery() );
         }
 
         SECTION( "is not a tool" ) {
@@ -206,20 +206,6 @@ TEST_CASE( "battery and tool properties", "[battery][tool][properties]" )
             CHECK_FALSE( bat_cell.is_ammo() );
             // Non-ammo itself does not have an ammo type
             CHECK( bat_cell.ammo_type() == ammotype::NULL_ID() );
-        }
-
-        SECTION( "has compatible ammo types" ) {
-            const std::set<ammotype> bat_ammos = bat_cell.ammo_types();
-            CHECK_FALSE( bat_ammos.empty() );
-            CHECK( bat_ammos.count( bat_ammotype ) );
-        }
-
-        SECTION( "has capacity to hold battery ammo type" ) {
-            CHECK( bat_cell.ammo_capacity( bat_ammotype ) > 0 );
-        }
-
-        SECTION( "has battery ammo as default" ) {
-            CHECK( bat_cell.ammo_default() == bat_ammo );
         }
 
         SECTION( "is not counted by charges" ) {
@@ -292,21 +278,19 @@ TEST_CASE( "installing battery in tool", "[battery][tool][install]" )
     item bat_cell( "light_battery_cell" );
     item flashlight( "flashlight" );
 
-    const int bat_charges = bat_cell.ammo_capacity( ammotype( "battery" ) );
-    REQUIRE( bat_charges > 0 );
-
     SECTION( "flashlight with no battery installed" ) {
         REQUIRE( !flashlight.magazine_current() );
 
         CHECK( flashlight.ammo_remaining() == 0 );
         CHECK( flashlight.ammo_capacity( ammotype( "battery" ) ) == 0 );
         CHECK( flashlight.remaining_ammo_capacity() == 0 );
+		CHECK( flashlight.energy_remaining() == 0_J );
     }
 
     SECTION( "dead battery installed in flashlight" ) {
         // Ensure battery is dead
-        bat_cell.ammo_set( bat_cell.ammo_default(), 0 );
-        REQUIRE( bat_cell.ammo_remaining() == 0 );
+        bat_cell.add_energy( -2000000_J );
+        REQUIRE( bat_cell.energy_remaining() == 0_J );
 
         // Put battery in flashlight
         REQUIRE( flashlight.has_pocket_type( item_pocket::pocket_type::MAGAZINE_WELL ) );
@@ -316,12 +300,14 @@ TEST_CASE( "installing battery in tool", "[battery][tool][install]" )
 
         // No remaining ammo
         CHECK( flashlight.ammo_remaining() == 0 );
+		CHECK( flashlight.energy_remaining() == 0_J );
     }
 
     SECTION( "charged battery installed in flashlight" ) {
         // Charge the battery
-        bat_cell.ammo_set( bat_cell.ammo_default(), bat_charges );
-        REQUIRE( bat_cell.ammo_remaining() == bat_charges );
+		bat_cell.add_energy( 100000_J );
+        REQUIRE( bat_cell.energy_remaining() == 100000_J );
+		REQUIRE( bat_cell.ammo_remaining() == 100 );
 
         // Put battery in flashlight
         REQUIRE( flashlight.has_pocket_type( item_pocket::pocket_type::MAGAZINE_WELL ) );
@@ -330,7 +316,8 @@ TEST_CASE( "installing battery in tool", "[battery][tool][install]" )
         CHECK( flashlight.magazine_current() );
 
         // Flashlight has a full charge
-        CHECK( flashlight.ammo_remaining() == bat_charges );
+        CHECK( flashlight.energy_remaining() == 100000_J );
+		CHECK( flashlight.ammo_remaining() == 100 );
     }
 
     SECTION( "wrong size battery for flashlight" ) {

@@ -33,26 +33,6 @@ TEST_CASE( "ammo types", "[ammo][ammo_types]" )
     // - Tools/weapons with magazine_integral (pocket_data has a MAGAZINE rather than MAGAZINE_WELL)
 
     SECTION( "items with MAGAZINE pockets have ammo_types" ) {
-        // Batteries are magazines
-        REQUIRE( item( "light_battery_cell" ).is_magazine() );
-        REQUIRE( item( "battery_car" ).is_magazine() );
-
-        // Tool batteries
-        CHECK( has_ammo_types( item( "light_battery_cell" ) ) );
-        CHECK( has_ammo_types( item( "medium_battery_cell" ) ) );
-        CHECK( has_ammo_types( item( "heavy_battery_cell" ) ) );
-        CHECK( has_ammo_types( item( "light_disposable_cell" ) ) );
-        CHECK( has_ammo_types( item( "medium_disposable_cell" ) ) );
-        CHECK( has_ammo_types( item( "heavy_disposable_cell" ) ) );
-        // Vehicle batteries
-        CHECK( has_ammo_types( item( "battery_car" ) ) );
-        CHECK( has_ammo_types( item( "battery_motorbike" ) ) );
-        CHECK( has_ammo_types( item( "large_storage_battery" ) ) );
-
-        SECTION( "battery magazines include 'battery' ammo type" ) {
-            CHECK( item( "light_battery_cell" ).ammo_types().count( ammotype( "battery" ) ) == 1 );
-            CHECK( item( "battery_car" ).ammo_types().count( ammotype( "battery" ) ) == 1 );
-        }
 
         // Gun magazines
         REQUIRE( item( "belt40mm" ).is_magazine() );
@@ -163,7 +143,6 @@ TEST_CASE( "ammo default", "[ammo][ammo_default]" )
         // MAGAZINE type items
         item battery( "light_battery_cell" );
         item glockmag( "glockmag" );
-        CHECK( battery.ammo_default() == itype_id( "battery" ) );
         CHECK( glockmag.ammo_default() == itype_id( "9mm" ) );
 
         // TOOL type items with integral magazines

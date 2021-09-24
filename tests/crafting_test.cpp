@@ -408,10 +408,13 @@ TEST_CASE( "UPS shows as a crafting component", "[crafting][ups]" )
     avatar dummy;
     clear_character( dummy );
     dummy.worn.emplace_back( "backpack" );
-    item &ups = dummy.i_add( item( "UPS_off", calendar::turn_zero, 500 ) );
+    item &ups = dummy.i_add( item( "UPS_off", calendar::turn_zero ) );
+	item bat_cell( "light_battery_cell" );
+	bat_cell.add_energy( 100000_J );
+	ret_val<bool> result = ups.put_in( bat_cell, item_pocket::pocket_type::MAGAZINE_WELL );
     REQUIRE( dummy.has_item( ups ) );
     REQUIRE( ups.charges == 500 );
-    REQUIRE( dummy.available_ups() == 500 );
+    REQUIRE( dummy.available_ups() == 500_J );
 }
 
 TEST_CASE( "tools use charge to craft", "[crafting][charge]" )

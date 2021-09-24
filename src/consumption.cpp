@@ -1601,7 +1601,6 @@ bool Character::can_consume( const item &it ) const
         return true;
     }
     return it.has_item_with( [&]( const item & consumable ) {
-        // Checking NO_RELOAD to prevent consumption of `battery` when contained in `battery_car` (#20012)
         return !consumable.has_flag( flag_NO_RELOAD ) && can_consume_as_is( consumable );
     } );
 }

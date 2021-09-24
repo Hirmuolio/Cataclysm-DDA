@@ -50,7 +50,11 @@ static void test_consumable_ammo( Character &you, std::string &itemname, bool wh
     INFO( "consume \'" + it.tname() + "\' with " + std::to_string( it.ammo_remaining() ) + " charges" );
     REQUIRE( you.can_consume( it ) == when_empty );
 
-    if( !it.magazine_default().is_null() ) {
+    
+	if( it.is_battery() ){
+		// fill it up
+		it.add_energy( 20000000000_J);
+	}else if( !it.magazine_default().is_null() ) {
         item mag( it.magazine_default() );
         mag.ammo_set( mag.ammo_default() );
         it.put_in( mag, item_pocket::pocket_type::MAGAZINE_WELL );
