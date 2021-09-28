@@ -244,5 +244,10 @@
     "id": "adv_UPS_off",
     "type": "MIGRATION",
     "replace": "UPS_off"
+  },
+  {
+    "id": "manual_computers",
+    "type": "MIGRATION",
+    "replace": "manual_computer"
   }
 ]
