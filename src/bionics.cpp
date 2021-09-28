@@ -3275,7 +3275,7 @@ bool Character::can_fuel_bionic_with( const item &it ) const
             if( !item( it.ammo_current() ).is_fuel() ) {
                 return false;
             }
-		}else if( !it.is_battery() ) {
+        } else if( !it.is_battery() ) {
             return false;
         }
     }
@@ -3287,9 +3287,9 @@ bool Character::can_fuel_bionic_with( const item &it ) const
             if( it.type->magazine && fuel == item( it.ammo_current() ).get_base_material().id ) {
                 return true;
             }
-			if( fuel == fuel_type_battery && it.is_battery() ){
-				return true;
-			}
+            if( fuel == fuel_type_battery && it.is_battery() ) {
+                return true;
+            }
         }
 
     }
