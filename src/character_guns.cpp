@@ -97,7 +97,7 @@ void find_ammo_helper( T &src, const item &obj, bool empty, Output out, bool nes
             // Not-nested checks only top level containers and their immediate contents.
             return parent == nullptr || nested ? VisitResponse::NEXT : VisitResponse::SKIP;
         } );
-    } else if( obj.uses_magazine() ) {
+    } else if( obj.uses_magazine() ){
         // find compatible magazines excluding those already loaded in tools/guns
         src.visit_items( [&src, &nested, &out, &obj, empty, &found_ammo]( item * node, item * parent ) {
 
@@ -107,8 +107,8 @@ void find_ammo_helper( T &src, const item &obj, bool empty, Output out, bool nes
             }
 
             // Do not consider empty mags unless specified
-            if( !( node->ammo_remaining() || empty ) ) {
-                return VisitResponse::SKIP;
+            if( !node->ammo_remaining() && !empty ) {
+                return VisitResponse::NEXT;
             }
 
             // magazine is inside some sort of a container
