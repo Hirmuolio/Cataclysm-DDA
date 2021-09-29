@@ -233,7 +233,7 @@ static void draw_bionics_titlebar( const catacurses::window &window, avatar *p,
     const int curr_power = units::to_millijoule( p->get_power_level() );
     const int kilo = curr_power / units::to_millijoule( 1_kJ );
     const int joule = ( curr_power % units::to_millijoule( 1_kJ ) ) / units::to_millijoule( 1_J );
-    const int milli = curr_power % units::to_millijoule( 1_kJ );
+    const int milli = curr_power % units::to_millijoule( 1_J );
     if( kilo > 0 ) {
         power_string = std::to_string( kilo );
         if( joule > 0 ) {
