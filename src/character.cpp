@@ -10386,7 +10386,7 @@ void Character::process_items()
             } else if( ups_used < available_charges &&
                        it->ammo_remaining() < it->ammo_capacity( ammotype( "battery" ) ) ) {
                 // Charge the battery in the UPS modded tool
-                ups_used += 1_J;
+                ups_used += 1_kJ;
                 it->ammo_set( itype_battery, it->ammo_remaining() + 1 );
             }
         }
