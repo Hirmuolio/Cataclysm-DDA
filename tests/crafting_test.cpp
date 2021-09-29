@@ -409,12 +409,15 @@ TEST_CASE( "UPS shows as a crafting component", "[crafting][ups]" )
     clear_character( dummy );
     dummy.worn.emplace_back( "backpack" );
     item &ups = dummy.i_add( item( "UPS_off", calendar::turn_zero ) );
-	item bat_cell( "light_battery_cell" );
-	bat_cell.add_energy( 100000_J );
-	ret_val<bool> result = ups.put_in( bat_cell, item_pocket::pocket_type::MAGAZINE_WELL );
+    item bat_cell( "heavy_battery_cell" );
+    bat_cell.add_energy( 500_kJ );
+    ret_val<bool> result = ups.put_in( bat_cell, item_pocket::pocket_type::MAGAZINE_WELL );
+    INFO( result.c_str() );
+    REQUIRE( result.success() );
+
     REQUIRE( dummy.has_item( ups ) );
-    REQUIRE( ups.charges == 500 );
-    REQUIRE( dummy.available_ups() == 500_J );
+    REQUIRE( ups.energy_remaining() == 500_kJ );
+    REQUIRE( dummy.available_ups() == 500_kJ );
 }
 
 TEST_CASE( "tools use charge to craft", "[crafting][charge]" )
@@ -490,7 +493,7 @@ TEST_CASE( "tools use charge to craft", "[crafting][charge]" )
             tools.push_back( soldering_iron );
             item UPS( "UPS_off" );
             item UPS_mag( UPS.magazine_default() );
-            UPS_mag.ammo_set( UPS_mag.ammo_default(), 510 );
+            UPS_mag.add_energy( 510_kJ );
             UPS.put_in( UPS_mag, item_pocket::pocket_type::MAGAZINE_WELL );
             tools.emplace_back( UPS );
             tools.push_back( tool_with_ammo( "vac_mold", 4 ) );

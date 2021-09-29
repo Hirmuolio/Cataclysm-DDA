@@ -3287,7 +3287,7 @@ bool Character::can_fuel_bionic_with( const item &it ) const
             if( it.type->magazine && fuel == item( it.ammo_current() ).get_base_material().id ) {
                 return true;
             }
-            if( fuel == fuel_type_battery && it.is_battery() ) {
+            if( fuel == fuel_type_battery && it.is_battery() && it.energy_remaining() > 0_J ) {
                 return true;
             }
         }

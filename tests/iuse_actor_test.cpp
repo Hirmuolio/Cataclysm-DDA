@@ -86,9 +86,8 @@ TEST_CASE( "tool transform when activated", "[iuse][tool][transform]" )
         REQUIRE( flashlight.is_reloadable_with( itype_id( "light_battery_cell" ) ) );
 
         // Charge the battery
-        const int bat_charges = bat_cell.ammo_capacity( ammotype( "battery" ) );
-        bat_cell.ammo_set( bat_cell.ammo_default(), bat_charges );
-        REQUIRE( bat_cell.ammo_remaining() == bat_charges );
+        bat_cell.add_energy( 100_kJ );
+        REQUIRE( bat_cell.energy_remaining() == 100_kJ );
 
         // Put battery in flashlight
         REQUIRE( flashlight.has_pocket_type( item_pocket::pocket_type::MAGAZINE_WELL ) );
