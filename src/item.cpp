@@ -8575,7 +8575,7 @@ int item::ammo_consume( int qty, const tripoint &pos, Character *carrier )
 
     // Consume energy from itself
     if( is_battery() ) {
-        units::energy consumed = add_energy( units::from_kilojoule( qty ) );
+        units::energy consumed = -add_energy( -units::from_kilojoule( qty ) );
         qty -= units::to_kilojoule( consumed );
     }
 
