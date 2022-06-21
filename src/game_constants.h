@@ -110,6 +110,20 @@ constexpr int freezing = 32; // 0 Celsius
 constexpr int boiling = 212; // 100 Celsius
 } // namespace temperatures
 
+// Light level constants
+namespace lux
+{
+// Illumination levels in lux
+
+// Full vision range without penalties
+constexpr float full_vision = 30.f;
+
+// Sunlight at 90° with clear sky
+constexpr float sunlight = 129000.f; 
+
+}
+
+
 // Slowest speed at which a gun can be aimed.
 static constexpr int MAX_AIM_COST = 10;
 

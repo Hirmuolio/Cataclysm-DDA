@@ -46,7 +46,7 @@ static constexpr units::angle sunrise_angle = -1_degrees;
 
 double default_daylight_level()
 {
-    return 100.0;
+    return 129000.0;
 }
 
 time_duration lunar_month()
