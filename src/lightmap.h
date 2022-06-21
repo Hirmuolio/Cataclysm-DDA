@@ -9,7 +9,7 @@ static constexpr float LIGHT_SOURCE_LOCAL = 0.1f;
 static constexpr float LIGHT_SOURCE_BRIGHT = 10.0f;
 
 // Just enough light (in lux) that you can see the current and adjacent squares with normal vision.
-static constexpr float LIGHT_AMBIENT_MINIMAL = 0.01f;
+static constexpr float LIGHT_AMBIENT_MINIMAL = 0.06f;
 // The threshold between not being able to see anything and things appearing shadowy.
 static constexpr float LIGHT_AMBIENT_LOW = 1.0f;
 // The lower threshold for seeing well enough to do detail work such as reading or crafting.
