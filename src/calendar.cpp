@@ -373,23 +373,99 @@ float sun_light_at( const time_point &p )
 {
     const units::angle solar_alt = sun_altitude( p );
 
-    if( solar_alt < astronomical_dawn ) {
+    if( solar_alt <= 18_degrees ) {
         return 0;
-    } else if( solar_alt <= nautical_dawn ) {
-        // Sunlight rises exponentially from 0 to 3.7f as sun rises from -18° to -12°
-        return 3.7f * ( std::exp2( to_degrees( solar_alt - astronomical_dawn ) / 6.f ) - 1 );
-    } else if( solar_alt <= civil_dawn ) {
-        // Sunlight rises exponentially from 3.7f to 5.0f as sun rises from -12° to -6°
-        return ( 5.0f - 3.7f ) * ( std::exp2( to_degrees( solar_alt - nautical_dawn ) / 6.f ) - 1 ) + 3.7f;
-    } else if( solar_alt <= sunrise_angle ) {
-        // Sunlight rises exponentially from 5.0f to 60 as sun rises from -6° to -1°
-        return ( 60 - 5.0f ) * ( std::exp2( to_degrees( solar_alt - civil_dawn ) / 5.f ) - 1 ) + 5.0f;
-    } else if( solar_alt <= 60_degrees ) {
-        // Linear increase from -1° to 60° degrees light increases from 60 to 125 brightness.
-        return ( 65.f / 61 ) * to_degrees( solar_alt ) + 65.f / 61  + 60;
-    } else {
-        return 125.f;
     }
+
+    // Sunlight. Clear sky without clouds.
+    // Source: http://stjarnhimlen.se/comp/radfaq.html#10
+    std::map <float, float> angle_to_lux = {
+        { 90.0, 129000 },
+        { 80.0, 122000 },
+        { 70.0, 114000 },
+        { 60.0, 103000 },
+        { 50.0, 87400 },
+        { 45.0, 77800 },
+        { 40.0, 67500 },
+        { 35.0, 56900 },
+        { 30.0, 46300 },
+        { 25.0, 36300 },
+        { 20.0, 27400 },
+        { 15.0, 19200 },
+        { 14.0, 17600 },
+        { 13.0, 15900 },
+        { 12.0, 14300 },
+        { 11.0, 12700 },
+        { 10.0, 11100 },
+        { 9.5, 10400 },
+        { 9.0, 9610 },
+        { 8.5, 8880 },
+        { 8.0, 8170 },
+        { 7.5, 7490 },
+        { 7.0, 6840 },
+        { 6.5, 6220 },
+        { 6.0, 5620 },
+        { 5.5, 5060 },
+        { 5.0, 4540 },
+        { 4.5, 4010 },
+        { 4.0, 3550 },
+        { 3.5, 3110 },
+        { 3.0, 2690 },
+        { 2.5, 2290 },
+        { 2.0, 1920 },
+        { 1.5, 1580 },
+        { 1.0, 1270 },
+        { 0.5, 994 },
+        { 0.0, 759 },
+        { -0.5, 562 },
+        { -1.0, 405 },
+        { -1.5, 281 },
+        { -2.0, 189 },
+        { -2.5, 124 },
+        { -3.0, 79.1 },
+        { -3.5, 49.2 },
+        { -4.0, 29.9 },
+        { -4.5, 17.8 },
+        { -5.0, 10.4 },
+        { -5.5, 5.99 },
+        { -6.0, 3.41 },
+        { -6.5, 1.93 },
+        { -7.0, 1.09 },
+        { -7.5, 0.613 },
+        { -8.0, 0.348 },
+        { -8.5, 0.200 },
+        { -9.0, 0.116 },
+        { -9.5, 0.0692 },
+        { -10.0, 0.0421 },
+        { -10.5, 0.0264 },
+        { -11.0, 0.0171 },
+        { -11.5, 0.0115 },
+        { -12.0, 0.00806 },
+        { -12.5, 0.00597 },
+        { -13.0, 0.00456 },
+        { -13.5, 0.00360 },
+        { -14.0, 0.00292 },
+        { -14.5, 0.00241 },
+        { -15.0, 0.00202 },
+        { -15.5, 0.00171 },
+        { -16.0, 0.00144 },
+        { -16.5, 0.00121 },
+        { -17.0, 0.00100 },
+        { -17.5, 0.000815 },
+        { -18.0, 0.000645 }
+    };
+
+    // Linear interpolation of the two closest angles.
+    std::map<float, float>::iterator it = angle_to_lux.lower_bound( to_degrees( solar_alt ) );
+
+    const float angle_greater = ( *it ).first;
+    const float lux_greater = ( *it ).second;
+    it--;
+    const float angle_smaller = ( *it ).first;
+    const float lux_smaller = ( *it ).second;
+
+    return lux_greater + ( to_degrees( solar_alt ) - angle_smaller ) * ( lux_greater - lux_smaller ) /
+           ( angle_greater - angle_smaller );
 }
 
 float sun_moon_light_at( const time_point &p )
