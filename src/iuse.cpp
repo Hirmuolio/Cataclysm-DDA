@@ -8988,7 +8988,7 @@ cata::optional<int> iuse::lux_meter( Character *p, item *, bool, const tripoint 
                               "The illumination is %.1f lux, Sun illumination %.1f lux, Sun altitude %.1f°.",
                               g->natural_light_level( pos.z ), sun_light_at( calendar::turn ), to_degrees( altitude ) );
     } else {
-        p->add_msg_if_player( m_neutral, _( "The illumination is %.1f. lux" ),
+        p->add_msg_if_player( m_neutral, _( "The illumination is %.1f lux." ),
                               g->natural_light_level( pos.z ) );
     }
 

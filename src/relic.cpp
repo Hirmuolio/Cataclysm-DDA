@@ -460,7 +460,7 @@ void relic::try_recharge( item &parent, Character *carrier, const tripoint &pos 
         }
         case relic_recharge_type::SOLAR_SUNNY: {
             if( can_recharge_solar( parent, carrier, pos ) &&
-                get_weather().weather_id->light_modifier >= 0 ) {
+                get_weather().weather_id->light_modifier >= 0.9 ) {
                 charge.accumulate_charge( parent );
             }
             return;
