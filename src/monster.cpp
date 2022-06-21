@@ -1069,8 +1069,9 @@ int monster::sight_range( const float light_level ) const
     } else if( light_level >= lux::full_vision ) {
         return type->vision_day;
     }
-	// TODO check this equation
-    int range = light_level / lux::full_vision * type->vision_day + ( lux::full_vision - light_level ) / lux::full_vision * type->vision_night ;
+    // TODO check this equation
+    int range = light_level / lux::full_vision * type->vision_day + ( lux::full_vision - light_level ) /
+                lux::full_vision * type->vision_night ;
 
     return range;
 }

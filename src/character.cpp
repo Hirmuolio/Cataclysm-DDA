@@ -1093,7 +1093,8 @@ int Character::sight_range( float light_level ) const
      * log(LIGHT_AMBIENT_LOW / light_level) <= LIGHT_TRANSPARENCY_OPEN_AIR * distance
      * log(LIGHT_AMBIENT_LOW / light_level) * (1 / LIGHT_TRANSPARENCY_OPEN_AIR) <= distance
      */
-    int range = static_cast<int>( -std::log( get_vision_threshold( get_map().ambient_light_at( pos() ) ) / light_level ) / LIGHT_TRANSPARENCY_OPEN_AIR );
+    int range = static_cast<int>( -std::log( get_vision_threshold( get_map().ambient_light_at(
+                                      pos() ) ) / light_level ) / LIGHT_TRANSPARENCY_OPEN_AIR );
 
     // Clamp to [1, sight_max].
     return clamp( range, 1, sight_max );
@@ -2311,7 +2312,8 @@ float Character::get_vision_threshold( float light_level ) const
 
     // As light_level goes from LIGHT_AMBIENT_MINIMAL to LIGHT_AMBIENT_LIT,
     // dimming goes from 1.0 to 2.0.
-    const float dimming_from_light = 1.0 + ( light_level - LIGHT_AMBIENT_MINIMAL ) / ( LIGHT_AMBIENT_LIT - LIGHT_AMBIENT_MINIMAL );
+    const float dimming_from_light = 1.0 + ( light_level - LIGHT_AMBIENT_MINIMAL ) /
+                                     ( LIGHT_AMBIENT_LIT - LIGHT_AMBIENT_MINIMAL );
 
     float range = get_per() / 3.0f;
     if( vision_mode_cache[NV_GOGGLES] || vision_mode_cache[NIGHTVISION_3] ||
