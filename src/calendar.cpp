@@ -22,7 +22,7 @@
 #include "units_utility.h"
 
 /** How much light moon provides per lit-up quarter (Full-moon light is four times this value) */
-static constexpr double moonlight_per_quarter = 1.5;
+static constexpr float moonlight_per_quarter = 0.3/4;
 
 // Divided by 100 to prevent overflowing when converted to moves
 const int calendar::INDEFINITELY_LONG( std::numeric_limits<int>::max() / 100 );
@@ -366,14 +366,14 @@ static float moon_light_at( const time_point &p )
         current_phase = static_cast<int>( MOON_PHASE_MAX ) - current_phase;
     }
 
-    return 1. + moonlight_per_quarter * current_phase;
+    return moonlight_per_quarter * current_phase;
 }
 
 float sun_light_at( const time_point &p )
 {
     const units::angle solar_alt = sun_altitude( p );
 
-    if( solar_alt <= 18_degrees ) {
+    if( solar_alt <= astronomical_dawn  ) {
         return 0;
     }
 
