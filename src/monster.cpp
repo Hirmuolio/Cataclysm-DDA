@@ -1067,7 +1067,7 @@ int monster::sight_range( const float light_level ) const
     static const int default_daylight = default_daylight_level();
     if( light_level == 0 ) {
         return type->vision_night;
-    } else if( light_level == default_daylight ) {
+    } else if( light_level >= default_daylight ) {
         return type->vision_day;
     }
     int range = light_level * type->vision_day + ( default_daylight - light_level ) *
