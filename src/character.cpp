@@ -1093,6 +1093,7 @@ int Character::sight_range( float light_level ) const
      * log(LIGHT_AMBIENT_LOW / light_level) <= LIGHT_TRANSPARENCY_OPEN_AIR * distance
      * log(LIGHT_AMBIENT_LOW / light_level) * (1 / LIGHT_TRANSPARENCY_OPEN_AIR) <= distance
      */
+	 // TODO log(0) is bad
     int range = static_cast<int>( -std::log( get_vision_threshold( get_map().ambient_light_at(
                                       pos() ) ) / light_level ) / LIGHT_TRANSPARENCY_OPEN_AIR );
 
