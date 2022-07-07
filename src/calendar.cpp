@@ -22,7 +22,7 @@
 #include "units_utility.h"
 
 /** How much light moon provides per lit-up quarter (Full-moon light is four times this value) */
-static constexpr float moonlight_per_quarter = 0.3 / 4;
+static constexpr float moonlight_per_quarter = 0.3f / 4;
 
 // Divided by 100 to prevent overflowing when converted to moves
 const int calendar::INDEFINITELY_LONG( std::numeric_limits<int>::max() / 100 );
@@ -44,9 +44,9 @@ static constexpr units::angle nautical_dawn = -12_degrees;
 static constexpr units::angle civil_dawn = -6_degrees;
 static constexpr units::angle sunrise_angle = -1_degrees;
 
-double default_daylight_level()
+float default_daylight_level()
 {
-    return 129000.0;
+    return 100.f;
 }
 
 time_duration lunar_month()
@@ -476,12 +476,21 @@ float sun_moon_light_at( const time_point &p )
 
 float lux_to_light( const float lux )
 {
-	if lux > 50{
-		return 100;
+	if( lux >= 30.f){
+		return 100.f;
+	} else if ( lux <= 0.06 ) {
+		// Linear from 0 to 3.7 at 0.06 lux
+		return 0.06f / 3.7f * lux;
+	} else if ( lux <= 10 ) {
+		// Linear from 3.7 at 0.06 lux to 5 at 10 lux
+		return 65.f/497.f * lux + 7.34f;
 	}
+	// Linear from 5 at 10 lux to 100 at 30 lux
+	return 4.75f * lux -85.f/7.f;
+	
 }
 
-double sun_moon_light_at_noon_near( const time_point &p )
+float sun_moon_light_at_noon_near( const time_point &p )
 {
     const time_point solar_noon = solar_noon_near( p );
     return sun_moon_light_at( solar_noon );
