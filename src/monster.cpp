@@ -1066,7 +1066,7 @@ int monster::sight_range( const float light_level ) const
         ( underwater && !swims() && !has_flag( MF_AQUATIC ) && !digging() ) ) {
         return 1;
     }
-	static const float default_daylight = default_daylight_level();
+    static const float default_daylight = default_daylight_level();
     if( light_level < 1 ) {
         return type->vision_night;
     } else if( light_level >= default_daylight ) {

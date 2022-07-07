@@ -476,18 +476,18 @@ float sun_moon_light_at( const time_point &p )
 
 float lux_to_light( const float lux )
 {
-	if( lux >= 30.f){
-		return 100.f;
-	} else if ( lux <= 0.06 ) {
-		// Linear from 0 to 3.7 at 0.06 lux
-		return 0.06f / 3.7f * lux;
-	} else if ( lux <= 10 ) {
-		// Linear from 3.7 at 0.06 lux to 5 at 10 lux
-		return 65.f/497.f * lux + 7.34f;
-	}
-	// Linear from 5 at 10 lux to 100 at 30 lux
-	return 4.75f * lux -85.f/7.f;
-	
+    if( lux >= 30.f ) {
+        return 100.f;
+    } else if( lux <= 0.06 ) {
+        // Linear from 0 to 3.7 at 0.06 lux
+        return 0.06f / 3.7f * lux;
+    } else if( lux <= 10 ) {
+        // Linear from 3.7 at 0.06 lux to 5 at 10 lux
+        return 65.f / 497.f * lux + 7.34f;
+    }
+    // Linear from 5 at 10 lux to 100 at 30 lux
+    return 4.75f * lux - 85.f / 7.f;
+
 }
 
 float sun_moon_light_at_noon_near( const time_point &p )
