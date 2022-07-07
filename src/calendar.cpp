@@ -473,6 +473,14 @@ float sun_moon_light_at( const time_point &p )
     return sun_light_at( p ) + moon_light_at( p );
 }
 
+
+float lux_to_light( const float lux )
+{
+	if lux > 50{
+		return 100;
+	}
+}
+
 double sun_moon_light_at_noon_near( const time_point &p )
 {
     const time_point solar_noon = solar_noon_near( p );
