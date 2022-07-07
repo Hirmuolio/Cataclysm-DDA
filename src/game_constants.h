@@ -120,7 +120,7 @@ namespace lux
 constexpr float full_vision = 30.f;
 
 // Sunlight at 90° with clear sky
-constexpr float sunlight = 129000.f; 
+constexpr float sunlight = 129000.f;
 
 }
 
