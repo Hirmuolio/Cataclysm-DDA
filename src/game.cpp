@@ -3812,7 +3812,7 @@ float game::natural_light_level( const int zlev ) const
     float ret = LIGHT_AMBIENT_MINIMAL;
 
     // Sunlight/moonlight related stuff
-    ret = incident_sun_moon_light( get_weather().weather_id, calendar::turn );
+    ret = lux_to_light( incident_sun_moon_light( get_weather().weather_id, calendar::turn ) );
 
     // Artifact light level changes here. Even though some of these only have an effect
     // aboveground it is cheaper performance wise to simply iterate through the entire

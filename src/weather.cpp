@@ -131,13 +131,14 @@ void glare( const weather_type_id &w )
 
 ////// food vs weather
 
-int incident_sunlight( const weather_type_id &wtype, const time_point &t )
+float incident_sunlight( const weather_type_id &wtype, const time_point &t )
 {
     return std::max<float>( 0.0f, sun_light_at( t ) * wtype->light_modifier );
 }
 
-int incident_sun_moon_light( const weather_type_id &wtype, const time_point &t )
+float incident_sun_moon_light( const weather_type_id &wtype, const time_point &t )
 {
+	add_msg( "S %f, W %f, N %s" , sun_moon_light_at( t ), wtype->light_modifier, wtype->name );
     return std::max<float>( 0.0f, sun_moon_light_at( t ) * wtype->light_modifier );
 }
 
