@@ -244,7 +244,7 @@ void suffer::mutation_power( Character &you, const trait_id &mut_id )
             if( you.get_bmi() < character_weight_category::underweight ) {
                 you.add_msg_if_player( m_warning,
                                        _( "You're too malnourished to keep your %s going." ),
-                                       mut_id->name() );
+                                       you.mutation_name( mut_id ) );
                 you.deactivate_mutation( mut_id );
             } else {
                 // does not directly modify hunger, but burns kcal
@@ -256,7 +256,7 @@ void suffer::mutation_power( Character &you, const trait_id &mut_id )
             if( you.get_thirst() >= 260 ) {
                 you.add_msg_if_player( m_warning,
                                        _( "You're too dehydrated to keep your %s going." ),
-                                       mut_id->name() );
+                                       you.mutation_name( mut_id ) );
                 you.deactivate_mutation( mut_id );
             } else {
                 you.mod_thirst( mut_id->cost );
@@ -267,7 +267,7 @@ void suffer::mutation_power( Character &you, const trait_id &mut_id )
             if( you.get_fatigue() >= fatigue_levels::EXHAUSTED ) {
                 you.add_msg_if_player( m_warning,
                                        _( "You're too exhausted to keep your %s going." ),
-                                       mut_id->name() );
+                                       you.mutation_name( mut_id ) );
                 you.deactivate_mutation( mut_id );
             } else {
                 you.mod_fatigue( mut_id->cost );
@@ -1225,7 +1225,7 @@ void suffer::from_radiation( Character &you )
 {
     map &here = get_map();
     // checking for radioactive items in inventory
-    const int item_radiation = you.leak_level( flag_RADIOACTIVE );
+    const float item_radiation = you.leak_level();
     const int map_radiation = here.get_radiation( you.pos() );
     float rads = map_radiation / 100.0f + item_radiation / 10.0f;
 
@@ -1879,7 +1879,7 @@ void Character::mend( int rate_multiplier )
         healing_factor *= bp->mend_rate;
 
         const time_duration dur_inc = 1_turns * roll_remainder( rate_multiplier * healing_factor );
-        auto &eff = get_effect( effect_mending, bp );
+        effect &eff = get_effect( effect_mending, bp );
         if( eff.is_null() ) {
             add_effect( effect_mending, dur_inc, bp, true );
             continue;
@@ -2095,7 +2095,7 @@ void Character::add_addiction( const addiction_id &type, int strength )
         timer = 6_hours;
     }
     //Update existing addiction
-    for( auto &i : addictions ) {
+    for( addiction &i : addictions ) {
         if( i.type != type ) {
             continue;
         }
@@ -2157,11 +2157,4 @@ int Character::addiction_level( const addiction_id &type ) const
         return ad.type == type;
     } );
     return iter != addictions.end() ? iter->intensity : 0;
-}
-
-int  Character::leak_level( const flag_id &flag ) const
-{
-    int leak_level = 0;
-    leak_level = inv->leak_level( flag );
-    return leak_level;
 }

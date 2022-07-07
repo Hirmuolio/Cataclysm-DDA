@@ -2643,7 +2643,7 @@ std::vector<item_location> Character::nearby( const
         return VisitResponse::NEXT;
     } );
 
-    for( const auto &cur : map_selector( pos(), radius ) ) {
+    for( const map_cursor &cur : map_selector( pos(), radius ) ) {
         cur.visit_items( [&]( const item * e, const item * parent ) {
             if( func( e, parent ) ) {
                 res.emplace_back( cur, const_cast<item *>( e ) );
@@ -2652,7 +2652,7 @@ std::vector<item_location> Character::nearby( const
         } );
     }
 
-    for( const auto &cur : vehicle_selector( pos(), radius ) ) {
+    for( const vehicle_cursor &cur : vehicle_selector( pos(), radius ) ) {
         cur.visit_items( [&]( const item * e, const item * parent ) {
             if( func( e, parent ) ) {
                 res.emplace_back( cur, const_cast<item *>( e ) );
@@ -2908,7 +2908,7 @@ bool Character::can_use( const item &it, const item &context ) const
                                _( "<npcname> can't use anything while incorporeal." ) );
         return false;
     }
-    const auto &ctx = !context.is_null() ? context : it;
+    const item &ctx = !context.is_null() ? context : it;
 
     if( !meets_requirements( it, ctx ) ) {
         const std::string unmet( enumerate_unmet_requirements( it, ctx ) );
@@ -2958,7 +2958,7 @@ bool Character::is_wielding( const item &target ) const
 std::vector<std::pair<std::string, std::string>> Character::get_overlay_ids() const
 {
     std::vector<std::pair<std::string, std::string>> rval;
-    std::multimap<int, std::string> mutation_sorting;
+    std::multimap<int, std::pair<std::string, std::string>> mutation_sorting;
     int order;
     std::string overlay_id;
 
@@ -2974,18 +2974,22 @@ std::vector<std::pair<std::string, std::string>> Character::get_overlay_ids() co
         }
         overlay_id = ( mut.second.powered ? "active_" : "" ) + mut.first.str();
         order = get_overlay_order_of_mutation( overlay_id );
-        mutation_sorting.insert( std::pair<int, std::string>( order, overlay_id ) );
+        std::string variant;
+        if( mut.second.variant != nullptr ) {
+            variant = mut.second.variant->id;
+        }
+        mutation_sorting.emplace( order, std::pair<std::string, std::string> { overlay_id, variant } );
     }
 
     // then get bionics
     for( const bionic &bio : *my_bionics ) {
         overlay_id = ( bio.powered ? "active_" : "" ) + bio.id.str();
         order = get_overlay_order_of_mutation( overlay_id );
-        mutation_sorting.insert( std::pair<int, std::string>( order, overlay_id ) );
+        mutation_sorting.emplace( order, std::pair<std::string, std::string> { overlay_id, "" } );
     }
 
     for( auto &mutorder : mutation_sorting ) {
-        rval.emplace_back( "mutation_" + mutorder.second, "" );
+        rval.emplace_back( "mutation_" + mutorder.second.first, mutorder.second.second );
     }
 
     // next clothing
@@ -3127,7 +3131,7 @@ bool Character::meets_stat_requirements( const item &it ) const
 
 bool Character::meets_requirements( const item &it, const item &context ) const
 {
-    const auto &ctx = !context.is_null() ? context : it;
+    const item &ctx = !context.is_null() ? context : it;
     return meets_stat_requirements( it ) && meets_skill_requirements( it.type->min_skills, ctx );
 }
 
@@ -4095,6 +4099,12 @@ int Character::get_thirst() const
     return thirst;
 }
 
+int Character::get_instant_thirst() const
+{
+    return thirst - std::max( units::to_milliliter<int>
+                              ( stomach.get_water() / 10 ), 0 );
+}
+
 void Character::mod_thirst( int nthirst )
 {
     if( has_flag( json_flag_NO_THIRST ) || !needs_food() ) {
@@ -4176,7 +4186,7 @@ void Character::on_damage_of_type( int adjusted_damage, damage_type type, const 
                 // Unpowered bionics are protected from power surges.
                 continue;
             }
-            const auto &info = i.info();
+            const bionic_data &info = i.info();
             if( info.has_flag( STATIC( json_character_flag( "BIONIC_SHOCKPROOF" ) ) ) ||
                 info.has_flag( STATIC( json_character_flag( "BIONIC_FAULTY" ) ) ) ) {
                 continue;
@@ -4384,6 +4394,21 @@ int Character::weariness_level() const
     }
 
     return level;
+}
+
+int Character::weariness_transition_level() const
+{
+    int amount = weariness();
+    int threshold = weary_threshold();
+    amount -= threshold * get_option<float>( "WEARY_INITIAL_STEP" );
+    while( amount >= 0 ) {
+        amount -= threshold;
+        if( threshold > 20 ) {
+            threshold *= get_option<float>( "WEARY_THRESH_SCALING" );
+        }
+    }
+
+    return std::abs( amount );
 }
 
 float Character::maximum_exertion_level() const
@@ -5158,7 +5183,7 @@ nc_color Character::symbol_color() const
         return cyan_background( basic );
     }
 
-    const auto &fields = get_map().field_at( pos() );
+    const field &fields = get_map().field_at( pos() );
 
     // Priority: electricity, fire, acid, gases
     bool has_elec = false;
@@ -6110,6 +6135,25 @@ void Character::mod_rad( int mod )
     set_rad( std::max( 0, get_rad() + mod ) );
 }
 
+float Character::leak_level() const
+{
+    float ret = 0.f;
+
+    // This is bad way to calculate radiation and should be rewritten some day.
+    for( const item_location &item_loc : const_cast<Character *>( this )->all_items_loc() ) {
+        const item *it = item_loc.get_item();
+        if( it->has_flag( flag_RADIOACTIVE ) ) {
+            if( it->has_flag( flag_LEAK_ALWAYS ) ) {
+                ret += to_gram( it->weight() ) / 250.f;
+            } else if( it->has_flag( flag_LEAK_DAM ) && it->damage() > 0 ) {
+                ret += it->damage_level();
+            }
+        }
+    }
+
+    return ret;
+}
+
 int Character::get_stamina() const
 {
     if( is_npc() ) {
@@ -6719,7 +6763,7 @@ void Character::vomit()
     mod_moves( -100 );
     for( auto &elem : *effects ) {
         for( auto &_effect_it : elem.second ) {
-            auto &it = _effect_it.second;
+            effect &it = _effect_it.second;
             if( it.get_id() == effect_foodpoison ) {
                 it.mod_duration( -30_minutes );
             } else if( it.get_id() == effect_drunk ) {
@@ -6762,7 +6806,7 @@ tripoint Character::adjacent_tile() const
         }
         // Only consider tile if unoccupied, passable and has no traps
         dangerous_fields = 0;
-        auto &tmpfld = here.field_at( p );
+        field &tmpfld = here.field_at( p );
         for( auto &fld : tmpfld ) {
             const field_entry &cur = fld.second;
             if( cur.is_dangerous() ) {
@@ -9001,7 +9045,7 @@ void Character::place_corpse()
     }
     std::vector<item *> tmp = inv_dump();
     item body = item::make_corpse( mtype_id::NULL_ID(), calendar::turn, get_name() );
-    body.set_item_temperature( 310.15 );
+    body.set_item_temperature( units::from_celcius( 37 ) );
     map &here = get_map();
     for( item *itm : tmp ) {
         here.add_item_or_charges( pos(), *itm );
@@ -9240,10 +9284,8 @@ void Character::process_one_effect( effect &it, bool is_new )
 
     // Handle miss messages
     const std::vector<std::pair<translation, int>> &msgs = it.get_miss_msgs();
-    if( !msgs.empty() ) {
-        for( const auto &i : msgs ) {
-            add_miss_reason( i.first.translated(), static_cast<unsigned>( i.second ) );
-        }
+    for( const auto &i : msgs ) {
+        add_miss_reason( i.first.translated(), static_cast<unsigned>( i.second ) );
     }
 
     // Handle vitamins
@@ -9510,7 +9552,7 @@ void Character::process_effects()
 
     // Apply new effects from effect->effect chains
     while( !scheduled_effects.empty() ) {
-        const auto &effect = scheduled_effects.front();
+        const scheduled_effect_t &effect = scheduled_effects.front();
 
         add_effect( effect_source::empty(),
                     effect.eff_id,
@@ -9527,7 +9569,7 @@ void Character::process_effects()
     // Perform immediate effect removals
     while( !terminating_effects.empty() ) {
 
-        const auto &effect = terminating_effects.front();
+        const terminating_effect_t &effect = terminating_effects.front();
 
         remove_effect( effect.eff_id, effect.bp );
 
@@ -9535,6 +9577,14 @@ void Character::process_effects()
     }
 
     Creature::process_effects();
+}
+
+void Character::gravity_check()
+{
+    if( get_map().tr_at( pos() ) == tr_ledge ) {
+        get_map().tr_at( pos() ).trigger( pos(), *this );
+        get_map().update_visibility_cache( pos().z );
+    }
 }
 
 double Character::vomit_mod()
@@ -9637,7 +9687,7 @@ void Character::shift_destination( const point &shift )
         *next_expected_position += shift;
     }
 
-    for( auto &elem : auto_move_route ) {
+    for( tripoint &elem : auto_move_route ) {
         elem += shift;
     }
 }
@@ -10973,7 +11023,7 @@ void Character::process_items()
     if( !inv_use_ups.empty() ) {
         const int available_charges = available_ups();
         int ups_used = 0;
-        for( const auto &it : inv_use_ups ) {
+        for( item * const &it : inv_use_ups ) {
             // For powered armor, an armor-powering bionic should always be preferred over UPS usage.
             if( it->is_power_armor() && can_interface_armor() && has_power() ) {
                 // Bionic power costs are handled elsewhere
@@ -11367,7 +11417,7 @@ void Character::pause()
     if( in_vehicle && one_in( 8 ) ) {
         VehicleList vehs = here.get_vehicles();
         vehicle *veh = nullptr;
-        for( auto &v : vehs ) {
+        for( wrapped_vehicle &v : vehs ) {
             veh = v.v;
             if( veh && veh->is_moving() && veh->player_in_control( *this ) ) {
                 double exp_temp = 1 + veh->total_mass() / 400.0_kilogram +
@@ -11392,7 +11442,7 @@ bool Character::can_lift( const T &obj ) const
     // avoid comparing by weight as different objects use differing scales (grams vs kilograms etc)
     int str = get_lift_str();
     if( mounted_creature ) {
-        const auto mons = mounted_creature.get();
+        auto *const mons = mounted_creature.get();
         str = mons->mech_str_addition() == 0 ? str : mons->mech_str_addition();
     }
     const int npc_str = get_lift_assist();

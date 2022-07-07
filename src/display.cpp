@@ -13,6 +13,7 @@
 #include "mtype.h"
 #include "npc.h"
 #include "timed_event.h"
+#include "units_utility.h"
 #include "vehicle.h"
 #include "vpart_position.h"
 #include "weather.h"
@@ -44,6 +45,7 @@ disp_overmap_cache::disp_overmap_cache()
 {
     _center = overmap::invalid_tripoint;
     _mission = overmap::invalid_tripoint;
+    _width = 0;
 }
 
 disp_bodygraph_cache::disp_bodygraph_cache()
@@ -262,6 +264,74 @@ std::string display::time_string( const Character &u )
         // NOLINTNEXTLINE(cata-text-style): the question mark does not end a sentence
         return _( "???" );
     }
+}
+
+std::string display::sundial_text_color( const Character &u, int width )
+{
+    const std::vector<std::pair<std::string, nc_color> > d_glyphs {
+        { "*", c_yellow },
+        { "+", c_yellow },
+        { ".", c_brown },
+        { "_", c_red }
+    };
+    const std::vector<std::pair<std::string, nc_color> > n_glyphs {
+        { "C", c_white },
+        { "c", c_light_blue },
+        { ",", c_blue },
+        { "_", c_cyan }
+    };
+
+    auto get_glyph = []( int x, int w, int num_glyphs ) {
+        int hw = ( w / 2 ) > 0 ? w / 2 : 1;
+        return clamp<int>( ( std::abs( x - hw ) * num_glyphs ) / hw, 0, num_glyphs - 1 );
+    };
+
+    std::pair<units::angle, units::angle> sun_pos = sun_azimuth_altitude( calendar::turn );
+    const int h = hour_of_day<int>( calendar::turn );
+    const int h_dawn = hour_of_day<int>( sunset( calendar::turn ) ) - 12;
+    const float light = sun_light_at( calendar::turn );
+    float azm = to_degrees( normalize( sun_pos.first + 90_degrees ) );
+    if( azm > 270.f ) {
+        azm -= 360.f;
+    }
+
+    width -= 2;
+    const float scale = 180.f / width;
+    const int azm_pos = static_cast<int>( std::round( azm / scale ) ) - 1;
+    const int night_h = h >= h_dawn + 12 ? h - ( h_dawn + 12 ) : h + ( 12 - h_dawn );
+    std::string ret = "[";
+    if( g->is_sheltered( u.pos() ) ) {
+        ret += ( width > 0 ? std::string( width, '?' ) : "" );
+    } else {
+        for( int i = 0; i < width; i++ ) {
+            std::string ch = " ";
+            nc_color clr = c_white;
+            int i_dist = std::abs( i - azm_pos );
+            float f_dist = ( i_dist * 2 ) / static_cast<float>( width );
+            float l_dist = ( f_dist * f_dist * 80.f ) + 30.f;
+            if( h >= h_dawn && h < h_dawn + 12 ) {
+                // day
+                if( i_dist == 0 ) {
+                    int glyph = get_glyph( i, width, d_glyphs.size() );
+                    ch = d_glyphs[glyph].first;
+                    clr = d_glyphs[glyph].second;
+                }
+            } else {
+                // night
+                int n_dist = std::abs( ( night_h * width ) / 12 - i );
+                if( n_dist == 0 ) {
+                    int glyph = get_glyph( i, width, n_glyphs.size() );
+                    ch = n_glyphs[glyph].first;
+                    clr = n_glyphs[glyph].second;
+                }
+            }
+            if( light > l_dist ) {
+                clr = hilite( clr );
+            }
+            ret += colorize( ch, clr );
+        }
+    }
+    return ret + "]";
 }
 
 std::pair<std::string, nc_color> display::morale_face_color( const avatar &u )
@@ -593,8 +663,7 @@ std::pair<std::string, nc_color> display::activity_text_color( const Character &
 std::pair<std::string, nc_color> display::thirst_text_color( const Character &u )
 {
     // some delay from water in stomach is desired, but there needs to be some visceral response
-    int thirst = u.get_thirst() - std::max( units::to_milliliter<int>( u.stomach.get_water() ) / 10,
-                                            0 );
+    int thirst = u.get_instant_thirst();
     std::string hydration_string;
     nc_color hydration_color = c_white;
     if( thirst > 520 ) {
@@ -645,7 +714,7 @@ std::pair<std::string, nc_color> display::hunger_text_color( const Character &u 
             std::forward_as_tuple( effect_hunger_famished, translate_marker( "Famished" ), c_light_red )
         }
     };
-    for( auto &hunger_state : hunger_states ) {
+    for( const auto &hunger_state : hunger_states ) {
         if( u.has_effect( std::get<0>( hunger_state ) ) ) {
             return std::make_pair( _( std::get<1>( hunger_state ) ), std::get<2>( hunger_state ) );
         }
@@ -1153,7 +1222,7 @@ std::string display::colorized_overmap_text( const avatar &u, const int width, c
     const tripoint_abs_omt &center_xyz = u.global_omt_location();
     const tripoint_abs_omt &mission_xyz = u.get_active_mission_target();
     // Retrieve cached string instead of constantly rebuilding it
-    if( disp_om_cache.is_valid_for( center_xyz, mission_xyz ) ) {
+    if( disp_om_cache.is_valid_for( center_xyz, mission_xyz, width ) ) {
         return disp_om_cache.get_val();
     }
 
@@ -1192,7 +1261,7 @@ std::string display::colorized_overmap_text( const avatar &u, const int width, c
     }
 
     // Rebuild the cache so we can reuse it if nothing changes
-    disp_om_cache.rebuild( center_xyz, mission_xyz, overmap_text );
+    disp_om_cache.rebuild( center_xyz, mission_xyz, width, overmap_text );
 
     return overmap_text;
 }
