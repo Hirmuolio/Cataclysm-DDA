@@ -155,9 +155,9 @@ void glare( const weather_type_id &w );
  * into account.
  */
 float incident_sunlight( const weather_type_id &wtype,
-                       const time_point &t = calendar::turn );
+                         const time_point &t = calendar::turn );
 float incident_sun_moon_light( const weather_type_id &wtype,
-                       const time_point &t = calendar::turn );
+                               const time_point &t = calendar::turn );
 
 void weather_sound( const translation &sound_message, const std::string &sound_effect );
 
