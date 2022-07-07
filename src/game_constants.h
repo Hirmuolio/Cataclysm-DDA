@@ -111,20 +111,6 @@ constexpr units::temperature freezing = units::from_celcius( 0 ); // 0 Celsius
 constexpr units::temperature boiling = units::from_celcius( 100 ); // 100 Celsius
 } // namespace temperatures
 
-// Light level constants
-namespace lux
-{
-// Illumination levels in lux
-
-// Full vision range without penalties
-constexpr float full_vision = 30.f;
-
-// Sunlight at 90° with clear sky
-constexpr float sunlight = 129000.f;
-
-}
-
-
 // Slowest speed at which a gun can be aimed.
 static constexpr int MAX_AIM_COST = 10;
 

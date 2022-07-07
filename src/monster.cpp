@@ -1073,8 +1073,8 @@ int monster::sight_range( const float light_level ) const
         return type->vision_day;
     }
     // TODO check this equation
-    int range = light_level / lux::full_vision * type->vision_day + ( lux::full_vision - light_level ) /
-                lux::full_vision * type->vision_night ;
+    int range = light_level / default_daylight * type->vision_day + ( default_daylight - light_level ) /
+                default_daylight * type->vision_night ;
 
     return range;
 }
