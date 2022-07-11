@@ -91,7 +91,7 @@ TEST_CASE( "Solar power", "[vehicle][power]" )
     SECTION( "Summer day noon" ) {
         calendar::turn = calendar::turn_zero + calendar::season_length() + 1_days + 12_hours;
         veh_ptr->update_time( calendar::turn );
-        veh_ptr->discharge_battery( 100000 );
+        veh_ptr->discharge_battery( 1000000 );
         REQUIRE( veh_ptr->fuel_left( fuel_type_battery ) == 0 );
         WHEN( "30 minutes elapse" ) {
             veh_ptr->update_time( calendar::turn + 30_minutes );
@@ -104,7 +104,7 @@ TEST_CASE( "Solar power", "[vehicle][power]" )
         calendar::turn = calendar::turn_zero + calendar::season_length() + 1_days;
         calendar::turn = sunrise( calendar::turn ) - 1_hours;
         veh_ptr->update_time( calendar::turn );
-        veh_ptr->discharge_battery( 100000 );
+        veh_ptr->discharge_battery( 1000000 );
         REQUIRE( veh_ptr->fuel_left( fuel_type_battery ) == 0 );
         WHEN( "30 minutes elapse" ) {
             veh_ptr->update_time( calendar::turn + 30_minutes );
@@ -116,7 +116,7 @@ TEST_CASE( "Solar power", "[vehicle][power]" )
     SECTION( "Winter noon" ) {
         calendar::turn = calendar::turn_zero + 3 * calendar::season_length() + 1_days + 12_hours;
         veh_ptr->update_time( calendar::turn );
-        veh_ptr->discharge_battery( 100000 );
+        veh_ptr->discharge_battery( 1000000 );
         REQUIRE( veh_ptr->fuel_left( fuel_type_battery ) == 0 );
         WHEN( "30 minutes elapse" ) {
             veh_ptr->update_time( calendar::turn + 30_minutes );
@@ -142,7 +142,7 @@ TEST_CASE( "Daily solar power", "[vehicle][power]" )
     SECTION( "Spring day 2" ) {
         calendar::turn = calendar::turn_zero + 1_days;
         veh_ptr->update_time( calendar::turn );
-        veh_ptr->discharge_battery( 100000 );
+        veh_ptr->discharge_battery( 1000000 );
         REQUIRE( veh_ptr->fuel_left( fuel_type_battery ) == 0 );
         WHEN( "24 hours pass" ) {
             veh_ptr->update_time( calendar::turn + 24_hours );
@@ -154,7 +154,7 @@ TEST_CASE( "Daily solar power", "[vehicle][power]" )
     SECTION( "Summer day 1" ) {
         calendar::turn = calendar::turn_zero + calendar::season_length();
         veh_ptr->update_time( calendar::turn );
-        veh_ptr->discharge_battery( 100000 );
+        veh_ptr->discharge_battery( 1000000 );
         REQUIRE( veh_ptr->fuel_left( fuel_type_battery ) == 0 );
         WHEN( "24 hours pass" ) {
             veh_ptr->update_time( calendar::turn + 24_hours );
@@ -166,7 +166,7 @@ TEST_CASE( "Daily solar power", "[vehicle][power]" )
     SECTION( "Autum day 1" ) {
         calendar::turn = calendar::turn_zero + 2 * calendar::season_length();
         veh_ptr->update_time( calendar::turn );
-        veh_ptr->discharge_battery( 100000 );
+        veh_ptr->discharge_battery( 1000000 );
         REQUIRE( veh_ptr->fuel_left( fuel_type_battery ) == 0 );
         WHEN( "24 hours pass" ) {
             veh_ptr->update_time( calendar::turn + 24_hours );
@@ -178,7 +178,7 @@ TEST_CASE( "Daily solar power", "[vehicle][power]" )
     SECTION( "Winter day 1" ) {
         calendar::turn = calendar::turn_zero + 3 * calendar::season_length();
         veh_ptr->update_time( calendar::turn );
-        veh_ptr->discharge_battery( 100000 );
+        veh_ptr->discharge_battery( 1000000 );
         REQUIRE( veh_ptr->fuel_left( fuel_type_battery ) == 0 );
         WHEN( "24 hours pass" ) {
             veh_ptr->update_time( calendar::turn + 24_hours );
