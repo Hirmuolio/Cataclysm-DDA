@@ -460,9 +460,9 @@ bool Creature::sees( const tripoint &t, bool is_avatar, int range_mod ) const
     }
 }
 
-bool Creature::sees( const tripoint_bub_ms &t, bool is_avatar, int range_mod ) const
+bool Creature::sees( const tripoint_bub_ms &t, bool is_avatar ) const
 {
-    return sees( t.raw(), is_avatar, range_mod );
+    return sees( t.raw(), is_avatar, 0 );
 }
 
 // Helper function to check if potential area of effect of a weapon overlaps vehicle

@@ -9805,9 +9805,9 @@ bool Character::sees( const tripoint &t, bool, int ) const
     return can_see;
 }
 
-bool Character::sees( const tripoint_bub_ms &t, bool is_avatar, int range_mod ) const
+bool Character::sees( const tripoint_bub_ms &t, bool is_avatar ) const
 {
-    return sees( t.raw(), is_avatar, range_mod );
+    return sees( t.raw(), is_avatar );
 }
 
 bool Character::sees( const Creature &critter ) const

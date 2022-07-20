@@ -376,7 +376,7 @@ class Creature : public viewer
         /*@{*/
         bool sees( const Creature &critter ) const override;
         bool sees( const tripoint &t, bool is_avatar = false, int range_mod = 0 ) const override;
-        bool sees( const tripoint_bub_ms &t, bool is_avatar = false, int range_mod = 0 ) const override;
+        bool sees( const tripoint_bub_ms &t, bool is_avatar = false ) const override;
         /*@}*/
 
         /**
