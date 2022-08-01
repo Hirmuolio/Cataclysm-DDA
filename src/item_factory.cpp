@@ -2087,10 +2087,8 @@ void Item_factory::check_definitions() const
                 msg += string_format( "invalid shot definition, shot damage with no shot count." );
             }
         }
-        if( type->battery ) {
-            if( type->battery->max_capacity < 0_mJ ) {
-                msg += "battery cannot have negative maximum charge\n";
-            }
+        if( type->max_capacity < 0_mJ ) {
+            msg += "battery cannot have negative maximum charge\n";
         }
         if( type->gun ) {
             for( const ammotype &at : type->gun->ammo ) {
@@ -3262,35 +3260,6 @@ void Item_factory::load_magazine( const JsonObject &jo, const std::string &src )
     }
 }
 
-void islot_battery::load( const JsonObject &jo )
-{
-    mandatory( jo, was_loaded, "max_capacity", max_capacity );
-}
-
-void islot_battery::deserialize( const JsonObject &jo )
-{
-    load( jo );
-}
-
-void Item_factory::load_battery( const JsonObject &jo, const std::string &src )
-{
-    itype def;
-    if( load_definition( jo, src, def ) ) {
-        if( def.was_loaded ) {
-            if( def.battery ) {
-                def.battery->was_loaded = true;
-            } else {
-                def.battery = cata::make_value<islot_battery>();
-                def.battery->was_loaded = true;
-            }
-        } else {
-            def.battery = cata::make_value<islot_battery>();
-        }
-        def.battery->load( jo );
-        load_basic_info( jo, def, src );
-    }
-}
-
 void Item_factory::load( islot_bionic &slot, const JsonObject &jo, const std::string &src )
 {
     bool strict = src == "dda";
@@ -3767,6 +3736,7 @@ void Item_factory::load_basic_info( const JsonObject &jo, itype &def, const std:
     assign( jo, "explode_in_fire", def.explode_in_fire );
     assign( jo, "insulation", def.insulation_factor );
     assign( jo, "solar_efficiency", def.solar_efficiency );
+	assign( jo, "max_capacity", def.max_capacity );
     assign( jo, "ascii_picture", def.picture_id );
 
     if( jo.has_member( "thrown_damage" ) ) {
@@ -3808,7 +3778,6 @@ void Item_factory::load_basic_info( const JsonObject &jo, itype &def, const std:
     static const std::set<std::string> needs_plural = {
         "AMMO",
         "ARMOR",
-        "BATTERY",
         "BIONIC_ITEM",
         "BOOK",
         "COMESTIBLE",

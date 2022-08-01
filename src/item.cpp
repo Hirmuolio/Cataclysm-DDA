@@ -619,8 +619,8 @@ units::energy item::mod_energy( const units::energy &qty )
     units::energy val = energy_remaining() + qty;
     if( val < 0_J ) {
         return val;
-    } else if( val > type->battery->max_capacity ) {
-        energy = type->battery->max_capacity;
+    } else if( val > type->max_capacity ) {
+        energy = type->max_capacity;
     } else {
         energy = val;
     }
@@ -4319,15 +4319,15 @@ void item::battery_info( std::vector<iteminfo> &info, const iteminfo_query * /*p
     }
 
     std::string info_string;
-    if( type->battery->max_capacity < 1_J ) {
+    if( type->max_capacity < 1_J ) {
         info_string = string_format( _( "<bold>Capacity</bold>: %dmJ" ),
-                                     to_millijoule( type->battery->max_capacity ) );
-    } else if( type->battery->max_capacity < 1_kJ ) {
+                                     to_millijoule( type->max_capacity ) );
+    } else if( type->max_capacity < 1_kJ ) {
         info_string = string_format( _( "<bold>Capacity</bold>: %dJ" ),
-                                     to_joule( type->battery->max_capacity ) );
-    } else if( type->battery->max_capacity >= 1_kJ ) {
+                                     to_joule( type->max_capacity ) );
+    } else if( type->max_capacity >= 1_kJ ) {
         info_string = string_format( _( "<bold>Capacity</bold>: %dkJ" ),
-                                     to_kilojoule( type->battery->max_capacity ) );
+                                     to_kilojoule( type->max_capacity ) );
     }
     insert_separation_line( info );
     info.emplace_back( "BATTERY", info_string );
@@ -6576,7 +6576,7 @@ std::string item::display_name( unsigned int quantity ) const
     } else if( is_vehicle_battery() ) {
         show_amt = true;
         amount = to_joule( energy_remaining() );
-        max_amount = to_joule( type->battery->max_capacity );
+        max_amount = to_joule( type->max_capacity );
     }
 
     std::string ammotext;
@@ -9573,7 +9573,7 @@ bool item::is_battery() const
 
 bool item::is_vehicle_battery() const
 {
-    return !!type->battery;
+    return is_battery();
 }
 
 bool item::is_ammo_belt() const

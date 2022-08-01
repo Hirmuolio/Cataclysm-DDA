@@ -887,16 +887,6 @@ struct islot_magazine {
     cata::optional<itype_id> linkage;
 };
 
-struct islot_battery {
-    /** Maximum energy the battery can store */
-    units::energy max_capacity;
-
-    bool was_loaded = false;
-
-    void load( const JsonObject &jo );
-    void deserialize( const JsonObject &jo );
-};
-
 struct islot_ammo : common_ranged_data {
     /**
      * Ammo type, basically the "form" of the ammo that fits into the gun/tool.
@@ -1095,7 +1085,6 @@ struct itype {
         cata::value_ptr<islot_gun> gun;
         cata::value_ptr<islot_gunmod> gunmod;
         cata::value_ptr<islot_magazine> magazine;
-        cata::value_ptr<islot_battery> battery;
         cata::value_ptr<islot_bionic> bionic;
         cata::value_ptr<islot_ammo> ammo;
         cata::value_ptr<islot_seed> seed;
@@ -1293,6 +1282,11 @@ struct itype {
         * Efficiency of solar energy conversion for solarpacks.
         */
         float solar_efficiency = 0.0f;
+
+        /**
+        * Maximum amount of battery energy that can be in this item.
+        */
+        units::energy max_capacity;
 
     private:
         /** Minimum and maximum amount of damage to an item (state of maximum repair). */
