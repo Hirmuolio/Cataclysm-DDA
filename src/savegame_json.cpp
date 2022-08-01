@@ -3057,7 +3057,7 @@ void item::migrate_battery()
         return;
     }
     // It is pretty safe to assume that the only thing here is battery charges
-    add_energy( units::from_kilojoule( items.front()->charges ) );
+    mod_energy( units::from_kilojoule( items.front()->charges ) );
     contents.clear_pockets( item_pocket::pocket_type::CORPSE );
 }
 
