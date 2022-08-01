@@ -533,7 +533,6 @@
     "looks_like": "cell_phone",
     "symbol": ";",
     "color": "light_gray",
-    "ammo": [ "battery" ],
     "charges_per_use": 1,
     "use_action": [
       "CAMERA",
@@ -556,7 +555,6 @@
     ],
     "flags": [ "WATCH", "ALARMCLOCK", "USE_UPS", "NO_UNLOAD", "NO_RELOAD", "WATER_BREAK", "CALORIES_INTAKE" ],
     "pocket_data": [
-      { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 120 } },
       {
         "pocket_type": "EBOOK",
         "rigid": true,
@@ -564,7 +562,8 @@
         "max_contains_weight": "1 g",
         "weight_multiplier": 0.0
       }
-    ]
+    ],
+    "max_capacity": "120 kJ"
   },
   {
     "id": "smartphone_music",

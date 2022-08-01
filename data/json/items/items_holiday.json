@@ -13,17 +13,16 @@
     "symbol": "0",
     "color": "yellow",
     "looks_like": "pumpkin",
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 100 } } ],
     "charges_per_use": 1,
     "flags": [ "WATER_BREAK" ],
-    "ammo": [ "battery" ],
     "use_action": {
       "target": "plastic_jack_o_lantern_lit",
       "msg": "You flip the switch in the jack o'lantern.",
       "active": true,
       "menu_text": "Light",
       "type": "transform"
-    }
+    },
+    "max_capacity": "100 kJ"
   },
   {
     "id": "plastic_jack_o_lantern_lit",
