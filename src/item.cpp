@@ -10703,7 +10703,10 @@ int item::ammo_remaining( const Character *carrier ) const
     }
 
     // Battery energy as ammo at rate of 1 charge / 1 kJ
-    ret += units::to_kilojoule( energy_remaining() );
+    if( act_as_battery() ) {
+        ret += units::to_kilojoule( energy );
+    }
+
     return ret;
 }
 
@@ -11681,11 +11684,27 @@ int item::getlight_emit() const
         return 0;
     }
     if( has_flag( flag_CHARGEDIM ) && is_tool() && !has_flag( flag_USE_UPS ) ) {
-        // Falloff starts at 1/5 total charge and scales linearly from there to 0.
-        const ammotype &loaded_ammo = ammo_data()->ammo->type;
-        if( ammo_capacity( loaded_ammo ) && ammo_remaining() < ( ammo_capacity( loaded_ammo ) / 5 ) ) {
-            lumint *= ammo_remaining() * 5.0 / ammo_capacity( loaded_ammo );
+        float max_cap;
+        float current;
+        if( energy_remaining() > 0_kJ ) {
+            // This is ugly
+            if( act_as_battery() ) {
+                max_cap = units::to_kilojoule( type->max_capacity );
+            } else {
+                const item *mag = magazine_current();
+                if( mag ) {
+                    max_cap = units::to_kilojoule( mag->type->max_capacity );
+                }
+            }
+            current = units::to_kilojoule( energy_remaining() );
+        } else {
+            const ammotype &loaded_ammo = ammo_data()->ammo->type;
+            max_cap = ammo_capacity( loaded_ammo );
+            current = ammo_remaining();
         }
+        // Falloff starts at 1/5 total charge and scales linearly from there to 0.
+        lumint *= std::min( current * 5 / max_cap, 1.f );
+
     }
     return lumint;
 }

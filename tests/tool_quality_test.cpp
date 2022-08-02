@@ -98,7 +98,6 @@ TEST_CASE( "battery-powered tool qualities", "[tool][battery][quality]" )
 
     WHEN( "tool has a battery with zero charge" ) {
         // Get a dead battery
-        battery.ammo_set( battery.ammo_default(), 0 );
         REQUIRE( battery.ammo_remaining() == 0 );
         // Install the battery in the drill
         drill.put_in( battery, item_pocket::pocket_type::MAGAZINE_WELL );
@@ -116,13 +115,15 @@ TEST_CASE( "battery-powered tool qualities", "[tool][battery][quality]" )
 
     WHEN( "tool has a battery with enough charge for one use, equal to charges_per_use" ) {
         // Get a battery with exactly enough charge for one use
-        units::energy bat_charges = units::from_kilojoule( drill.type->charges_to_use() );
+        int charges_required = drill.type->charges_to_use();
+        units::energy bat_charges = units::from_kilojoule( charges_required );
         battery.mod_energy( bat_charges );
         REQUIRE( battery.energy_remaining() == bat_charges );
         // Install the battery in the drill
         drill.put_in( battery, item_pocket::pocket_type::MAGAZINE_WELL );
         REQUIRE( drill.magazine_current() );
         REQUIRE( drill.energy_remaining() == bat_charges );
+        CHECK( drill.ammo_remaining() == charges_required );
 
         // Both screwing and drilling should work
         THEN( "both inherent and charged tool qualities can be used" ) {

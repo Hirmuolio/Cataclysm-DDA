@@ -169,7 +169,6 @@ TEST_CASE( "battery tool mod test", "[battery][mod]" )
                 item med_battery( "medium_battery_cell" );
 
                 const int bat_charges = med_battery.ammo_capacity( ammo_battery );
-                med_battery.ammo_set( med_battery.ammo_default(), bat_charges );
                 REQUIRE( med_battery.ammo_remaining() == bat_charges );
                 flashlight.put_in( med_battery, item_pocket::pocket_type::MAGAZINE_WELL );
 
@@ -324,7 +323,6 @@ TEST_CASE( "installing battery in tool", "[battery][tool][install]" )
 
     SECTION( "dead battery installed in flashlight" ) {
         // Ensure battery is dead
-        bat_cell.ammo_set( bat_cell.ammo_default(), 0 );
         REQUIRE( bat_cell.ammo_remaining() == 0 );
 
         // Put battery in flashlight
