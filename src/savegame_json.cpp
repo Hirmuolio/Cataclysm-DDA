@@ -3053,12 +3053,13 @@ void item::migrate_battery()
         // Already migrated
         return;
     } else if( items.size() > 1 ) {
-        debugmsg( "Failed to migrating old battery %s.  It has many items in its MIGRATION pocket.", tname() );
+        debugmsg( "Failed to migrating old battery %s.  It has many items in its MIGRATION pocket.",
+                  tname() );
         return;
     }
     // It is pretty safe to assume that the only thing here is battery charges
     mod_energy( units::from_kilojoule( items.front()->charges ) );
-    contents.clear_pockets( item_pocket::pocket_type::MIGRATION);
+    contents.clear_pockets( item_pocket::pocket_type::MIGRATION );
 }
 
 void item::deserialize( const JsonObject &data )

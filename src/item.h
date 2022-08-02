@@ -1453,6 +1453,8 @@ class item : public visitable
         bool is_medication() const;            // Is it a medication that only pretends to be food?
         bool is_bionic() const;
         bool is_magazine() const;
+        // Is used as magzine (goes into magazine well). May not be a magazine or use have ammo.
+        bool act_as_magazine() const;
         bool is_battery() const;
         bool is_vehicle_battery() const;
         bool is_ammo_belt() const;
