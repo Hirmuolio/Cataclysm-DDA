@@ -2730,6 +2730,8 @@ class item : public visitable
     private:
         /** migrates an item into this item. */
         void migrate_content_item( const item &contained );
+        // Migate old batteries from pocket to energy
+        void migrate_battery();
 
         bool use_amount_internal( const itype_id &it, int &quantity, std::list<item> &used,
                                   const std::function<bool( const item & )> &filter = return_true<item> );

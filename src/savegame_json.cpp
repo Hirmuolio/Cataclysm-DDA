@@ -3045,6 +3045,22 @@ void item::migrate_content_item( const item &contained )
     }
 }
 
+void item::migrate_battery()
+{
+    // Battery charges from old batteries go into MIGRATION pocket.
+    std::list<item *> items = all_items_top( item_pocket::pocket_type::MIGRATION );
+    if( items.empty() ) {
+        // Already migrated
+        return;
+    } else if( items.size() > 1 ) {
+        debugmsg( "Failed to migrating old battery %s.  It has many items in its MIGRATION pocket.", tname() );
+        return;
+    }
+    // It is pretty safe to assume that the only thing here is battery charges
+    mod_energy( units::from_kilojoule( items.front()->charges ) );
+    contents.clear_pockets( item_pocket::pocket_type::MIGRATION);
+}
+
 void item::deserialize( const JsonObject &data )
 {
     data.allow_omitted_members();
@@ -3117,6 +3133,11 @@ void item::deserialize( const JsonObject &data )
         } else {
             select_itype_variant();
         }
+    }
+
+    // Migrate old batteries to new system
+    if( is_vehicle_battery() ) {
+        migrate_battery();
     }
 }
 

@@ -38,7 +38,7 @@
   },
   {
     "id": "light_minus_atomic_battery_cell",
-    "type": "MAGAZINE",
+    "type": "BATTERY",
     "category": "spare_parts",
     "name": { "str": "ultra-light plutonium fuel battery", "str_pl": "ultra-light plutonium fuel batteries" },
     "description": "This battery uses a thin plutonium-244 rod to stabilize an exotic nanocompound.  It is universally compatible with small devices.  Although it stores a huge amount of power, it cannot be recharged.",
@@ -50,12 +50,9 @@
     "material": [ "iron", "plastic" ],
     "symbol": "=",
     "color": "green",
-    "ammo_type": [ "battery" ],
-    "count": 500,
-    "capacity": 500,
     "looks_like": "battery",
     "flags": [ "NO_SALVAGE", "NO_UNLOAD", "NO_RELOAD", "LEAK_DAM", "RADIOACTIVE", "BATTERY_ULTRA_LIGHT" ],
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 500 } } ]
+    "max_capacity": "500 kJ"
   },
   {
     "id": "light_minus_disposable_cell",
