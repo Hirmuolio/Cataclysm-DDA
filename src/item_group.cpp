@@ -470,7 +470,10 @@ void Item_modifier::modify( item &new_item, const std::string &context ) const
     }
 
     if( ch != -1 ) {
-        if( new_item.count_by_charges() || new_item.made_of( phase_id::LIQUID ) ) {
+        if( new_item.act_as_battery() ) {
+            new_item.energy = 1_kJ * ch;
+        }
+        else if( new_item.count_by_charges() || new_item.made_of( phase_id::LIQUID ) ) {
             // food, ammo
             // count_by_charges requires that charges is at least 1. It makes no sense to
             // spawn a "water (0)" item.

@@ -2087,10 +2087,8 @@ void Item_factory::check_definitions() const
                 msg += string_format( "invalid shot definition, shot damage with no shot count." );
             }
         }
-        if( type->battery ) {
-            if( type->battery->max_capacity < 0_mJ ) {
-                msg += "battery cannot have negative maximum charge\n";
-            }
+        if( type->max_capacity < 0_mJ ) {
+            msg += "battery cannot have negative maximum charge\n";
         }
         if( type->gun ) {
             for( const ammotype &at : type->gun->ammo ) {
@@ -3264,7 +3262,7 @@ void Item_factory::load_magazine( const JsonObject &jo, const std::string &src )
 
 void islot_battery::load( const JsonObject &jo )
 {
-    mandatory( jo, was_loaded, "max_capacity", max_capacity );
+    return;
 }
 
 void islot_battery::deserialize( const JsonObject &jo )
@@ -3766,6 +3764,7 @@ void Item_factory::load_basic_info( const JsonObject &jo, itype &def, const std:
     assign( jo, "emits", def.emits );
     assign( jo, "explode_in_fire", def.explode_in_fire );
     assign( jo, "insulation", def.insulation_factor );
+    assign( jo, "max_capacity", def.max_capacity );
     assign( jo, "solar_efficiency", def.solar_efficiency );
     assign( jo, "ascii_picture", def.picture_id );
 

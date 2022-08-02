@@ -2699,7 +2699,6 @@
     "weight": "20 g",
     "volume": "200 ml",
     "charges_per_use": 1,
-    "ammo": "battery",
     "use_action": {
       "type": "transform",
       "msg": "You turn the earplugs on.",
@@ -2709,7 +2708,7 @@
       "need_charges_msg": "The earplugs's batteries are dead."
     },
     "material_thickness": 1,
-    "pocket_data": [ { "pocket_type": "MAGAZINE", "rigid": true, "ammo_restriction": { "battery": 100 } } ]
+    "max_capacity": "100 kJ"
   },
   {
     "id": "powered_earplugs_on",

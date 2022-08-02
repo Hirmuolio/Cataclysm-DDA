@@ -1456,6 +1456,8 @@ class item : public visitable
         // Is used as magzine (goes into magazine well). May not be a magazine or use have ammo.
         bool act_as_magazine() const;
         bool is_battery() const;
+        // Can store battery energy
+        bool act_as_battery() const;
         bool is_vehicle_battery() const;
         bool is_ammo_belt() const;
         bool is_holster() const;

@@ -888,9 +888,6 @@ struct islot_magazine {
 };
 
 struct islot_battery {
-    /** Maximum energy the battery can store */
-    units::energy max_capacity;
-
     bool was_loaded = false;
 
     void load( const JsonObject &jo );
@@ -1293,6 +1290,12 @@ struct itype {
         * Efficiency of solar energy conversion for solarpacks.
         */
         float solar_efficiency = 0.0f;
+
+
+        /**
+        * Maximum amount of battery energy that can be stored in this item
+        */
+        units::energy max_capacity = 0_kJ;
 
     private:
         /** Minimum and maximum amount of damage to an item (state of maximum repair). */
