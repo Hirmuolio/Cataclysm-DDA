@@ -10843,8 +10843,9 @@ int item::ammo_consume( int qty, const tripoint &pos, Character *carrier )
 	// Battery energy as ammo at rate of 1 charge = 1 kJ
     if( act_as_battery() ) {
 		// This can have rounding error
-		// If qty is larger than energy remaining the ´consumed amount may not be integer kJ
+		// If qty is larger than energy remaining the consumed amount may not be integer kJ
 		// The return value is rounded down to kJ losing rounding error
+		// So do this last to minimize possible impact from this error
         qty -= units::to_kilojoule( mod_energy( units::from_kilojoule( qty ) ) );
     }
 
