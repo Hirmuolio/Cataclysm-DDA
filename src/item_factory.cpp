@@ -2172,7 +2172,7 @@ void Item_factory::check_definitions() const
                 }
                 for( const itype_id &opt : e.second ) {
                     const itype *mag = find_template( opt );
-                    if( !mag->magazine || !mag->magazine->type.count( e.first ) ) {
+                    if( !mag->magazine && !mag->battery ) {
                         msg += string_format( "invalid magazine %s in magazine adapter\n", opt.str() );
                     }
                 }
