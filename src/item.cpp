@@ -10649,11 +10649,16 @@ int item::gun_range( const Character *p ) const
 
 units::energy item::energy_remaining() const
 {
+    units::energy ret = 0_kJ;
     if( act_as_battery() ) {
-        return energy;
+        ret += energy;
     }
 
-    return 0_J;
+    const item *mag = magazine_current();
+    if( mag ) {
+        ret += mag->energy_remaining();
+    }
+    return ret;
 }
 
 int item::ammo_remaining( const Character *carrier ) const
@@ -10696,6 +10701,9 @@ int item::ammo_remaining( const Character *carrier ) const
             ret += e->charges;
         }
     }
+
+    // Battery energy as ammo at rate of 1 charge / 1 kJ
+    ret += units::to_kilojoule( energy_remaining() );
     return ret;
 }
 

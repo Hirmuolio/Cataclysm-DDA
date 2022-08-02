@@ -8518,7 +8518,11 @@ units::energy Character::available_ups() const
     }
 
     for( const item *i : all_items_with_flag( flag_IS_UPS ) ) {
-        available_charges += units::from_kilojoule( i->ammo_remaining() );
+        if( i->energy_remaining() > 0_kJ ) {
+            available_charges += i->energy_remaining();
+        } else {
+            available_charges += units::from_kilojoule( i->ammo_remaining() );
+        }
     }
 
     return available_charges;

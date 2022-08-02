@@ -116,16 +116,13 @@ TEST_CASE( "battery-powered tool qualities", "[tool][battery][quality]" )
 
     WHEN( "tool has a battery with enough charge for one use, equal to charges_per_use" ) {
         // Get a battery with exactly enough charge for one use
-        int bat_charges = drill.type->charges_to_use();
-        battery.ammo_set( battery.ammo_default(), bat_charges );
-        REQUIRE( battery.ammo_remaining() == bat_charges );
+        units::energy bat_charges = units::from_kilojoule( drill.type->charges_to_use() );
+        battery.mod_energy( bat_charges );
+        REQUIRE( battery.energy_remaining() == bat_charges );
         // Install the battery in the drill
         drill.put_in( battery, item_pocket::pocket_type::MAGAZINE_WELL );
         REQUIRE( drill.magazine_current() );
-        REQUIRE( drill.ammo_remaining() == bat_charges );
-
-        // Ensure there is enough charge
-        REQUIRE( drill.type->charges_to_use() <= bat_charges );
+        REQUIRE( drill.energy_remaining() == bat_charges );
 
         // Both screwing and drilling should work
         THEN( "both inherent and charged tool qualities can be used" ) {
@@ -171,10 +168,10 @@ TEST_CASE( "battery-powered tool qualities", "[tool][battery][quality]" )
 
         GIVEN( "UPS has battery with enough charge, equal to drill's charges_per_use" ) {
             // Charge the battery
-			units::energy bat_charges = units::from_kilojoule( drill->type->charges_to_use() );
+            units::energy bat_charges = units::from_kilojoule( drill->type->charges_to_use() );
             REQUIRE( bat_charges > 0_kJ );
-			bat_cell->mod_energy( bat_charges );
-			REQUIRE( bat_cell->energy_remaining() == bat_charges );
+            bat_cell->mod_energy( bat_charges );
+            REQUIRE( bat_cell->energy_remaining() == bat_charges );
             // Install heavy battery into UPS
             REQUIRE( ups->put_in( *bat_cell, item_pocket::pocket_type::MAGAZINE_WELL ).success() );
             REQUIRE( they.available_ups() == bat_charges );
