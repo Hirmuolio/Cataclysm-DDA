@@ -471,7 +471,7 @@ TEST_CASE( "UPS shows as a crafting component", "[crafting][ups]" )
     dummy.worn.wear_item( dummy, item( "backpack" ), false, false );
     item_location ups = dummy.i_add( item( "UPS_off" ) );
     item ups_mag( ups->magazine_default() );
-    ups_mag.ammo_set( ups_mag.ammo_default(), 500 );
+    ups_mag.mod_energy( 500_kJ );
     ret_val<void> result = ups->put_in( ups_mag, item_pocket::pocket_type::MAGAZINE_WELL );
     INFO( result.c_str() );
     REQUIRE( result.success() );
@@ -553,7 +553,7 @@ TEST_CASE( "tools use charge to craft", "[crafting][charge]" )
             tools.push_back( soldering_iron );
             item UPS( "UPS_off" );
             item UPS_mag( UPS.magazine_default() );
-            UPS_mag.ammo_set( UPS_mag.ammo_default(), 510 );
+            UPS_mag.mod_energy( 510_kJ );
             UPS.put_in( UPS_mag, item_pocket::pocket_type::MAGAZINE_WELL );
             tools.emplace_back( UPS );
             tools.push_back( tool_with_ammo( "vac_mold", 4 ) );
@@ -577,7 +577,7 @@ TEST_CASE( "tools use charge to craft", "[crafting][charge]" )
 
             item ups( "UPS_off" );
             item ups_mag( ups.magazine_default() );
-            ups_mag.ammo_set( ups_mag.ammo_default(), 10 );
+            ups_mag.mod_energy( 10_kJ );
             ups.put_in( ups_mag, item_pocket::pocket_type::MAGAZINE_WELL );
             tools.push_back( ups );
 

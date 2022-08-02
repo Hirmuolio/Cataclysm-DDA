@@ -270,7 +270,12 @@ item tool_with_ammo( const std::string &tool, const int qty )
         tool_it.ammo_set( tool_it.ammo_default(), qty );
     } else if( !tool_it.magazine_default().is_null() ) {
         item tool_it_mag( tool_it.magazine_default() );
-        tool_it_mag.ammo_set( tool_it_mag.ammo_default(), qty );
+        if( tool_it_mag.act_as_battery() ) {
+            tool_it_mag.mod_energy( units::from_kilojoule( qty ) );
+        } else {
+            tool_it_mag.ammo_set( tool_it_mag.ammo_default(), qty );
+        }
+
         tool_it.put_in( tool_it_mag, item_pocket::pocket_type::MAGAZINE_WELL );
     }
     return tool_it;

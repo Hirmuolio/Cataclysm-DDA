@@ -10839,6 +10839,14 @@ int item::ammo_consume( int qty, const tripoint &pos, Character *carrier )
         carrier->mod_power_level( -units::from_kilojoule( bio_used ) );
         qty -= bio_used;
     }
+	
+	// Battery energy as ammo at rate of 1 charge = 1 kJ
+    if( act_as_battery() ) {
+		// This can have rounding error
+		// If qty is larger than energy remaining the ´consumed amount may not be integer kJ
+		// The return value is rounded down to kJ losing rounding error
+        qty -= units::to_kilojoule( mod_energy( units::from_kilojoule( qty ) ) );
+    }
 
     return wanted_qty - qty;
 }

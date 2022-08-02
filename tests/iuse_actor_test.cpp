@@ -94,7 +94,7 @@ TEST_CASE( "tool transform when activated", "[iuse][tool][transform]" )
 
         // Charge the battery
         const int bat_charges = bat_cell.ammo_capacity( ammo_battery );
-        bat_cell.ammo_set( bat_cell.ammo_default(), bat_charges );
+        bat_cell.mod_energy( units::from_kilojoule( bat_charges ) );
         REQUIRE( bat_cell.ammo_remaining() == bat_charges );
 
         // Put battery in flashlight

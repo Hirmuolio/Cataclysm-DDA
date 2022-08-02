@@ -411,11 +411,10 @@ TEST_CASE( "bionics", "[bionics] [item]" )
         item battery = item( "light_battery_cell" );
 
         // Empty battery won't work
-        battery.ammo_set( battery.ammo_default(), 0 );
         CHECK_FALSE( dummy.can_fuel_bionic_with( battery ) );
 
         // Full battery works
-        battery.ammo_set( battery.ammo_default(), 50 );
+        battery.mod_energy( 50_kJ );
         CHECK( dummy.can_fuel_bionic_with( battery ) );
 
         // Tool with battery won't work

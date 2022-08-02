@@ -87,7 +87,7 @@ TEST_CASE( "repair_vehicle_part" )
 
         item ups( "UPS_off" );
         item ups_mag( ups.magazine_default() );
-        ups_mag.ammo_set( ups_mag.ammo_default(), 500 );
+        ups_mag.mod_energy( 510_kJ );
         ups.put_in( ups_mag, item_pocket::pocket_type::MAGAZINE_WELL );
         tools.push_back( ups );
 
@@ -118,7 +118,7 @@ TEST_CASE( "repair_vehicle_part" )
 
         item ups( "UPS_off" );
         item ups_mag( ups.magazine_default() );
-        ups_mag.ammo_set( ups_mag.ammo_default(), 5 );
+        ups_mag.mod_energy( 5_kJ );
         ups.put_in( ups_mag, item_pocket::pocket_type::MAGAZINE_WELL );
         tools.push_back( ups );
 

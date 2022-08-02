@@ -170,7 +170,7 @@ void player_add_headlamp()
 {
     item headlamp( "wearable_light_on" );
     item battery( "light_battery_cell" );
-    battery.ammo_set( battery.ammo_default(), -1 );
+    battery.mod_energy( 1000_kJ );
     headlamp.put_in( battery, item_pocket::pocket_type::MAGAZINE_WELL );
     Character &you = get_player_character();
     you.worn.wear_item( you, headlamp, false, true );

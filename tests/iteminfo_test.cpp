@@ -2254,7 +2254,7 @@ TEST_CASE( "list of item qualities", "[iteminfo][quality]" )
 
         // With enough charges
         int bat_charges = drill.type->charges_to_use();
-        battery.ammo_set( battery.ammo_default(), bat_charges );
+        battery.mod_energy( units::from_kilojoule( bat_charges ) );
         drill.put_in( battery, item_pocket::pocket_type::MAGAZINE_WELL );
         REQUIRE( drill.ammo_remaining() == bat_charges );
 
