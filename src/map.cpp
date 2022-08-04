@@ -5088,7 +5088,7 @@ static void process_vehicle_items( vehicle &cur_veh, int part )
                         const int missing = cur_veh.discharge_battery( 1, true );
                         // Around 85% efficient; a few of the discharges don't actually recharge
                         if( missing == 0 && !one_in( 7 ) ) {
-                            if( n.is_vehicle_battery() ) {
+                            if( n.is_battery() ) {
                                 n.mod_energy( 1_kJ );
                             } else {
                                 n.ammo_set( itype_battery, n.ammo_remaining() + 1 );
@@ -5584,7 +5584,6 @@ std::list<item> map::use_charges( const tripoint &origin, const int range,
 units::energy map::consume_ups( const tripoint &origin, const int range, units::energy qty )
 {
     const units::energy wanted_qty = qty;
-    int qty_kj = units::to_kilojoule( qty );
 
     // populate a grid of spots that can be reached
     std::vector<tripoint> reachable_pts;
@@ -5596,8 +5595,8 @@ units::energy map::consume_ups( const tripoint &origin, const int range, units::
             map_stack items = i_at( p );
             for( item &elem : items ) {
                 if( elem.has_flag( flag_IS_UPS ) ) {
-                    qty_kj -=  elem.ammo_consume( qty_kj, p, nullptr );
-                    if( qty_kj == 0 ) {
+                    qty -=  elem.electric_consume( qty, p, nullptr );
+                    if( qty == 0_J ) {
                         break;
                     }
                 }
@@ -5605,7 +5604,7 @@ units::energy map::consume_ups( const tripoint &origin, const int range, units::
         }
     }
 
-    return wanted_qty - units::from_kilojoule( qty_kj );
+    return wanted_qty - qty;
 }
 
 std::list<std::pair<tripoint, item *> > map::get_rc_items( const tripoint &p )

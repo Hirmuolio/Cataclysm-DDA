@@ -3137,7 +3137,7 @@ void item::deserialize( const JsonObject &data )
     }
 
     // Migrate old batteries to new system
-    if( is_vehicle_battery() ) {
+    if( is_battery() ) {
         migrate_battery();
     }
 }

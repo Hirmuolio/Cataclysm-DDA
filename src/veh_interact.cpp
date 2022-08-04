@@ -1577,8 +1577,9 @@ void veh_interact::calc_overview()
         if( vpr.part().is_battery() ) {
             // always display total battery capacity and percentage charge
             auto details = []( const vehicle_part & pt, const catacurses::window & w, int y ) {
-                int pct = ( static_cast<double>( pt.ammo_remaining() ) / pt.ammo_capacity(
-                                ammo_battery ) ) * 100;
+                //int pct = ( static_cast<double>( pt.ammo_remaining() ) / pt.ammo_capacity(ammo_battery ) ) * 100;
+                //int pct = pt.energy_remaining() / pt.energy:capacity * 100;
+                int pct = 99; //TODO fix this
                 int offset = 1;
                 std::string fmtstring = "%i    %3i%%";
                 if( pt.is_leaking() ) {

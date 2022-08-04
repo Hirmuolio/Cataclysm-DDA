@@ -48,23 +48,6 @@ TEST_CASE( "ammo types", "[ammo][ammo_types]" )
         REQUIRE( item( "light_battery_cell" ).act_as_magazine() );
         REQUIRE( item( "battery_car" ).act_as_magazine() );
 
-        // Tool batteries
-        CHECK( has_ammo_types( item( "light_battery_cell" ) ) );
-        CHECK( has_ammo_types( item( "medium_battery_cell" ) ) );
-        CHECK( has_ammo_types( item( "heavy_battery_cell" ) ) );
-        CHECK( has_ammo_types( item( "light_disposable_cell" ) ) );
-        CHECK( has_ammo_types( item( "medium_disposable_cell" ) ) );
-        CHECK( has_ammo_types( item( "heavy_disposable_cell" ) ) );
-        // Vehicle batteries
-        CHECK( has_ammo_types( item( "battery_car" ) ) );
-        CHECK( has_ammo_types( item( "battery_motorbike" ) ) );
-        CHECK( has_ammo_types( item( "large_storage_battery" ) ) );
-
-        SECTION( "battery magazines include 'battery' ammo type" ) {
-            CHECK( item( "light_battery_cell" ).ammo_types().count( ammo_battery ) == 1 );
-            CHECK( item( "battery_car" ).ammo_types().count( ammo_battery ) == 1 );
-        }
-
         // Gun magazines
         REQUIRE( item( "belt40mm" ).is_magazine() );
         REQUIRE( item( "akmag10" ).is_magazine() );

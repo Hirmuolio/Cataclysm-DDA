@@ -408,6 +408,7 @@ void vehicle::init_state( map &placed_on, int init_veh_fuel, int init_veh_status
         }
 
         if( pt.is_battery() ) {
+            // TODO fix these
             if( veh_fuel_mult == 100 ) { // Mint condition vehicle
                 pt.ammo_set( itype_battery );
             } else if( one_in( 2 ) && veh_fuel_mult > 0 ) { // Randomize battery ammo a bit
@@ -5099,7 +5100,8 @@ int vehicle::charge_battery( int amount, bool include_other_vehicles )
     for( vehicle_part &p : parts ) {
         if( p.is_available() && p.is_battery() &&
             p.ammo_capacity( ammo_battery ) > p.ammo_remaining() ) {
-            chargeable_parts.insert( { ( p.ammo_remaining() * 100 ) / p.ammo_capacity( ammo_battery ), &p } );
+            //chargeable_parts.insert( { ( p.ammo_remaining() * 100 ) / p.ammo_capacity( ammo_battery ), &p } );
+            // TODO fix these
         }
     }
     while( amount > 0 && !chargeable_parts.empty() ) {
@@ -5138,7 +5140,7 @@ int vehicle::discharge_battery( int amount, bool recurse )
     std::multimap<int, vehicle_part *> dischargeable_parts;
     for( vehicle_part &p : parts ) {
         if( p.is_available() && p.is_battery() && p.ammo_remaining() > 0 ) {
-            dischargeable_parts.insert( { ( p.ammo_remaining() * 100 ) / p.ammo_capacity( ammo_battery ), &p } );
+            //dischargeable_parts.insert( { ( p.ammo_remaining() * 100 ) / p.ammo_capacity( ammo_battery ), &p } ); // TODO fix this
         }
     }
     while( amount > 0 && !dischargeable_parts.empty() ) {

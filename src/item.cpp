@@ -611,7 +611,7 @@ bool item::activate_thrown( const tripoint &pos )
 
 units::energy item::mod_energy( const units::energy &qty )
 {
-    if( !is_vehicle_battery() ) {
+    if( !is_battery() ) {
         debugmsg( "Tried to set energy of non-battery item" );
         return 0_J;
     }
@@ -4314,7 +4314,7 @@ void item::book_info( std::vector<iteminfo> &info, const iteminfo_query *parts, 
 void item::battery_info( std::vector<iteminfo> &info, const iteminfo_query * /*parts*/,
                          int /*batch*/, bool /*debug*/ ) const
 {
-    if( !is_vehicle_battery() ) {
+    if( !is_battery() ) {
         return;
     }
 
@@ -6573,7 +6573,7 @@ std::string item::display_name( unsigned int quantity ) const
         } else if( !ammo_default().is_null() ) {
             max_amount = ammo_capacity( item_controller->find_template( ammo_default() )->ammo->type );
         }
-    } else if( is_vehicle_battery() ) {
+    } else if( is_battery() ) {
         show_amt = true;
         amount = to_joule( energy_remaining() );
         max_amount = to_joule( type->max_capacity );
@@ -9566,24 +9566,19 @@ bool item::is_magazine() const
     return !!type->magazine || contents.has_pocket_type( item_pocket::pocket_type::MAGAZINE );
 }
 
+bool item::is_battery() const
+{
+    return !!type->battery;
+}
+
 bool item::act_as_magazine() const
 {
     return is_magazine() || is_battery();
 }
 
-bool item::is_battery() const
-{
-    return ( is_magazine() && ammo_capacity( ammo_battery ) ) || type->battery;
-}
-
 bool item::act_as_battery() const
 {
     return type->max_capacity > 0_kJ;
-}
-
-bool item::is_vehicle_battery() const
-{
-    return !!type->battery;
 }
 
 bool item::is_ammo_belt() const
@@ -10647,7 +10642,7 @@ int item::gun_range( const Character *p ) const
     return std::max( 0, ret );
 }
 
-units::energy item::energy_remaining() const
+units::energy item::energy_remaining( const Character *carrier ) const
 {
     units::energy ret = 0_kJ;
     if( act_as_battery() ) {
@@ -10658,6 +10653,17 @@ units::energy item::energy_remaining() const
     if( mag ) {
         ret += mag->energy_remaining();
     }
+
+    // Power from bionic
+    if( carrier != nullptr && has_flag( flag_USES_BIONIC_POWER ) ) {
+        ret += carrier->get_power_level();
+    }
+
+    // Power from UPS
+    if( carrier != nullptr && ( has_flag( flag_USE_UPS ) || get_gun_ups_drain() > 0_J ) ) {
+        ret += carrier->available_ups();
+    }
+
     return ret;
 }
 
@@ -10785,7 +10791,7 @@ bool item::ammo_sufficient( const Character *carrier, int qty ) const
     if( ammo_required() ) {
         return ammo_remaining( carrier ) >= ammo_required() * qty;
     } else if( get_gun_ups_drain() > 0_kJ ) {
-        return carrier->available_ups() >= get_gun_ups_drain() * qty;
+        return energy_remaining( carrier ) >= get_gun_ups_drain() * qty;
     } else if( count_by_charges() ) {
         return ammo_remaining( carrier ) >= qty;
     }
@@ -10801,7 +10807,7 @@ bool item::ammo_sufficient( const Character *carrier, const std::string &method,
     if( ammo_required() ) {
         return ammo_remaining( carrier ) >= ammo_required() * qty;
     } else if( get_gun_ups_drain() > 0_kJ ) {
-        return carrier->available_ups() >= get_gun_ups_drain() * qty;
+        return energy_remaining( carrier ) >= get_gun_ups_drain() * qty;
     }
     return true;
 }
@@ -10839,14 +10845,43 @@ int item::ammo_consume( int qty, const tripoint &pos, Character *carrier )
         carrier->mod_power_level( -units::from_kilojoule( bio_used ) );
         qty -= bio_used;
     }
-	
-	// Battery energy as ammo at rate of 1 charge = 1 kJ
+
+    // Battery energy as ammo at rate of 1 charge = 1 kJ
     if( act_as_battery() ) {
-		// This can have rounding error
-		// If qty is larger than energy remaining the consumed amount may not be integer kJ
-		// The return value is rounded down to kJ losing rounding error
-		// So do this last to minimize possible impact from this error
+        // This can have rounding error
+        // If qty is larger than energy remaining the consumed amount may not be integer kJ
+        // The return value is rounded down to kJ losing rounding error
+        // So do this last to minimize possible impact from this error
         qty -= units::to_kilojoule( mod_energy( units::from_kilojoule( qty ) ) );
+    }
+
+    return wanted_qty - qty;
+}
+
+units::energy item::electric_consume( units::energy qty, const tripoint &pos, Character *carrier )
+{
+    const units::energy wanted_qty = qty;
+
+    // Consume charges from itself
+    if( is_battery() ) {
+        qty -= -mod_energy( -qty );
+    }
+
+    // Consume contained magazine
+    if( uses_magazine() ) {
+        qty -= contents.electric_consume( qty, pos );
+    }
+
+    // Consume UPS power from various sources
+    if( carrier != nullptr && has_flag( flag_USE_UPS ) ) {
+        qty -= carrier->consume_ups( qty );
+    }
+
+    // Consume bio pwr directly
+    if( carrier != nullptr && has_flag( flag_USES_BIONIC_POWER ) ) {
+        units::energy bio_used = std::min( carrier->get_power_level(), qty );
+        carrier->mod_power_level( -bio_used );
+        qty -= bio_used;
     }
 
     return wanted_qty - qty;
@@ -11696,7 +11731,7 @@ int item::getlight_emit() const
         float max_cap;
         float current;
         if( energy_remaining() > 0_kJ ) {
-            // This is ugly
+            // This is ugly. TODO make better
             if( act_as_battery() ) {
                 max_cap = units::to_kilojoule( type->max_capacity );
             } else {
@@ -13211,8 +13246,9 @@ bool item::process_tool( Character *carrier, const tripoint &pos )
 
     avatar &player_character = get_avatar();
     // if insufficient available charges shutdown the tool
-    if( ( type->tool->turns_per_charge > 0 || type->tool->power_draw > 0 ) &&
-        ammo_remaining( carrier ) == 0 ) {
+    if( ( type->tool->turns_per_charge > 0 && ammo_remaining( carrier ) == 0 ) ||
+        ( type->tool->power_draw > 0 && energy_remaining( carrier ) == 0_J )
+      ) {
         if( carrier && has_flag( flag_USE_UPS ) ) {
             carrier->add_msg_if_player( m_info, _( "You need an UPS to run the %s!" ), tname() );
         }
@@ -13231,19 +13267,14 @@ bool item::process_tool( Character *carrier, const tripoint &pos )
         }
     }
 
-    int energy = 0;
+
     if( type->tool->turns_per_charge > 0 &&
         to_turn<int>( calendar::turn ) % type->tool->turns_per_charge == 0 ) {
-        energy = std::max( ammo_required(), 1 );
+        int consumption = std::max( ammo_required(), 1 );
+        ammo_consume( consumption, pos, carrier );
     } else if( type->tool->power_draw > 0 ) {
-        // power_draw in mW / 1000000 to give kJ (battery unit) per second
-        energy = type->tool->power_draw / 1000000;
-        // energy_bat remainder results in chance at additional charge/discharge
-        energy += x_in_y( type->tool->power_draw % 1000000, 1000000 ) ? 1 : 0;
-    }
-
-    if( energy > 0 ) {
-        ammo_consume( energy, pos, carrier );
+        units::energy drain = units::from_millijoule( type->tool->power_draw );
+        drain -= electric_consume( drain, pos, carrier );
     }
 
     type->tick( carrier != nullptr ? *carrier : player_character, *this, pos );

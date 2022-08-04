@@ -282,6 +282,9 @@ class item_contents
         void heat_up();
         // returns amount of ammo consumed
         int ammo_consume( int qty, const tripoint &pos );
+        // returns amount of energy consumed
+        units::energy electric_consume( units::energy qty, const tripoint &pos );
+
         item *magazine_current();
         std::set<ammotype> ammo_types() const;
         int ammo_capacity( const ammotype &ammo ) const;

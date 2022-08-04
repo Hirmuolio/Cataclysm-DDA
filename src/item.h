@@ -1458,7 +1458,6 @@ class item : public visitable
         bool is_battery() const;
         // Can store battery energy
         bool act_as_battery() const;
-        bool is_vehicle_battery() const;
         bool is_ammo_belt() const;
         bool is_holster() const;
         bool is_ammo() const;
@@ -2226,8 +2225,10 @@ class item : public visitable
 
         void clear_itype_variant();
 
-        /** Quantity of energy currently loaded in tool or battery */
-        units::energy energy_remaining() const;
+        /** Quantity of energy currently available to this item.
+        * Includes energy in item, in its magazine, UPS and bionic
+        */
+        units::energy energy_remaining( const Character *carrier = nullptr ) const;
 
         /**
          * Quantity of ammunition currently loaded in tool, gun or auxiliary gunmod. Can include UPS and bionic
@@ -2287,6 +2288,16 @@ class item : public visitable
          * @return amount of ammo consumed which will be between 0 and qty
          */
         int ammo_consume( int qty, const tripoint &pos, Character *carrier );
+
+        /**
+         * Consume electricity (if available) and return the amount of electricity that was consumed
+         * Consume order: battery(new), UPS, bionic
+         * @param qty amount of electricity that should be consumed
+         * @param pos current location of item, used for ejecting magazines and similar effects
+         * @param carrier holder of the item, used for getting UPS and bionic power
+         * @return amount of electricity consumed which will be between 0 and qty
+         */
+        units::energy electric_consume( units::energy qty, const tripoint &pos, Character *carrier );
 
         /** Specific ammo data, returns nullptr if item is neither ammo nor loaded with any */
         const itype *ammo_data() const;

@@ -227,7 +227,7 @@ bool vehicle_part::fuel_set( const itype_id &fuel )
 itype_id vehicle_part::ammo_current() const
 {
     if( is_battery() ) {
-        return itype_battery;
+        return itype_battery; // TODO do something
     }
 
     if( is_tank() && !base.empty() ) {
@@ -586,7 +586,7 @@ bool vehicle_part::contains_liquid() const
 
 bool vehicle_part::is_battery() const
 {
-    return base.is_magazine() && base.ammo_types().count( ammo_battery );
+    return base.is_battery();
 }
 
 bool vehicle_part::is_reactor() const
