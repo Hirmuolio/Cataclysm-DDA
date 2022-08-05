@@ -3893,7 +3893,7 @@ void item::armor_info( std::vector<iteminfo> &info, const iteminfo_query *parts,
             item tmp = *this;
 
             //no need to clutter the ui with inactive versions when the armor is already active
-            if( !( active || ( type->tool && type->tool->power_draw > 0 ) ) ) {
+            if( !( active || ( type->tool && type->tool->power_draw > 0_J ) ) ) {
                 bool print_prot = true;
                 if( parts->test( iteminfo_parts::ARMOR_PROTECTION ) ) {
                     print_prot = !tmp.armor_full_protection_info( info, parts );
@@ -13309,7 +13309,7 @@ bool item::process_tool( Character *carrier, const tripoint &pos )
     avatar &player_character = get_avatar();
     // if insufficient available charges shutdown the tool
     if( ( type->tool->turns_per_charge > 0 && ammo_remaining( carrier ) == 0 ) ||
-        ( type->tool->power_draw > 0 && energy_remaining( carrier ) == 0_J )
+        ( type->tool->power_draw > 0_J && energy_remaining( carrier ) == 0_J )
       ) {
         if( carrier && has_flag( flag_USE_UPS ) ) {
             carrier->add_msg_if_player( m_info, _( "You need an UPS to run the %s!" ), tname() );
@@ -13334,8 +13334,8 @@ bool item::process_tool( Character *carrier, const tripoint &pos )
         to_turn<int>( calendar::turn ) % type->tool->turns_per_charge == 0 ) {
         int consumption = std::max( ammo_required(), 1 );
         ammo_consume( consumption, pos, carrier );
-    } else if( type->tool->power_draw > 0 ) {
-        units::energy drain = units::from_millijoule( type->tool->power_draw );
+    } else if( type->tool->power_draw > 0_J ) {
+        units::energy drain = type->tool->power_draw;
         drain -= electric_consume( drain, pos, carrier );
     }
 
