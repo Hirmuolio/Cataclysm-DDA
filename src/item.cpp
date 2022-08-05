@@ -10970,6 +10970,13 @@ units::energy item::electric_consume( units::energy qty, const tripoint &pos, Ch
     return wanted_qty - qty;
 }
 
+void item::activation_consume( const tripoint &pos, Character *carrier )
+{
+    if( type->charges_to_use() ) {
+        ammo_consume( type->charges_to_use(), pos, carrier );
+    }
+}
+
 const itype *item::ammo_data() const
 {
     const item *mag = magazine_current();
