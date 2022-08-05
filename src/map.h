@@ -1278,7 +1278,7 @@ class map
                                     const std::function<bool( const item & )> &filter = return_true<item>, bool select_ind = false );
         std::list<item> use_charges( const tripoint &origin, int range, const itype_id &type,
                                      int &quantity, const std::function<bool( const item & )> &filter = return_true<item>,
-                                     basecamp *bcp = nullptr, bool in_tools = false );
+                                     basecamp *bcp = nullptr );
 
         /** Find items located at point p (on map or in vehicles) that pass the filter */
         std::list<item_location> items_with( const tripoint &p,

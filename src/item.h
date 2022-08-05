@@ -749,7 +749,7 @@ class item : public visitable
          */
         bool use_charges( const itype_id &what, int &qty, std::list<item> &used, const tripoint &pos,
                           const std::function<bool( const item & )> &filter = return_true<item>,
-                          Character *carrier = nullptr, bool in_tools = false );
+                          Character *carrier = nullptr );
 
         /**
          * Invokes item type's @ref itype::drop_action.

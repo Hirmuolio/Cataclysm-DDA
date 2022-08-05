@@ -8569,7 +8569,7 @@ units::energy Character::consume_ups( units::energy qty, const int radius )
 }
 
 std::list<item> Character::use_charges( const itype_id &what, int qty, const int radius,
-                                        const std::function<bool( const item & )> &filter, bool in_tools )
+                                        const std::function<bool( const item & )> &filter )
 {
     std::list<item> res;
     inventory inv = crafting_inventory( pos(), radius, true );
@@ -8602,11 +8602,11 @@ std::list<item> Character::use_charges( const itype_id &what, int qty, const int
     } );
 
     if( radius >= 0 ) {
-        get_map().use_charges( pos(), radius, what, qty, return_true<item>, nullptr, in_tools );
+        get_map().use_charges( pos(), radius, what, qty, return_true<item>, nullptr );
     }
     if( qty > 0 ) {
-        visit_items( [this, &what, &qty, &res, &del, &filter, &in_tools]( item * e, item * ) {
-            if( e->use_charges( what, qty, res, pos(), filter, this, in_tools ) ) {
+        visit_items( [this, &what, &qty, &res, &del, &filter]( item * e, item * ) {
+            if( e->use_charges( what, qty, res, pos(), filter, this ) ) {
                 del.push_back( e );
             }
             return qty > 0 ? VisitResponse::NEXT : VisitResponse::ABORT;

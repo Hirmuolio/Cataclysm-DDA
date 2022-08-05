@@ -347,16 +347,6 @@ std::list<item> talker_character::use_charges( const itype_id &item_name, const 
     return me_chr->use_charges( item_name, count );
 }
 
-std::list<item> talker_character::use_charges( const itype_id &item_name, const int count,
-        bool in_tools )
-{
-    if( !in_tools ) {
-        return me_chr->use_charges( item_name, count );
-    } else {
-        return me_chr->use_charges( item_name, count, -1, return_true<item>, in_tools );
-    }
-}
-
 std::list<item> talker_character::use_amount( const itype_id &item_name, const int count )
 {
     return me_chr->use_amount( item_name, count );

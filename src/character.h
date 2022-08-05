@@ -2519,8 +2519,7 @@ class Character : public Creature, public visitable
         * @return List of items used
         */
         std::list<item> use_charges( const itype_id &what, int qty, int radius,
-                                     const std::function<bool( const item & )> &filter = return_true<item>,
-                                     bool in_tools = false );
+                                     const std::function<bool( const item & )> &filter = return_true<item> );
 
         item find_firestarter_with_charges( int quantity ) const;
         bool has_fire( int quantity ) const;

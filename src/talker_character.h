@@ -191,7 +191,6 @@ class talker_character: public talker_character_const
         // inventory, buying, and selling
         std::vector<item *> items_with( const std::function<bool( const item & )> &filter ) const override;
         std::list<item> use_charges( const itype_id &item_name, int count ) override;
-        std::list<item> use_charges( const itype_id &item_name, int count, bool in_tools ) override;
         std::list<item> use_amount( const itype_id &item_name, int count ) override;
         void i_add( const item &new_item ) override;
         void remove_items_with( const std::function<bool( const item & )> &filter ) override;

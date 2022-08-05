@@ -7026,7 +7026,7 @@ const std::set<tripoint> &vehicle::get_points( const bool force_refresh ) const
 }
 
 std::list<item> vehicle::use_charges( const vpart_position &vp, const itype_id &type,
-                                      int &quantity, const std::function<bool( const item & )> &filter, bool in_tools )
+                                      int &quantity, const std::function<bool( const item & )> &filter )
 {
     std::list<item> ret;
     // HACK: water_faucet pseudo tool gives access to liquids in tanks
@@ -7061,7 +7061,7 @@ std::list<item> vehicle::use_charges( const vpart_position &vp, const itype_id &
 
     if( cargo_vp ) {
         vehicle_stack veh_stack = get_items( cargo_vp->part_index() );
-        std::list<item> tmp = veh_stack.use_charges( type, quantity, vp.pos(), filter, in_tools );
+        std::list<item> tmp = veh_stack.use_charges( type, quantity, vp.pos(), filter );
         ret.splice( ret.end(), tmp );
         if( quantity <= 0 ) {
             return ret;
