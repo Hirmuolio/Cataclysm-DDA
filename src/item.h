@@ -2309,8 +2309,9 @@ class item : public visitable
 
         /**
          * Consumes whatever is needed for activating this item
+         * @return returns true if item should be destroyed
          */
-        void activation_consume( const tripoint &pos, Character *carrier );
+        bool activation_consume( int qty, const tripoint &pos, Character *carrier );
 
         /**
          * Consume electricity (if available) and return the amount of electricity that was consumed
