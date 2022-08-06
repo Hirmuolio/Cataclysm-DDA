@@ -2297,7 +2297,6 @@ class item : public visitable
          */
         bool activation_charges_sufficient( const Character *carrier, int qty = 1 ) const;
 
-
         /**
          * Consume ammo (if available) and return the amount of ammo that was consumed
          * Consume order: loaded items, UPS, bionic
