@@ -2308,12 +2308,6 @@ class item : public visitable
         int ammo_consume( int qty, const tripoint &pos, Character *carrier );
 
         /**
-         * Consumes whatever is needed for activating this item
-         * @return returns true if item should be destroyed
-         */
-        bool activation_consume( int qty, const tripoint &pos, Character *carrier );
-
-        /**
          * Consume electricity (if available) and return the amount of electricity that was consumed
          * Consume order: battery(new), UPS, bionic
          * @param qty amount of electricity that should be consumed
