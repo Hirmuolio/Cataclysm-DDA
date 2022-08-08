@@ -7345,6 +7345,7 @@ int item::get_quality( const quality_id &id, const bool strict_boiling ) const
     }
 
     // If tool has charged qualities and enough charge to use at least once
+    // (using ammo_remaining() with player character to include bionic/UPS power)
     if( !type->charged_qualities.empty() && activation_charges_sufficient( &get_player_character() ) ) {
         // see if any charged qualities are better than the current one
         for( const std::pair<const quality_id, int> &quality : type->charged_qualities ) {
@@ -10763,8 +10764,8 @@ int item::ammo_remaining( const Character *carrier ) const
     if( is_magazine() ) {
         for( const item *e : contents.all_items_top( item_pocket::pocket_type::MAGAZINE ) ) {
             if( e->is_ammo() ) {
-				ret += e->charges;
-			}
+                ret += e->charges;
+            }
         }
     }
 
