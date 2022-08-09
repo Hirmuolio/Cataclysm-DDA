@@ -10830,11 +10830,9 @@ int item::ammo_required() const
             }
             return ( type->gun->ammo_to_fire * multiplier ) + modifier;
         }
-    } else if( is_craft() ) {
-        return 0;
     }
 
-    return std::max( type->charges_to_use(), 0 );
+    return type->charges_to_use();
 }
 
 item &item::first_ammo()
