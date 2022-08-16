@@ -2290,15 +2290,6 @@ class item : public visitable
         bool ammo_sufficient( const Character *carrier, const std::string &method, int qty = 1 ) const;
 
         /**
-         * Check if sufficient ammo is loaded for given number of activations.
-         * @param carrier who holds the item. Needed for UPS/bionic
-         * @param qty Number of uses
-         * @returns true if ammo sufficient for number of uses is loaded, false otherwise
-         */
-        bool activation_charges_sufficient( const Character *carrier, int qty = 1 ) const;
-
-
-        /**
          * Consume ammo (if available) and return the amount of ammo that was consumed
          * Consume order: loaded items, UPS, bionic
          * @param qty maximum amount of ammo that should be consumed
@@ -2307,11 +2298,6 @@ class item : public visitable
          * @return amount of ammo consumed which will be between 0 and qty
          */
         int ammo_consume( int qty, const tripoint &pos, Character *carrier );
-
-        /**
-         * Consumes whatever is needed for activating this item
-         */
-        void activation_consume( const tripoint &pos, Character *carrier );
 
         /**
          * Consume electricity (if available) and return the amount of electricity that was consumed
