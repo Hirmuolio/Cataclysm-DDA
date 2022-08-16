@@ -1157,9 +1157,11 @@ int Character::overmap_sight_range( int light_level ) const
     float multiplier = mutation_value( "overmap_multiplier" );
     // Binoculars double your sight range.
     // When adding checks here, also call game::update_overmap_seen at the place they first become true
-    const bool has_optic = has_item_with_flag( flag_ZOOM ) || has_flag( json_flag_ENHANCED_VISION ) ||
-                           ( is_mounted() &&
-                             mounted_creature->has_flag( MF_MECH_RECON_VISION ) );
+    const bool has_optic = has_item_with_flag( flag_ZOOM ) ||
+                           has_flag( json_flag_ENHANCED_VISION ) ||
+                           ( is_mounted() && mounted_creature->has_flag( MF_MECH_RECON_VISION ) ) ||
+                           get_map().veh_at( pos() ).avail_part_with_feature( "ENHANCED_VISION" ).has_value();
+
     if( has_optic ) {
         multiplier += 1;
     }
@@ -1373,7 +1375,7 @@ void Character::assign_stashed_activity()
 bool Character::check_outbounds_activity( const player_activity &act, bool check_only )
 {
     map &here = get_map();
-    if( ( act.placement != tripoint_zero && act.placement != tripoint_min &&
+    if( ( act.placement != tripoint_abs_ms() && act.placement != player_activity::invalid_place &&
           !here.inbounds( here.getlocal( act.placement ) ) ) || ( !act.coords.empty() &&
                   !here.inbounds( here.getlocal( act.coords.back() ) ) ) ) {
         if( is_npc() && !check_only ) {
@@ -1385,8 +1387,10 @@ bool Character::check_outbounds_activity( const player_activity &act, bool check
             activity = player_activity();
         }
         add_msg_debug( debugmode::DF_CHARACTER,
-                       "npc %s at pos %d %d, activity target is not inbounds at %d %d therefore activity was stashed",
-                       disp_name(), pos().x, pos().y, act.placement.x, act.placement.y );
+                       "npc %s at pos %s, activity target is not inbounds at %s therefore "
+                       "activity was stashed",
+                       disp_name(), pos().to_string_writable(),
+                       act.placement.to_string_writable() );
         return true;
     }
     return false;
@@ -1957,6 +1961,10 @@ int Character::clatter_sound() const
 
 void Character::make_footstep_noise() const
 {
+    if( is_hallucination() ) {
+        return;
+    }
+
     const int volume = footstep_sound();
     if( volume <= 0 ) {
         return;
@@ -5520,19 +5528,21 @@ bool Character::sees_with_specials( const Creature &critter ) const
     return false;
 }
 
-bool Character::pour_into( item &container, item &liquid, bool ignore_settings )
+bool Character::pour_into( item_location &container, item &liquid, bool ignore_settings )
 {
     std::string err;
-    int amount = container.get_remaining_capacity_for_liquid( liquid, *this, &err );
+    int max_remaining_capacity = container->get_remaining_capacity_for_liquid( liquid, *this, &err );
+    int amount = container->all_pockets_rigid() ? max_remaining_capacity :
+                 std::min( max_remaining_capacity, container.max_charges_by_parent_recursive( liquid ) );
 
     if( !err.empty() ) {
-        if( !container.has_item_with( [&liquid]( const item & it ) {
+        if( !container->has_item_with( [&liquid]( const item & it ) {
         return it.typeId() == liquid.typeId();
         } ) ) {
             add_msg_if_player( m_bad, err );
         } else {
             //~ you filled <container> to the brim with <liquid>
-            add_msg_if_player( _( "You filled %1$s to the brim with %2$s." ), container.tname(),
+            add_msg_if_player( _( "You filled %1$s to the brim with %2$s." ), container->tname(),
                                liquid.tname() );
         }
         return false;
@@ -5543,9 +5553,9 @@ bool Character::pour_into( item &container, item &liquid, bool ignore_settings )
         amount = std::min( amount, liquid.charges );
     }
 
-    add_msg_if_player( _( "You pour %1$s into the %2$s." ), liquid.tname(), container.tname() );
+    add_msg_if_player( _( "You pour %1$s into the %2$s." ), liquid.tname(), container->tname() );
 
-    liquid.charges -= container.fill_with( liquid, amount, false, false, ignore_settings );
+    liquid.charges -= container->fill_with( liquid, amount, false, false, ignore_settings );
     inv->unsort();
 
     if( liquid.charges > 0 ) {
@@ -7040,6 +7050,15 @@ void Character::recalculate_enchantment_cache()
             const enchantment &ench = ench_id.obj();
             if( ench.is_active( *this, bio.powered &&
                                 bid->has_flag( STATIC( json_character_flag( "BIONIC_TOGGLED" ) ) ) ) ) {
+                enchantment_cache->force_add( ench );
+            }
+        }
+    }
+
+    for( const auto &elem : *effects ) {
+        for( const enchantment_id &ench_id : elem.first->enchantments ) {
+            const enchantment &ench = ench_id.obj();
+            if( ench.is_active( *this, true ) ) {
                 enchantment_cache->force_add( ench );
             }
         }
@@ -9804,7 +9823,7 @@ void Character::shift_destination( const point &shift )
         *next_expected_position += shift;
     }
 
-    for( tripoint &elem : auto_move_route ) {
+    for( tripoint_bub_ms &elem : auto_move_route ) {
         elem += shift;
     }
 }
@@ -9910,7 +9929,7 @@ bool Character::sees( const Creature &critter ) const
     return Creature::sees( critter );
 }
 
-void Character::set_destination( const std::vector<tripoint> &route,
+void Character::set_destination( const std::vector<tripoint_bub_ms> &route,
                                  const player_activity &new_destination_activity )
 {
     auto_move_route = route;
@@ -9959,7 +9978,7 @@ void Character::start_destination_activity()
     clear_destination();
 }
 
-std::vector<tripoint> &Character::get_auto_move_route()
+std::vector<tripoint_bub_ms> &Character::get_auto_move_route()
 {
     return auto_move_route;
 }
@@ -9971,7 +9990,7 @@ action_id Character::get_next_auto_move_direction()
     }
 
     if( next_expected_position ) {
-        if( pos() != *next_expected_position ) {
+        if( pos_bub() != *next_expected_position ) {
             // We're off course, possibly stumbling or stuck, cancel auto move
             return ACTION_NULL;
         }
@@ -9980,16 +9999,17 @@ action_id Character::get_next_auto_move_direction()
     next_expected_position.emplace( auto_move_route.front() );
     auto_move_route.erase( auto_move_route.begin() );
 
-    tripoint dp = *next_expected_position - pos();
+    tripoint_rel_ms dp = *next_expected_position - pos_bub();
 
     // Make sure the direction is just one step and that
     // all diagonal moves have 0 z component
-    if( std::abs( dp.x ) > 1 || std::abs( dp.y ) > 1 || std::abs( dp.z ) > 1 ||
-        ( std::abs( dp.z ) != 0 && ( std::abs( dp.x ) != 0 || std::abs( dp.y ) != 0 ) ) ) {
+    if( std::abs( dp.x() ) > 1 || std::abs( dp.y() ) > 1 || std::abs( dp.z() ) > 1 ||
+        ( dp.z() != 0 && ( dp.x() != 0 || dp.y() != 0 ) ) ) {
         // Should never happen, but check just in case
         return ACTION_NULL;
     }
-    return get_movement_action_from_delta( dp, iso_rotate::yes );
+    // TODO: fix point types
+    return get_movement_action_from_delta( dp.raw(), iso_rotate::yes );
 }
 
 int Character::talk_skill() const
@@ -10033,11 +10053,13 @@ bool Character::defer_move( const tripoint &next )
         return false;
     }
     // next must be adjacent to subsequent move in any preexisting automove route
-    if( has_destination() && square_dist( auto_move_route.front(), next ) != 1 ) {
+    // TODO: fix point types
+    if( has_destination() && square_dist( auto_move_route.front().raw(), next ) != 1 ) {
         return false;
     }
-    auto_move_route.insert( auto_move_route.begin(), next );
-    next_expected_position = pos();
+    // TODO: fix point types
+    auto_move_route.insert( auto_move_route.begin(), tripoint_bub_ms( next ) );
+    next_expected_position = pos_bub();
     return true;
 }
 
