@@ -10922,16 +10922,6 @@ int item::ammo_consume( int qty, const tripoint &pos, Character *carrier )
     return wanted_qty - qty;
 }
 
-void item::activation_consume( const tripoint &pos, Character *carrier )
-{
-    if( type->charges_to_use() ) {
-        ammo_consume( type->charges_to_use(), pos, carrier );
-    }
-    if( type->tool->electricity_per_use > 0_J ) {
-        electric_consume( type->tool->electricity_per_use, pos, carrier );
-    }
-}
-
 units::energy item::electric_consume( units::energy qty, const tripoint &pos, Character *carrier )
 {
     const units::energy wanted_qty = qty;

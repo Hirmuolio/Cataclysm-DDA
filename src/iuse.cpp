@@ -2919,7 +2919,7 @@ cata::optional<int> iuse::makemound( Character *p, item *it, bool t, const tripo
         !here.has_flag( ter_furn_flag::TFLAG_PLANT, pnt ) ) {
         p->add_msg_if_player( _( "You start churning up the earth here." ) );
         p->assign_activity( player_activity( churn_activity_actor( 18000, item_location( *p, it ) ) ) );
-        p->activity.placement = here.getabs( pnt );
+        p->activity.placement = here.getglobal( pnt );
         return 1;
     } else {
         p->add_msg_if_player( _( "You can't churn up this ground." ) );
@@ -3030,7 +3030,7 @@ cata::optional<int> iuse::clear_rubble( Character *p, item *it, bool, const trip
         add_msg( m_info, _( "%s helps with this task…" ), helpers[i]->get_name() );
     }
     p->assign_activity( player_activity( clear_rubble_activity_actor( moves / bonus ) ) );
-    p->activity.placement = pnt;
+    p->activity.placement = get_map().getglobal( pnt );
     return 1;
 }
 
