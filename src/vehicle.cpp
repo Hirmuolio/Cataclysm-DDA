@@ -5205,7 +5205,7 @@ int vehicle::charge_battery( int amount, bool include_other_vehicles )
         chargeable_parts.erase( iter );
         // Calculate number of charges to reach the next %, but insure it's at least
         // one more than current charge.
-        int next_charge_level = ( charge_level + 1 ) * p->ammo_capacity( ammo_battery ) / 100;
+        int next_charge_level = ( charge_level + 1 ) * p->energy_capacity() / 100;
         next_charge_level = std::max( next_charge_level, p->energy_remaining() + 1 );
         int qty = std::min( amount, next_charge_level - p->energy_remaining() );
         p->electric_add( qty );
@@ -5232,8 +5232,8 @@ int vehicle::discharge_battery( int amount, bool recurse )
     // Key parts by percentage charge level.
     std::multimap<int, vehicle_part *> dischargeable_parts;
     for( vehicle_part &p : parts ) {
-        if( p.is_available() && p.is_battery() && p.ammo_remaining() > 0 ) {
-            //dischargeable_parts.insert( { ( p.ammo_remaining() * 100 ) / p.ammo_capacity( ammo_battery ), &p } ); // TODO fix this
+        if( p.is_available() && p.is_battery() && p.energy_remaining() > 0 ) {
+            dischargeable_parts.insert( { ( p.energy_remaining() * 100 ) / p.energy_capacity(), &p } );
         }
     }
     while( amount > 0 && !dischargeable_parts.empty() ) {
@@ -5243,12 +5243,12 @@ int vehicle::discharge_battery( int amount, bool recurse )
         vehicle_part *p = iter->second;
         dischargeable_parts.erase( iter );
         // Calculate number of charges to reach the previous %.
-        int prev_charge_level = ( ( charge_level - 1 ) * p->ammo_capacity( ammo_battery ) ) / 100;
-        int amount_to_discharge = std::min( p->ammo_remaining() - prev_charge_level, amount );
+        int prev_charge_level = ( ( charge_level - 1 ) * p->energy_capacity() ) / 100;
+        int amount_to_discharge = std::min( p->energy_remaining() - prev_charge_level, amount );
         p->ammo_consume( amount_to_discharge, global_part_pos3( *p ) );
         amount -= amount_to_discharge;
-        if( p->ammo_remaining() > 0 ) {
-            dischargeable_parts.insert( { ( p->ammo_remaining() * 100 ) / p->ammo_capacity( ammo_battery ), p } );
+        if( p->energy_remaining() > 0 ) {
+            dischargeable_parts.insert( { ( p->energy_remaining() * 100 ) / p->energy_capacity(), p } );
         }
     }
 
