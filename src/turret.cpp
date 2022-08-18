@@ -27,8 +27,6 @@
 
 static const efftype_id effect_on_roof( "on_roof" );
 
-static const itype_id fuel_type_battery( "battery" );
-
 static const skill_id skill_gun( "gun" );
 
 std::vector<vehicle_part *> vehicle::turrets()
@@ -246,7 +244,7 @@ turret_data::status turret_data::query() const
         }
     } else if( part->base.get_gun_ups_drain() > 0_kJ ) {
         units::energy ups = part->base.get_gun_ups_drain() * part->base.gun_current_mode().qty;
-        if( ups > units::from_kilojoule( veh->energy_left() ) ) {
+        if( ups > units::from_kilojoule( veh->energy_left( true ) ) ) {
             return status::no_power;
         }
     } else {
@@ -300,7 +298,7 @@ void turret_data::post_fire( Character &you, int shots )
         }
     }
 
-    veh->drain( fuel_type_battery, units::to_kilojoule( mode->get_gun_ups_drain() * shots ) );
+    veh->discharge_battery( units::to_kilojoule( mode->get_gun_ups_drain() * shots ) );
 }
 
 int turret_data::fire( Character &c, const tripoint &target )
