@@ -74,7 +74,6 @@
 
 static const activity_id ACT_VEHICLE( "ACT_VEHICLE" );
 
-static const ammotype ammo_battery( "battery" );
 
 static const faction_id faction_no_faction( "no_faction" );
 
@@ -1574,9 +1573,7 @@ void veh_interact::calc_overview()
         if( vpr.part().is_battery() ) {
             // always display total battery capacity and percentage charge
             auto details = []( const vehicle_part & pt, const catacurses::window & w, int y ) {
-                //int pct = ( static_cast<double>( pt.ammo_remaining() ) / pt.ammo_capacity(ammo_battery ) ) * 100;
-                //int pct = pt.energy_remaining() / pt.energy:capacity * 100;
-                int pct = 99; //TODO fix this
+                int pct = static_cast<double>( pt.energy_remaining() ) / pt.energy_capacity() * 100;
                 int offset = 1;
                 std::string fmtstring = "%i    %3i%%";
                 if( pt.is_leaking() ) {
@@ -1584,7 +1581,7 @@ void veh_interact::calc_overview()
                     offset = 0;
                 }
                 right_print( w, y, offset, item::find_type( pt.ammo_current() )->color,
-                             string_format( fmtstring, pt.ammo_capacity( ammo_battery ), pct ) );
+                             string_format( fmtstring, pt.energy_capacity(), pct ) );
             };
             selectable = is_selectable( vpr.part() );
             overview_opts.emplace_back( "3_BATTERY", &vpr.part(), selectable,
