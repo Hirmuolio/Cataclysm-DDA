@@ -285,7 +285,7 @@ int vehicle_part::energy_remaining() const
 
 int vehicle_part::energy_capacity() const
 {
-    return base.remaining_ammo_capacity();
+    return base.ammo_capacity( ammo_battery );
 }
 
 int vehicle_part::ammo_set( const itype_id &ammo, int qty )
