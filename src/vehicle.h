@@ -310,6 +310,13 @@ struct vehicle_part {
         int electric_consume( int qty, const tripoint &pos );
 
         /**
+         * Set the battery energy to the specified quantity (kJ)
+         * @param qty maximum amount of energy that should be set (kJ)
+         * @return amount of ammo actually set
+         */
+        int electric_set( int qty );
+
+        /**
          * Add energy to battery
          * @param qty maximum amount of energy that should be added (kJ)
          * @return amount added which will be between 0 and specified qty

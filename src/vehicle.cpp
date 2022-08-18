@@ -408,17 +408,17 @@ void vehicle::init_state( map &placed_on, int init_veh_fuel, int init_veh_status
         }
 
         if( pt.is_battery() ) {
+            int quantity;
             if( veh_fuel_mult == 100 ) { // Mint condition vehicle
-                pt.ammo_set( itype_battery );
+                quantity = pt.energy_capacity();
             } else if( one_in( 2 ) && veh_fuel_mult > 0 ) { // Randomize battery ammo a bit
-                pt.ammo_set( itype_battery, pt.ammo_capacity( ammo_battery ) * ( veh_fuel_mult + rng( 0,
-                             10 ) ) / 100 );
+                quantity = pt.energy_capacity() * ( veh_fuel_mult + rng( 0, 10 ) ) / 100;
             } else if( one_in( 2 ) && veh_fuel_mult > 0 ) {
-                pt.ammo_set( itype_battery, pt.ammo_capacity( ammo_battery ) * ( veh_fuel_mult - rng( 0,
-                             10 ) ) / 100 );
+                quantity = pt.energy_capacity() * ( veh_fuel_mult - rng( 0, 10 ) ) / 100;
             } else {
-                pt.ammo_set( itype_battery, pt.ammo_capacity( ammo_battery ) * veh_fuel_mult / 100 );
+                quantity = pt.energy_capacity() * veh_fuel_mult / 100;
             }
+            pt.electric_set( quantity );
         }
 
         if( !type->parts[p].fuel.is_null() ) {
