@@ -356,8 +356,8 @@ int vehicle_part::electric_consume( int qty, const tripoint &pos )
 }
 int vehicle_part::electric_set( int qty )
 {
-	base.ammo_set( itype_battery, qty );
-	return base.ammo_remaining();
+    base.ammo_set( itype_battery, qty );
+    return base.ammo_remaining();
 }
 
 int vehicle_part::electric_add( int qty )
