@@ -24,7 +24,6 @@
 #include "vpart_position.h"
 
 static const std::string part_location_structure( "structure" );
-static const ammotype ammo_battery( "battery" );
 
 static const itype_id fuel_type_muscle( "muscle" );
 static const itype_id itype_battery( "battery" );
@@ -187,9 +186,9 @@ int vehicle::print_part_list( const catacurses::window &win, int y1, const int m
 
         if( vp.is_fuel_store() && !vp.ammo_current().is_null() ) {
             if( detail ) {
-                if( vp.ammo_current() == itype_battery ) {
-                    partname += string_format( _( " (%s/%s charge)" ), vp.ammo_remaining(),
-                                               vp.ammo_capacity( ammo_battery ) );
+                if( vp.is_battery() ) {
+                    partname += string_format( _( " (%s/%s charge)" ), vp.energy_remaining(),
+                                               vp.energy_capacity() );
                 } else {
                     const itype *pt_ammo_cur = item::find_type( vp.ammo_current() );
                     auto stack = units::legacy_volume_factor / pt_ammo_cur->stack_size;
