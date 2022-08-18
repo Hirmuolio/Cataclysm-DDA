@@ -356,7 +356,7 @@ void vehicle::set_electronics_menu_options( std::vector<uilist_entry> &options,
             {
                 camera_on = false;
                 add_msg( _( "Camera system disabled" ) );
-            } else if( fuel_left( fuel_type_battery, true ) )
+            } else if( energy_left( true ) )
             {
                 camera_on = true;
                 add_msg( _( "Camera system enabled" ) );
@@ -1230,7 +1230,7 @@ void vehicle::enable_patrol()
 
 void vehicle::honk_horn() const
 {
-    const bool no_power = !fuel_left( fuel_type_battery, true );
+    const bool no_power = !energy_left( true );
     bool honked = false;
 
     for( const vpart_reference &vp : get_avail_parts( "HORN" ) ) {
@@ -1310,7 +1310,7 @@ void vehicle::reload_seeds( const tripoint &pos )
 void vehicle::beeper_sound() const
 {
     // No power = no sound
-    if( fuel_left( fuel_type_battery, true ) == 0 ) {
+    if( energy_left( true ) == 0 ) {
         return;
     }
 
@@ -2102,7 +2102,7 @@ void vehicle::validate_carried_vehicles( std::vector<std::vector<int>>
 
 void vpart_position::form_inventory( inventory &inv ) const
 {
-    const int veh_battery = vehicle().fuel_left( itype_battery, true );
+    const int veh_battery = vehicle().energy_left( true );
     const cata::optional<vpart_reference> vp_faucet = part_with_tool( itype_water_faucet );
     const cata::optional<vpart_reference> vp_cargo = part_with_feature( "CARGO", true );
 
@@ -2217,7 +2217,7 @@ void vehicle::interact_with( const vpart_position &vp, bool with_pickup )
             continue;
         }
 
-        const bool enabled = fuel_left( itype_battery, true ) >= tool.charges_to_use();
+        const bool enabled = energy_left( true ) >= tool.charges_to_use();
         selectmenu.addentry( TOOLS_OFFSET + i, enabled, pair.second, _( "Use " ) + tool.nname( 1 ) );
     }
 
@@ -2257,7 +2257,7 @@ void vehicle::interact_with( const vpart_position &vp, bool with_pickup )
     }
     if( vp_purify ) {
         bool can_purify = fuel_left( itype_water ) &&
-                          fuel_left( itype_battery, true ) >= itype_water_purifier.obj().charges_to_use();
+                          energy_left( true ) >= itype_water_purifier.obj().charges_to_use();
         selectmenu.addentry( PURIFY_TANK, can_purify, 'P', _( "Purify water in vehicle tank" ) );
     }
     if( vp_monster_capture ) {
@@ -2309,7 +2309,7 @@ void vehicle::interact_with( const vpart_position &vp, bool with_pickup )
             player_character.invoke_item( &pseudo );
             return true;
         }
-        if( fuel_left( itype_battery, true ) < pseudo.ammo_required() ) {
+        if( energy_left( true ) < pseudo.ammo_required() ) {
             return false;
         }
         // TODO: Figure out this comment: Pseudo items don't have a magazine in it, and they don't need it anymore.
@@ -2385,7 +2385,7 @@ void vehicle::interact_with( const vpart_position &vp, bool with_pickup )
             vehicle_part &tank = veh_interact::select_part( *this, sel, title );
             if( tank ) {
                 int cost = item::find_type( itype_water_purifier )->charges_to_use();
-                if( fuel_left( itype_battery, true ) < tank.ammo_remaining() * cost ) {
+                if( energy_left( true ) < tank.ammo_remaining() * cost ) {
                     //~ $1 - vehicle name, $2 - part name
                     add_msg( m_bad, _( "Insufficient power to purify the contents of the %1$s's %2$s" ),
                              name, tank.name() );

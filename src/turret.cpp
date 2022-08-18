@@ -246,7 +246,7 @@ turret_data::status turret_data::query() const
         }
     } else if( part->base.get_gun_ups_drain() > 0_kJ ) {
         units::energy ups = part->base.get_gun_ups_drain() * part->base.gun_current_mode().qty;
-        if( ups > units::from_kilojoule( veh->fuel_left( fuel_type_battery ) ) ) {
+        if( ups > units::from_kilojoule( veh->energy_left() ) ) {
             return status::no_power;
         }
     } else {

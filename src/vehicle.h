@@ -1276,6 +1276,11 @@ class vehicle
         // Returns total vehicle fuel capacity for the given fuel type
         int fuel_capacity( const itype_id &ftype ) const;
 
+        // Returns amount of battery energy left (kJ)
+        int energy_left( bool recurse = false,
+                         const std::function<bool( const vehicle_part & )> &filter = return_true<const vehicle_part &> )
+        const;
+
         // Returns the total specific energy (J/g) of this fuel type. Frozen is ignored.
         units::specific_energy fuel_specific_energy( const itype_id &ftype ) const;
 
