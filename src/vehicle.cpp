@@ -5165,6 +5165,8 @@ int vehicle::traverse_vehicle_graph( Vehicle *start_veh, int amount, Func action
             // Add this connected vehicle to the queue of vehicles to search next,
             // but only if we haven't seen this one before.
             if( visited_vehs.count( target_veh ) < 1 ) {
+                // Cables use epower as % power loss.
+                // Percentages stack when going through multiple vehicles
                 int target_loss = current_loss + current_veh->part_info( p ).epower;
                 connected_vehs.push( std::make_pair( target_veh, target_loss ) );
 
