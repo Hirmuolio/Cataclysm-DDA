@@ -153,7 +153,6 @@ static const efftype_id effect_visuals( "visuals" );
 static const fault_id fault_bionic_salvaged( "fault_bionic_salvaged" );
 
 static const itype_id itype_anesthetic( "anesthetic" );
-static const itype_id itype_battery( "battery" );
 static const itype_id itype_radiocontrol( "radiocontrol" );
 static const itype_id itype_remotevehcontrol( "remotevehcontrol" );
 static const itype_id itype_water_clean( "water_clean" );
@@ -1632,8 +1631,7 @@ material_id Character::find_remote_fuel( bool look_only )
             continue;
         }
         if( !look_only ) {
-            set_value( "rem_battery", std::to_string( vp->vehicle().fuel_left( itype_battery,
-                       true ) ) );
+            set_value( "rem_battery", std::to_string( vp->vehicle().energy_left( true ) ) );
         }
         remote_fuel = fuel_type_battery;
     }

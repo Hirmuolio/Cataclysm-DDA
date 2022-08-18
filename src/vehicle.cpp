@@ -1006,7 +1006,7 @@ bool vehicle::is_alternator_on( const int a ) const
 bool vehicle::has_security_working() const
 {
     bool found_security = false;
-    if( fuel_left( fuel_type_battery ) > 0 ) {
+    if( energy_left() > 0 ) {
         for( int s : speciality ) {
             if( part_flag( s, "SECURITY" ) && parts[ s ].is_available() ) {
                 found_security = true;
@@ -3340,6 +3340,33 @@ int vehicle::fuel_left( const itype_id &ftype, bool recurse,
 int vehicle::fuel_left( const int p, bool recurse ) const
 {
     return fuel_left( parts[ p ].fuel_current(), recurse );
+}
+
+int vehicle::energy_left( bool recurse,
+                          const std::function<bool( const vehicle_part & )> &filter ) const
+{
+    int energ = 0;
+
+    for( const int i : fuel_containers ) {
+        const vehicle_part &part = parts[i];
+        if( !part.is_battery() ) {
+            continue;
+        }
+        energ += part.energy_remaining();
+    }
+
+    if( recurse ) {
+        auto energy_counting_visitor = [&]( vehicle const * veh, int amount, int ) {
+            return amount + veh->energy_left();
+        };
+
+        // HAX: add 1 to the initial amount so traversal doesn't immediately stop just
+        // 'cause we have 0 fuel left in the current vehicle. Subtract the 1 immediately
+        // after traversal.
+        energ = traverse_vehicle_graph( this, energ + 1, energy_counting_visitor ) - 1;
+    }
+
+    return energ;
 }
 
 int vehicle::engine_fuel_left( const int e, bool recurse ) const
@@ -7339,7 +7366,7 @@ void vehicle::update_time( const time_point &update_to )
             const cata::optional<vpart_reference> vp_purifier = vpart_position( *this, idx )
                     .part_with_tool( itype_water_purifier );
 
-            if( vp_purifier && ( fuel_left( itype_battery, true ) > cost_to_purify ) ) {
+            if( vp_purifier && ( energy_left( true ) > cost_to_purify ) ) {
                 tank->ammo_set( itype_water_clean, c_qty );
                 discharge_battery( cost_to_purify );
             } else {

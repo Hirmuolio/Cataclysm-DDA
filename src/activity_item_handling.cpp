@@ -94,7 +94,6 @@ static const efftype_id effect_incorporeal( "incorporeal" );
 static const flag_id json_flag_MOP( "MOP" );
 static const flag_id json_flag_NO_AUTO_CONSUME( "NO_AUTO_CONSUME" );
 
-static const itype_id itype_battery( "battery" );
 static const itype_id itype_detergent( "detergent" );
 static const itype_id itype_disassembly( "disassembly" );
 static const itype_id itype_liquid_soap( "liquid_soap" );
@@ -1048,7 +1047,7 @@ static bool are_requirements_nearby(
             const cata::optional<vpart_reference> &vp = here.veh_at( elem ).part_with_tool( itype_welder );
 
             if( vp ) {
-                const int veh_battery = vp->vehicle().fuel_left( itype_battery, true );
+                const int veh_battery = vp->vehicle().energy_left( true );
 
                 item welder( itype_welder, calendar::turn_zero );
                 welder.charges = veh_battery;
