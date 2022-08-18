@@ -275,6 +275,19 @@ int vehicle_part::remaining_ammo_capacity() const
     return base.remaining_ammo_capacity();
 }
 
+int vehicle_part::energy_remaining() const
+{
+    if( base.is_magazine() ) {
+        return base.ammo_remaining();
+    }
+    return 0;
+}
+
+int vehicle_part::energy_capacity() const
+{
+    return base.remaining_ammo_capacity();
+}
+
 int vehicle_part::ammo_set( const itype_id &ammo, int qty )
 {
     // We often check if ammo is set to see if tank is empty, if qty == 0 don't set ammo
@@ -334,6 +347,11 @@ int vehicle_part::ammo_consume( int qty, const tripoint &pos )
         }
         return res;
     }
+    return base.ammo_consume( qty, pos, nullptr );
+}
+
+int vehicle_part::electric_consume( int qty, const tripoint &pos )
+{
     return base.ammo_consume( qty, pos, nullptr );
 }
 
