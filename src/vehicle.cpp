@@ -3349,7 +3349,7 @@ int vehicle::energy_left( bool recurse,
 
     for( const int i : fuel_containers ) {
         const vehicle_part &part = parts[i];
-        if( !part.is_battery() ) {
+        if( !part.is_battery() || !filter( part ) ) {
             continue;
         }
         energ += part.energy_remaining();
