@@ -5192,8 +5192,8 @@ int vehicle::charge_battery( int amount, bool include_other_vehicles )
     std::multimap<int, vehicle_part *> chargeable_parts;
     for( vehicle_part &p : parts ) {
         if( p.is_available() && p.is_battery() &&
-            p.ammo_capacity( ammo_battery ) > p.ammo_remaining() ) {
-            chargeable_parts.insert( { ( p.ammo_remaining() * 100 ) / p.ammo_capacity( ammo_battery ), &p } );
+            p.energy_capacity() > p.energy_remaining() ) {
+            chargeable_parts.insert( { p.energy_remaining() * 100 / p.energy_capacity(), &p } );
         }
     }
     while( amount > 0 && !chargeable_parts.empty() ) {
@@ -5204,13 +5204,13 @@ int vehicle::charge_battery( int amount, bool include_other_vehicles )
         chargeable_parts.erase( iter );
         // Calculate number of charges to reach the next %, but insure it's at least
         // one more than current charge.
-        int next_charge_level = ( ( charge_level + 1 ) * p->ammo_capacity( ammo_battery ) ) / 100;
-        next_charge_level = std::max( next_charge_level, p->ammo_remaining() + 1 );
-        int qty = std::min( amount, next_charge_level - p->ammo_remaining() );
-        p->ammo_set( fuel_type_battery, p->ammo_remaining() + qty );
+        int next_charge_level = ( charge_level + 1 ) * p->ammo_capacity( ammo_battery ) / 100;
+        next_charge_level = std::max( next_charge_level, p->energy_remaining() + 1 );
+        int qty = std::min( amount, next_charge_level - p->energy_remaining() );
+        p->electric_add( qty );
         amount -= qty;
-        if( p->ammo_capacity( ammo_battery ) > p->ammo_remaining() ) {
-            chargeable_parts.insert( { ( p->ammo_remaining() * 100 ) / p->ammo_capacity( ammo_battery ), p } );
+        if( p->energy_capacity() > p->energy_remaining() ) {
+            chargeable_parts.insert( { p->energy_remaining() * 100 / p->energy_capacity(), p } );
         }
     }
 
@@ -5372,7 +5372,7 @@ void vehicle::slow_leak()
                 continue;
             }
             double health = p.health_percent();
-            int qty = std::max( ( 0.5 - health ) * ( 0.5 - health ) * p.energy_remaining() / 10, 1 );
+            int qty = std::max( ( 0.5 - health ) * ( 0.5 - health ) * p.energy_remaining() / 10, 1.0 );
             p.electric_consume( qty, global_part_pos3( p ) );
 
         } else {
@@ -5381,7 +5381,7 @@ void vehicle::slow_leak()
             }
             double health = p.health_percent();
             itype_id fuel = p.ammo_current();
-            int qty = std::max( ( 0.5 - health ) * ( 0.5 - health ) * p.ammo_remaining() / 10, 1 );
+            int qty = std::max( ( 0.5 - health ) * ( 0.5 - health ) * p.ammo_remaining() / 10, 1.0 );
             point q = coord_translate( p.mount );
             const tripoint dest = global_pos3() + tripoint( q, 0 );
 

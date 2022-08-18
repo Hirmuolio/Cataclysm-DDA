@@ -355,6 +355,14 @@ int vehicle_part::electric_consume( int qty, const tripoint &pos )
     return base.ammo_consume( qty, pos, nullptr );
 }
 
+int vehicle_part::electric_add( int qty )
+{
+    qty = std::min( ammo_capacity( ammo_battery ), ammo_remaining() + qty );
+    base.ammo_set( itype_battery, qty );
+    return qty;
+}
+
+
 double vehicle_part::consume_energy( const itype_id &ftype, double energy_j )
 {
     if( base.empty() || !is_fuel_store() ) {
