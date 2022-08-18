@@ -303,11 +303,18 @@ struct vehicle_part {
 
         /**
          * Consume battery energy
-         * @param qty maximum amount of energy that should be consumed
+         * @param qty maximum amount of energy that should be consumed (kJ)
          * @param pos current global location of part from which energy is being consumed
          * @return amount consumed which will be between 0 and specified qty
          */
         int electric_consume( int qty, const tripoint &pos );
+
+        /**
+         * Add energy to battery
+         * @param qty maximum amount of energy that should be added (kJ)
+         * @return amount added which will be between 0 and specified qty
+         */
+        int electric_add( int qty );
 
         /**
          * Consume fuel by energy content.
