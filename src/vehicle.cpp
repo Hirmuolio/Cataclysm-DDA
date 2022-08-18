@@ -5364,31 +5364,42 @@ void vehicle::slow_leak()
     // for each badly damaged tanks (lower than 50% health), leak a small amount
     for( int part : fuel_containers ) {
         vehicle_part &p = parts[part];
-        if( !p.is_leaking() || p.ammo_remaining() <= 0 ) {
+
+        if( !p.is_leaking() ) {
             continue;
         }
 
-        double health = p.health_percent();
-        itype_id fuel = p.ammo_current();
-        int qty = std::max( ( 0.5 - health ) * ( 0.5 - health ) * p.ammo_remaining() / 10, 1.0 );
-        point q = coord_translate( p.mount );
-        const tripoint dest = global_pos3() + tripoint( q, 0 );
-
-        // damaged batteries self-discharge without leaking, plutonium leaks slurry
-        if( fuel != fuel_type_battery && fuel != fuel_type_plutonium_cell ) {
-            item leak( fuel, calendar::turn, qty );
-            here.add_item_or_charges( dest, leak );
-            p.ammo_consume( qty, global_part_pos3( p ) );
-        } else if( fuel == fuel_type_plutonium_cell ) {
-            if( p.ammo_remaining() >= PLUTONIUM_CHARGES / 10 ) {
-                item leak( "plut_slurry_dense", calendar::turn, qty );
-                here.add_item_or_charges( dest, leak );
-                p.ammo_consume( qty * PLUTONIUM_CHARGES / 10, global_part_pos3( p ) );
-            } else {
-                p.ammo_consume( p.ammo_remaining(), global_part_pos3( p ) );
+        if( p.is_battery() ) {
+            if( p.energy_remaining() <= 0 ) {
+                continue;
             }
+            double health = p.health_percent();
+            int qty = std::max( ( 0.5 - health ) * ( 0.5 - health ) * p.energy_remaining() / 10, 1 );
+            p.electric_consume( qty, global_part_pos3( p ) );
+
         } else {
-            p.ammo_consume( qty, global_part_pos3( p ) );
+            if( p.ammo_remaining() <= 0 ) {
+                continue;
+            }
+            double health = p.health_percent();
+            itype_id fuel = p.ammo_current();
+            int qty = std::max( ( 0.5 - health ) * ( 0.5 - health ) * p.ammo_remaining() / 10, 1 );
+            point q = coord_translate( p.mount );
+            const tripoint dest = global_pos3() + tripoint( q, 0 );
+
+            if( fuel == fuel_type_plutonium_cell ) {
+                if( p.ammo_remaining() >= PLUTONIUM_CHARGES / 10 ) {
+                    item leak( "plut_slurry_dense", calendar::turn, qty );
+                    here.add_item_or_charges( dest, leak );
+                    p.ammo_consume( qty * PLUTONIUM_CHARGES / 10, global_part_pos3( p ) );
+                } else {
+                    p.ammo_consume( p.ammo_remaining(), global_part_pos3( p ) );
+                }
+            } else {
+                item leak( fuel, calendar::turn, qty );
+                here.add_item_or_charges( dest, leak );
+                p.ammo_consume( qty, global_part_pos3( p ) );
+            }
         }
     }
 }
