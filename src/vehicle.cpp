@@ -4725,8 +4725,8 @@ std::pair<int, int> vehicle::battery_power_level() const
     for( const int bi : batteries ) {
         const vehicle_part &b = parts[bi];
         if( b.is_available() ) {
-            remaining_epower += b.ammo_remaining();
-            total_epower_capacity += b.ammo_capacity( ammo_battery );
+            remaining_epower += b.energy_remaining();
+            total_epower_capacity += b.energy_capacity();
         }
     }
 
