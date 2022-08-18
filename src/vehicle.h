@@ -270,9 +270,13 @@ struct vehicle_part {
         /** Maximum amount of fuel, charges or ammunition that can be contained by a part */
         int ammo_capacity( const ammotype &ammo ) const;
 
-        /** Amount of fuel, charges or ammunition currently contained by a part */
+        /** Amount of fuel, or ammunition currently contained by a part */
         int ammo_remaining() const;
         int remaining_ammo_capacity() const;
+
+        /** Amount of battery energy (kJ) contained by a part */
+        int energy_remaining() const;
+        int energy_capacity() const;
 
         /** Type of fuel used by an engine */
         itype_id fuel_current() const;
@@ -296,6 +300,14 @@ struct vehicle_part {
          * @return amount consumed which will be between 0 and specified qty
          */
         int ammo_consume( int qty, const tripoint &pos );
+
+        /**
+         * Consume battery energy
+         * @param qty maximum amount of energy that should be consumed
+         * @param pos current global location of part from which energy is being consumed
+         * @return amount consumed which will be between 0 and specified qty
+         */
+        int electric_consume( int qty, const tripoint &pos );
 
         /**
          * Consume fuel by energy content.
