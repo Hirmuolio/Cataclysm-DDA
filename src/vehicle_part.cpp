@@ -31,7 +31,6 @@
 
 static const ammotype ammo_battery( "battery" );
 
-static const itype_id fuel_type_battery( "battery" );
 static const itype_id fuel_type_none( "null" );
 
 static const itype_id itype_battery( "battery" );
