@@ -112,7 +112,7 @@ void glare( const weather_type_id &w )
     season_type season = season_of_year( calendar::turn );
     if( season == WINTER ) {
         // Winter snow glare happens at slightly cloudy weather
-		// It is enough to be "in sunlight"
+        // It is enough to be "in sunlight"
         effect = &effect_snow_glare;
         dur = player_character.has_effect( *effect ) ? 1_turns : 2_turns;
     } else if( w->light_modifier > 0.9 ) {
