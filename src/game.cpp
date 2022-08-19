@@ -4898,7 +4898,7 @@ bool game::is_in_sunlight( const tripoint &p )
     bool is_inside = vp && vp->is_inside();
 
     return m.is_outside( p ) && light_level( p.z ) >= 40 && !is_night( calendar::turn ) &&
-           get_weather().weather_id->sun_intensity >= sun_intensity_type::normal &&
+           get_weather().weather_id->light_modifier >= 0.5 &&
            !is_inside;
 }
 
