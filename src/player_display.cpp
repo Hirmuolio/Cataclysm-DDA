@@ -1357,7 +1357,8 @@ void Character::disp_info( bool customize_character )
         effect_name_and_text.emplace_back( starvation_name, starvation_text );
     }
 
-    if( has_trait( trait_TROGLO ) && g->is_in_sunlight( pos() ) && incident_sun_irradiance( get_weather().weather_id, calendar::turn ) > 500 ) {
+    if( has_trait( trait_TROGLO ) && g->is_in_sunlight( pos() ) &&
+        incident_sun_irradiance( get_weather().weather_id, calendar::turn ) > 500 ) {
         effect_name_and_text.emplace_back( _( "In Sunlight" ),
                                            _( "The sunlight irritates you.\n"
                                               "Strength - 1;    Dexterity - 1;    Intelligence - 1;    Perception - 1" )
