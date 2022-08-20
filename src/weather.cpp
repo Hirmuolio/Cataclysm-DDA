@@ -97,9 +97,8 @@ weather_type_id get_bad_weather()
 void glare( const weather_type_id &w )
 {
     Character &player_character = get_player_character();//todo npcs, also
-    // General prerequisites for glare
-    if( !is_creature_outside( player_character ) ||
-        !g->is_in_sunlight( player_character.pos() ) ||
+    //General prerequisites for glare
+    if( g->is_sheltered( player_character.pos() ) ||
         player_character.in_sleep_state() ||
         player_character.worn_with_flag( json_flag_SUN_GLASSES ) ||
         player_character.has_flag( json_flag_GLARE_RESIST ) ||
@@ -110,20 +109,19 @@ void glare( const weather_type_id &w )
     time_duration dur = 0_turns;
     const efftype_id *effect = nullptr;
     season_type season = season_of_year( calendar::turn );
-    if( season == WINTER ) {
-        // Winter snow glare happens at slightly cloudy weather
-        // It is enough to be "in sunlight"
+    if( season == WINTER &&
+        incident_sun_irradiance( get_weather().weather_id, calendar::turn ) > 300 ) {
+        // Winter snow glare happens at lower irradiance
         effect = &effect_snow_glare;
         dur = player_character.has_effect( *effect ) ? 1_turns : 2_turns;
-    } else if( w->light_modifier > 0.9 ) {
-        // Sun glare: only for bright sunny weather
+    } else if( incident_sun_irradiance( get_weather().weather_id, calendar::turn ) > 500 ) {
         effect = &effect_glare;
         dur = player_character.has_effect( *effect ) ? 1_turns : 2_turns;
     }
 
-    // Apply final glare effect
+    //apply final glare effect
     if( dur > 0_turns && effect != nullptr ) {
-        // Enhance/reduce by some traits
+        //enhance/reduce by some traits
         if( player_character.has_trait( trait_CEPH_VISION ) ) {
             dur = dur * 2;
         }
