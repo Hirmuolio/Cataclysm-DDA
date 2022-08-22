@@ -1248,7 +1248,7 @@ float firestarter_actor::light_mod( const tripoint &pos ) const
         return 0.0f;
     }
 
-    if( incident_sun_irradiance( get_weather().weather_id, calendar::turn ) > 300 ) {
+    if( incident_sun_irradiance( get_weather().weather_id, calendar::turn ) > irradiance::moderate ) {
         return std::pow( g->natural_light_level( pos.z ) / 80.0f, 8 );
     }
 
