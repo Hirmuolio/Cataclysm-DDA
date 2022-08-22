@@ -1244,7 +1244,7 @@ float firestarter_actor::light_mod( const tripoint &pos ) const
     if( !need_sunlight ) {
         return 1.0f;
     }
-    if( !g->is_in_sunlight( pos ) ) {
+    if( g->is_sheltered( pos ) ) {
         return 0.0f;
     }
 

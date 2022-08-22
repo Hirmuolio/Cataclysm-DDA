@@ -4895,7 +4895,7 @@ bool game::is_empty( const tripoint_bub_ms &p )
 bool game::is_in_sunlight( const tripoint &p )
 {
     return !is_sheltered( p ) &&
-           incident_sun_irradiance( get_weather().weather_id, calendar::turn ) > irradiance::low;
+           incident_sun_irradiance( get_weather().weather_id, calendar::turn ) > irradiance::minimal;
 }
 
 bool game::is_sheltered( const tripoint &p )

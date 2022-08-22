@@ -47,6 +47,9 @@ static constexpr int BODYTEMP_THRESHOLD = 500;
 
 namespace irradiance
 {
+// Sun at 5° on a clear day.
+constexpr float minimal = 87;
+
 // Sun at 25° on a clear day. Very roughly UV index 1
 constexpr float low = 422;
 
