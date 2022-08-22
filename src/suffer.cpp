@@ -802,7 +802,7 @@ void suffer::in_sunlight( Character &you )
 {
     const tripoint position = you.pos();
 
-    if( g->is_in_sunlight( position ) ) {
+    if( !g->is_in_sunlight( position ) ) {
         return;
     }
 
