@@ -999,7 +999,7 @@ static void eff_fun_sleep( Character &u, effect &it )
         here.is_outside( u.pos() ) ) {
         if( u.has_trait( trait_CHLOROMORPH ) ) {
             // Hunger and thirst fall before your Chloromorphic physiology!
-            if( incident_sun_irradiance( get_weather().weather_id, calendar::turn ) > 100 ) {
+            if( incident_sun_irradiance( get_weather().weather_id, calendar::turn ) > irradiance::low ) {
                 if( u.has_active_mutation( trait_CHLOROMORPH ) && ( u.get_fatigue() <= 25 ) ) {
                     u.set_fatigue( 25 );
                 }
