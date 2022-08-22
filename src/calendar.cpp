@@ -46,7 +46,12 @@ static constexpr units::angle sunrise_angle = -1_degrees;
 
 float default_daylight_level()
 {
-    return 100.f;
+    return 100.0f;
+}
+
+float max_sun_irradiance()
+{
+    return 1000.f;
 }
 
 time_duration lunar_month()
@@ -468,11 +473,20 @@ float sun_light_at( const time_point &p )
            ( angle_greater - angle_smaller );
 }
 
+float sun_irradiance( const time_point &p )
+{
+    const units::angle solar_alt = sun_altitude( p );
+
+    if( solar_alt < astronomical_dawn ) {
+        return 0;
+    }
+    return max_sun_irradiance() * sin( solar_alt );
+}
+
 float sun_moon_light_at( const time_point &p )
 {
     return sun_light_at( p ) + moon_light_at( p );
 }
-
 
 float lux_to_light( const float lux )
 {
@@ -487,7 +501,6 @@ float lux_to_light( const float lux )
     }
     // Linear from 5 at 10 lux to 100 at 30 lux
     return 4.75f * lux - 85.f / 7.f;
-
 }
 
 float sun_moon_light_at_noon_near( const time_point &p )

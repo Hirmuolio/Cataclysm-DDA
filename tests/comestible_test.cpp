@@ -151,7 +151,7 @@ static bool has_mutagen_vit( const islot_comestible &comest )
 {
     const std::map<vitamin_id, int> &vits = comest.default_nutrition.vitamins;
     for( const vitamin_id &vit : mutagen_vit_list ) {
-        if( vits.find( vit ) != vits.end() ) {
+        if( vits.find( vit ) != vits.end() && vits.at( vit ) > 0 ) {
             return true;
         }
     }
@@ -170,6 +170,9 @@ TEST_CASE( "comestible_health_bounds", "[comestible]" )
         const islot_comestible &comest = *it->comestible;
         const std::string &comest_type = comest.comesttype;
         if( ( comest_type != "FOOD" && comest_type != "DRINK" ) || has_mutagen_vit( comest ) ) {
+            continue;
+        }
+        if( it->src.back().second.str() != "dda" ) {
             continue;
         }
 

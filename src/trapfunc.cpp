@@ -181,10 +181,11 @@ bool trapfunc::beartrap( const tripoint &p, Creature *c, item * )
         damage_instance d;
         d.add_damage( damage_type::BASH, 12 );
         d.add_damage( damage_type::CUT, 18 );
-        c->deal_damage( nullptr, hit, d );
+        dealt_damage_instance dealt_dmg = c->deal_damage( nullptr, hit, d );
 
         Character *you = dynamic_cast<Character *>( c );
-        if( you != nullptr && !you->has_trait( trait_INFIMMUNE ) ) {
+        if( you != nullptr && !you->has_trait( trait_INFIMMUNE ) &&
+            dealt_dmg.type_damage( damage_type::CUT ) > 0 ) {
             const int chance_in = you->has_trait( trait_INFRESIST ) ? 512 : 128;
             if( one_in( chance_in ) ) {
                 you->add_effect( effect_tetanus, 1_turns, true );
@@ -222,11 +223,13 @@ bool trapfunc::board( const tripoint &, Creature *c, item * )
         z->deal_damage( nullptr, bodypart_id( "foot_r" ), damage_instance( damage_type::CUT, rng( 3,
                         5 ) ) );
     } else {
-        c->deal_damage( nullptr, bodypart_id( "foot_l" ), damage_instance( damage_type::CUT, rng( 6,
-                        10 ) ) );
-        c->deal_damage( nullptr, bodypart_id( "foot_r" ), damage_instance( damage_type::CUT, rng( 6,
-                        10 ) ) );
-        if( !you->has_trait( trait_INFIMMUNE ) ) {
+        dealt_damage_instance dealt_dmg_l = c->deal_damage( nullptr, bodypart_id( "foot_l" ),
+                                            damage_instance( damage_type::CUT, rng( 6, 10 ) ) );
+        dealt_damage_instance dealt_dmg_r = c->deal_damage( nullptr, bodypart_id( "foot_r" ),
+                                            damage_instance( damage_type::CUT, rng( 6, 10 ) ) );
+        int total_cut_dmg = dealt_dmg_l.type_damage( damage_type::CUT ) + dealt_dmg_l.type_damage(
+                                damage_type::CUT );
+        if( !you->has_trait( trait_INFIMMUNE ) && total_cut_dmg > 0 ) {
             const int chance_in = you->has_trait( trait_INFRESIST ) ? 256 : 35;
             if( one_in( chance_in ) ) {
                 you->add_effect( effect_tetanus, 1_turns, true );
@@ -897,8 +900,9 @@ bool trapfunc::pit_spikes( const tripoint &p, Creature *c, item * )
             }
             you->add_msg_if_player( m_bad, _( "The spikes impale your %s!" ),
                                     body_part_name_accusative( hit ) );
-            you->deal_damage( nullptr, hit, damage_instance( damage_type::CUT, damage ) );
-            if( !you->has_trait( trait_INFIMMUNE ) ) {
+            dealt_damage_instance dealt_dmg = you->deal_damage( nullptr, hit, damage_instance( damage_type::CUT,
+                                              damage ) );
+            if( !you->has_trait( trait_INFIMMUNE ) && dealt_dmg.type_damage( damage_type::CUT ) > 0 ) {
                 const int chance_in = you->has_trait( trait_INFRESIST ) ? 256 : 35;
                 if( one_in( chance_in ) ) {
                     you->add_effect( effect_tetanus, 1_turns, true );
@@ -985,8 +989,9 @@ bool trapfunc::pit_glass( const tripoint &p, Creature *c, item * )
             }
             you->add_msg_if_player( m_bad, _( "The glass shards slash your %s!" ),
                                     body_part_name_accusative( hit ) );
-            you->deal_damage( nullptr, hit, damage_instance( damage_type::CUT, damage ) );
-            if( !you->has_trait( trait_INFIMMUNE ) ) {
+            dealt_damage_instance dealt_dmg = you->deal_damage( nullptr, hit, damage_instance( damage_type::CUT,
+                                              damage ) );
+            if( !you->has_trait( trait_INFIMMUNE ) && dealt_dmg.type_damage( damage_type::CUT ) > 0 ) {
                 const int chance_in = you->has_trait( trait_INFRESIST ) ? 256 : 35;
                 if( one_in( chance_in ) ) {
                     you->add_effect( effect_tetanus, 1_turns, true );
@@ -1481,13 +1486,13 @@ bool trapfunc::cast_spell( const tripoint &p, Creature *critter, item * )
     trap tr = here.tr_at( p );
     const spell trap_spell = tr.spell_data.get_spell( 0 );
     npc dummy;
-    here.remove_trap( p );
-    // we remove the trap before casting the spell because otherwise if mapgen is invoked on our location it will retrigger the trap and create an infinite loop
+    if( !tr.has_flag( json_flag_UNCONSUMED ) ) {
+        here.remove_trap( p );
+    }
+    // we remove the trap before casting the spell because otherwise if we teleport we might be elsewhere at the end and p is no longer valid
     trap_spell.cast_all_effects( dummy, critter->pos() );
     trap_spell.make_sound( p );
-    if( tr.has_flag( json_flag_UNCONSUMED ) ) {
-        here.trap_set( p, tr.id );
-    }
+
     return true;
 }
 
