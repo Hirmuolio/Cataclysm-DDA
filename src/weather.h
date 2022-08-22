@@ -45,6 +45,24 @@ static constexpr int BODYTEMP_SCORCHING = 9500;
 static constexpr int BODYTEMP_THRESHOLD = 500;
 ///@}
 
+namespace irradiance
+{
+// Very rough approximation for UV index 1 at 25° sun altitude on clear day
+constexpr float low = 422;
+
+// Very rough approximation for UV index 3 at 35° sun anltitude on clear day
+constexpr float moderate = 573;
+
+// Very rough approximation for UV index 6 at 60° sun altitude on clear day
+constexpr float high = 866;
+
+// Very rough approximation for UV index 8 at 65° sun altitude on clear day
+constexpr float very_high = 906;
+
+// Very rough approximation for UV index 11 at 70° sun altitude on clear day
+constexpr float extreme = 940;
+}
+
 #include <cstdint>
 #include <iosfwd>
 #include <map>
