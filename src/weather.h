@@ -47,19 +47,19 @@ static constexpr int BODYTEMP_THRESHOLD = 500;
 
 namespace irradiance
 {
-// Very rough approximation for UV index 1 at 25° sun altitude on clear day
+// Sun at 25° on a clear day. Very roughly UV index 1
 constexpr float low = 422;
 
-// Very rough approximation for UV index 3 at 35° sun anltitude on clear day
+// Sun at 35° on a clear day. Very roughly UV index 3
 constexpr float moderate = 573;
 
-// Very rough approximation for UV index 6 at 60° sun altitude on clear day
+// Sun at 60° on a clear day. Very roughly UV index 6
 constexpr float high = 866;
 
-// Very rough approximation for UV index 8 at 65° sun altitude on clear day
+// Sun at 65° on a clear day. Very roughly UV index 8
 constexpr float very_high = 906;
 
-// Very rough approximation for UV index 11 at 70° sun altitude on clear day
+// Sun at 70° on a clear day. Very roughly UV index 11
 constexpr float extreme = 940;
 }
 
