@@ -110,7 +110,7 @@ void glare( const weather_type_id &w )
     const efftype_id *effect = nullptr;
     season_type season = season_of_year( calendar::turn );
     if( season == WINTER &&
-        incident_sun_irradiance( get_weather().weather_id, calendar::turn ) > 300 ) {
+        incident_sun_irradiance( get_weather().weather_id, calendar::turn ) > irradiance::moderate ) {
         // Winter snow glare happens at lower irradiance
         effect = &effect_snow_glare;
         dur = player_character.has_effect( *effect ) ? 1_turns : 2_turns;
