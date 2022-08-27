@@ -29,6 +29,8 @@ static const efftype_id effect_on_roof( "on_roof" );
 
 static const skill_id skill_gun( "gun" );
 
+static const trait_id trait_BRAWLER( "BRAWLER" );
+
 std::vector<vehicle_part *> vehicle::turrets()
 {
     std::vector<vehicle_part *> res;
@@ -403,6 +405,12 @@ bool vehicle::turrets_aim( std::vector<vehicle_part *> &turrets )
     }
 
     avatar &player_character = get_avatar();
+    if( player_character.has_trait( trait_BRAWLER ) ) {
+        player_character.add_msg_if_player(
+            _( "Pfft.  You are a brawler; using turrets is beneath you." ) );
+        return false;
+    }
+
     // Get target
     target_handler::trajectory trajectory = target_handler::mode_turrets( player_character, *this,
                                             turrets );
