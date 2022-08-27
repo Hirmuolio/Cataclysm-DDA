@@ -4524,22 +4524,22 @@ void map::adjust_radiation( const tripoint &p, const int delta )
     current_submap->set_radiation( l, current_radiation + delta );
 }
 
-int map::get_temperature( const tripoint &p ) const
+units::temperature map::get_temperature_mod( const tripoint &p ) const
 {
     if( !inbounds( p ) ) {
-        return 0;
+        return 0_K;
     }
 
     const submap *const current_submap = unsafe_get_submap_at( p );
     if( current_submap == nullptr ) {
         debugmsg( "Tried to get temperature at (%d,%d,%d) but the submap is not loaded", p.x, p.y, p.z );
-        return 0;
+        return 0_K;
     }
 
     return current_submap->get_temperature();
 }
 
-void map::set_temperature( const tripoint &p, int new_temperature )
+void map::set_temperature_mod( const tripoint &p, units::temperature new_temperature_mod )
 {
     if( !inbounds( p ) ) {
         return;
@@ -4550,7 +4550,7 @@ void map::set_temperature( const tripoint &p, int new_temperature )
         return;
     }
 
-    current_submap->set_temperature( new_temperature );
+    current_submap->set_temperature_mod( new_temperature_mod );
 }
 // Items: 3D
 
@@ -4931,14 +4931,14 @@ item map::water_from( const tripoint &p )
     weather_manager &weather = get_weather();
     if( has_flag( ter_furn_flag::TFLAG_SALT_WATER, p ) ) {
         item ret( "salt_water", calendar::turn, item::INFINITE_CHARGES );
-        ret.set_item_temperature( std::max( units::from_fahrenheit( weather.get_temperature( p ) ),
+        ret.set_item_temperature( std::max( weather.get_temperature( p ),
                                             temperatures::cold ) );
         return ret;
     }
 
     if( has_flag( ter_furn_flag::TFLAG_CHOCOLATE, p ) ) {
         item ret( "liquid_cacao", calendar::turn, item::INFINITE_CHARGES );
-        ret.set_item_temperature( std::max( units::from_fahrenheit( weather.get_temperature( p ) ),
+        ret.set_item_temperature( std::max( weather.get_temperature( p ),
                                             temperatures::cold ) );
         return ret;
     }
@@ -4946,7 +4946,7 @@ item map::water_from( const tripoint &p )
     if( has_flag( ter_furn_flag::TFLAG_MURKY, p ) ) {
         for( item &ret : get_map().i_at( p ) ) {
             if( ret.made_of( phase_id::LIQUID ) ) {
-                ret.set_item_temperature( std::max( units::from_fahrenheit( weather.get_temperature( p ) ),
+                ret.set_item_temperature( std::max( weather.get_temperature( p ),
                                                     temperatures::cold ) );
                 ret.poison = rng( 1, 6 );
                 ret.get_comestible()->parasites = 5;
@@ -4959,7 +4959,7 @@ item map::water_from( const tripoint &p )
     if( has_flag( ter_furn_flag::TFLAG_TOILET_WATER, p ) ) {
         for( item &ret : get_map().i_at( p ) ) {
             if( ret.made_of( phase_id::LIQUID ) ) {
-                ret.set_item_temperature( std::max( units::from_fahrenheit( weather.get_temperature( p ) ),
+                ret.set_item_temperature( std::max( weather.get_temperature( p ),
                                                     temperatures::cold ) );
                 ret.poison = one_in( 3 ) ? 0 : rng( 1, 3 );
             }
@@ -4970,14 +4970,14 @@ item map::water_from( const tripoint &p )
     const ter_id terrain_id = ter( p );
     if( terrain_id == t_sewage ) {
         item ret( "water_sewage", calendar::turn, item::INFINITE_CHARGES );
-        ret.set_item_temperature( std::max( units::from_fahrenheit( weather.get_temperature( p ) ),
+        ret.set_item_temperature( std::max( weather.get_temperature( p ),
                                             temperatures::cold ) );
         ret.poison = rng( 1, 7 );
         return ret;
     }
 
     item ret( "water", calendar::turn, item::INFINITE_CHARGES );
-    ret.set_item_temperature( std::max( units::from_fahrenheit( weather.get_temperature( p ) ),
+    ret.set_item_temperature( std::max( weather.get_temperature( p ),
                                         temperatures::cold ) );
     // iexamine::water_source requires a valid liquid from this function.
     if( terrain_id->has_examine( iexamine::water_source ) ) {
@@ -7875,7 +7875,7 @@ void map::produce_sap( const tripoint &p, const time_duration &time_since_last_a
 
     item sap( "maple_sap", calendar::turn );
 
-    sap.set_item_temperature( units::from_fahrenheit( get_temperature( p ) ) );
+    sap.set_item_temperature( get_weather().get_temperature( p ) );
     sap.charges = new_charges;
 
     // Is there a proper container?
@@ -8840,19 +8840,23 @@ void map::build_map_cache( const int zlev, bool skip_lightmap )
     camera_cache_dirty |= !diff.empty();
     // Initial value is illegal player position.
     const tripoint p = get_player_character().pos();
+    int const sr = u.unimpaired_range();
     static tripoint player_prev_pos;
-    seen_cache_dirty |= player_prev_pos != p;
+    static int player_prev_range( 0 );
+    seen_cache_dirty |= player_prev_pos != p || sr != player_prev_range || camera_cache_dirty;
     if( seen_cache_dirty ) {
-        build_seen_cache( p, zlev );
+        build_seen_cache( p, zlev, sr );
         player_prev_pos = p;
+        player_prev_range = sr;
         camera_cache_dirty = true;
     }
     if( camera_cache_dirty ) {
         u.moncam_cache = mcache;
         bool cumulative = seen_cache_dirty;
         for( Character::cached_moncam const &mon : u.moncam_cache ) {
-            build_seen_cache( get_map().getlocal( mon.second ), zlev, cumulative, true,
-                              std::max( 60 - mon.first->type->vision_day, 0 ) );
+            int const range = mon.first->type->vision_day;
+            build_seen_cache( get_map().getlocal( mon.second ), mon.second.z(), range, cumulative,
+                              true, std::max( 60 - range, 0 ) );
             cumulative = true;
         }
     }

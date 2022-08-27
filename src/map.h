@@ -1182,13 +1182,12 @@ class map
             adjust_radiation( tripoint( p, abs_sub.z() ), delta );
         }
 
-        // Temperature
-        // Temperature for submap
-        int get_temperature( const tripoint &p ) const;
-        // Set temperature for all four submap quadrants
-        void set_temperature( const tripoint &p, int temperature );
-        void set_temperature( const point &p, int new_temperature ) {
-            set_temperature( tripoint( p, abs_sub.z() ), new_temperature );
+        // Temperature modifier for submap
+        units::temperature get_temperature_mod( const tripoint &p ) const;
+        // Set temperature modifier for all four submap quadrants
+        void set_temperature_mod( const tripoint &p, units::temperature temperature_mod );
+        void set_temperature_mod( const point &p, units::temperature new_temperature_mod ) {
+            set_temperature_mod( tripoint( p, abs_sub.z() ), new_temperature_mod );
         }
 
         // Returns points for all submaps with inconsistent state relative to
@@ -1890,7 +1889,8 @@ class map
 
     protected:
         void generate_lightmap( int zlev );
-        void build_seen_cache( const tripoint &origin, int target_z, bool cumulative = false,
+        void build_seen_cache( const tripoint &origin, int target_z, int extension_range = 60,
+                               bool cumulative = false,
                                bool camera = false, int penalty = 0 );
         void apply_character_light( Character &p );
 

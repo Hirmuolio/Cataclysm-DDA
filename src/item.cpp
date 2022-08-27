@@ -286,6 +286,7 @@ item::item( const itype *type, time_point turn, int qty ) : type( type ), bday( 
     corpse = has_flag( flag_CORPSE ) ? &mtype_id::NULL_ID().obj() : nullptr;
     contents = item_contents( type->pockets );
     item_counter = type->countdown_interval;
+    item_vars = type->item_variables;
 
     if( qty >= 0 ) {
         charges = qty;
@@ -7345,6 +7346,7 @@ int item::get_quality( const quality_id &id, const bool strict_boiling ) const
     }
 
     // If tool has charged qualities and enough charge to use at least once
+    // (using ammo_sufficient() with player character to include bionic/UPS power)
     if( !type->charged_qualities.empty() && ammo_sufficient( &get_player_character() ) ) {
         // see if any charged qualities are better than the current one
         for( const std::pair<const quality_id, int> &quality : type->charged_qualities ) {
@@ -10252,6 +10254,9 @@ ret_val<void> item::can_contain( const item &it, const bool nested,
             if( parent_it.where() != item_location::type::invalid && internal_it == parent_it.get_item() ) {
                 continue;
             }
+            if( !internal_it->is_container() ) {
+                continue;
+            }
             if( internal_it->can_contain( it, true, ignore_rigidity, ignore_pkt_settings,
                                           parent_it, pkt->remaining_volume() ).success() ) {
                 return ret_val<void>::make_success();
@@ -10817,10 +10822,6 @@ int item::ammo_capacity( const ammotype &ammo ) const
 
 int item::ammo_required() const
 {
-    if( is_tool() ) {
-        return std::max( type->charges_to_use(), 0 );
-    }
-
     if( is_gun() ) {
         if( type->gun->ammo.empty() ) {
             return 0;
@@ -10835,7 +10836,7 @@ int item::ammo_required() const
         }
     }
 
-    return 0;
+    return type->charges_to_use();
 }
 
 item &item::first_ammo()
@@ -11786,12 +11787,16 @@ bool item::getlight( float &luminance, units::angle &width, units::angle &direct
 int item::getlight_emit() const
 {
     float lumint = type->light_emission;
-    if( ammo_required() == 0 ||
-        ( has_flag( flag_USE_UPS ) && ammo_capacity( ammo_battery ) == 0 ) ||
+
+    if( lumint == 0 ) {
+        return 0;
+    }
+
+    if( ammo_required() == 0 || ( has_flag( flag_USE_UPS ) && ammo_capacity( ammo_battery ) == 0 ) ||
         has_flag( flag_USES_BIONIC_POWER ) ) {
         return lumint;
     }
-    if( lumint == 0 || ammo_remaining() == 0 ) {
+    if( ammo_remaining() == 0 ) {
         return 0;
     }
     if( has_flag( flag_CHARGEDIM ) && is_tool() && !has_flag( flag_USE_UPS ) ) {
@@ -12546,7 +12551,7 @@ bool item::process_temperature_rot( float insulation, const tripoint &pos, map &
         return false;
     }
 
-    units::temperature temp = units::from_fahrenheit( get_weather().get_temperature( pos ) );
+    units::temperature temp = get_weather().get_temperature( pos );
 
     switch( flag ) {
         case temperature_flag::NORMAL:
@@ -12572,7 +12577,7 @@ bool item::process_temperature_rot( float insulation, const tripoint &pos, map &
     // body heat increases inventory temperature by 5 F (2.77 K) and insulation by 50%
     if( carried ) {
         insulation *= 1.5;
-        temp = temp + units::from_kelvin( 2.77 );
+        temp += units::from_kelvin( 2.77 );
     }
 
     time_point time = last_temp_check;
@@ -12584,19 +12589,19 @@ bool item::process_temperature_rot( float insulation, const tripoint &pos, map &
 
         const weather_generator &wgen = get_weather().get_cur_weather_gen();
         const unsigned int seed = g->get_seed();
-        int local_mod = g->new_game ? 0 : here.get_temperature( pos );
+        units::temperature local_mod = g->new_game ? 0_K : here.get_temperature_mod( pos );
 
-        int enviroment_mod;
+        units::temperature enviroment_mod;
         // Toilets and vending machines will try to get the heat radiation and convection during mapgen and segfault.
         if( !g->new_game ) {
-            enviroment_mod = get_heat_radiation( pos, false );
+            enviroment_mod = get_heat_radiation( pos );
             enviroment_mod += get_convection_temperature( pos );
         } else {
-            enviroment_mod = 0;
+            enviroment_mod = 0_K;
         }
 
         if( carried ) {
-            local_mod += 5; // body heat increases inventory temperature
+            local_mod += units::from_kelvin( 2.77 ); // body heat increases inventory temperature
         }
 
         // Process the past of this item in 1h chunks until there is less than 1h left.
@@ -12609,12 +12614,12 @@ bool item::process_temperature_rot( float insulation, const tripoint &pos, map &
             // Use weather if above ground, use map temp if below
             units::temperature env_temperature;
             if( pos.z >= 0 && flag != temperature_flag::ROOT_CELLAR ) {
-                double weather_temperature = wgen.get_weather_temperature( pos, time, seed );
-                env_temperature = units::from_fahrenheit( weather_temperature + enviroment_mod + local_mod );
+                env_temperature = wgen.get_weather_temperature( pos, time, seed );
             } else {
-                env_temperature = units::from_fahrenheit( units::to_fahrenheit( AVERAGE_ANNUAL_TEMPERATURE ) +
-                                  enviroment_mod + local_mod );
+                env_temperature = AVERAGE_ANNUAL_TEMPERATURE;
             }
+            env_temperature += local_mod;
+            env_temperature += enviroment_mod;
 
             switch( flag ) {
                 case temperature_flag::NORMAL:

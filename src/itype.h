@@ -1172,7 +1172,11 @@ struct itype {
         // Tool qualities that work only when the tool has charges_to_use charges remaining
         std::map<quality_id, int> charged_qualities;
 
+        // Properties are assigned to the type (belong to the item definition)
         std::map<std::string, std::string> properties;
+
+        // Item vars are loaded from the type, but assigned and de/serialized with the item itself
+        std::map<std::string, std::string> item_variables;
 
         // What we're made of (material names). .size() == made of nothing.
         // First -> the material
@@ -1190,7 +1194,7 @@ struct itype {
         std::map<std::string, use_function> use_methods;
 
         /** The factor of ammo consumption indexed by action type*/
-        std::map<std::string, float> ammo_scale;
+        std::map<std::string, int> ammo_scale;
 
         /** Fields to emit when item is in active state */
         std::set<emit_id> emits;
@@ -1364,12 +1368,7 @@ struct itype {
 
         int charges_default() const;
 
-        int charges_to_use() const {
-            if( tool ) {
-                return static_cast<int>( tool->charges_per_use );
-            }
-            return 1;
-        }
+        int charges_to_use() const;
 
         // for tools that sub another tool, but use a different ratio of charges
         int charge_factor() const {
