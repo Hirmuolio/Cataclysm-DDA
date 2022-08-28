@@ -8894,7 +8894,8 @@ cata::optional<int> iuse::cable_attach( Character *p, item *it, bool, const trip
                                       source_veh->name, target_veh->name );
             }
 
-            return 1; // Let the cable be destroyed.
+            p->i_rem( it );
+            return 0; // Let the cable be destroyed.
         }
     }
 
