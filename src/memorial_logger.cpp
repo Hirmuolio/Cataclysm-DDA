@@ -354,8 +354,8 @@ void memorial_logger::write_text_memorial( std::ostream &file,
         file << indent << _( "No bionics were installed." ) << eol;
     }
     file << string_format(
-             _( "Bionic Power: <color_light_blue>%d</color>/<color_light_blue>%d</color>" ),
-             units::to_kilojoule( u.get_power_level() ), units::to_kilojoule( u.get_max_power_level() ) ) << eol;
+             _( "Bionic Power: <color_light_blue>%s</color>/<color_light_blue>%s</color>" ),
+             units::display( u.get_power_level() ), units::display( u.get_max_power_level() ) ) << eol;
     file << eol;
 
     //Equipment

@@ -680,27 +680,15 @@ static void draw_bionics_tab( ui_adaptor &ui, const catacurses::window &w_bionic
     const bool is_current_tab = curtab == player_display_tab::bionics;
     const nc_color title_col = is_current_tab ? h_light_gray : c_light_gray;
     center_print( w_bionics, 0, title_col, _( title_BIONICS ) );
-    int power_amount;
-    std::string power_unit;
-    if( you.get_power_level() < 1_J ) {
-        power_amount = units::to_millijoule( you.get_power_level() );
-        power_unit = pgettext( "energy unit: millijoule", "mJ" );
-    } else if( you.get_power_level() < 1_kJ ) {
-        power_amount = units::to_joule( you.get_power_level() );
-        power_unit = pgettext( "energy unit: joule", "J" );
-    } else {
-        power_amount = units::to_kilojoule( you.get_power_level() );
-        power_unit = pgettext( "energy unit: kilojoule", "kJ" );
-    }
     // NOLINTNEXTLINE(cata-use-named-point-constants)
     const point pow_pos( 1, 1 );
     if( is_current_tab ) {
         ui.set_cursor( w_bionics, pow_pos );
     }
     trim_and_print( w_bionics, pow_pos, getmaxx( w_bionics ) - 1, c_white,
-                    string_format( _( "Power: <color_light_blue>%1$d %2$s</color>"
-                                      " / <color_light_blue>%3$d kJ</color>" ),
-                                   power_amount, power_unit, units::to_kilojoule( you.get_max_power_level() ) ) );
+                    string_format( _( "Power: <color_light_blue>%s</color>"
+                                      " / <color_light_blue>%s</color>" ),
+                                   units::display( you.get_power_level() ), units::display( you.get_max_power_level() ) ) );
     const int height = getmaxy( w_bionics ) - 2;  // -2 for headline and power_level
     const bool do_draw_scrollbar = height < static_cast<int>( bionicslist.size() );
     const int width = getmaxx( w_bionics ) - 1 - ( do_draw_scrollbar ? 1 : 0 );

@@ -2736,8 +2736,8 @@ bionic_uid Character::add_bionic( const bionic_id &b, bionic_uid parent_uid )
 
     const units::energy pow_up = b->capacity;
     if( pow_up > 0_J ) {
-        add_msg_if_player( m_good, _( "Increased storage capacity by %i." ),
-                           units::to_kilojoule( pow_up ) );
+        add_msg_if_player( m_good, _( "Increased storage capacity by %s." ),
+                           units::display( pow_up ) );
     }
 
     bionic_uid bio_uid = generate_bionic_uid();
