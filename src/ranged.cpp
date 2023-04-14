@@ -3897,12 +3897,16 @@ bool gunmode_checks_weapon( avatar &you, const map &m, std::vector<std::string> 
                                                    gmode->tname() ) );
             } else if( gmode->has_flag( flag_USES_BIONIC_POWER ) ) {
                 messages.push_back( string_format(
-                                        _( "You need at least %2$d kJ of bionic power to fire the %1$s!" ),
-                                        gmode->tname(), units::to_kilojoule( energy_drain ) ) );
+                                        _( "You need at least %s of bionic power to fire the %1$s!" ),
+                                        gmode->tname(), units::display( energy_drain ) ) );
             } else if( gmode->has_flag( flag_USE_UPS ) ) {
                 messages.push_back( string_format(
-                                        _( "You need a UPS with at least %2$d kJ to fire the %1$s!" ),
-                                        gmode->tname(), units::to_kilojoule( energy_drain ) ) );
+                                        _( "You need a UPS with at least %s to fire the %1$s!" ),
+                                        gmode->tname(), units::display( energy_drain ) ) );
+            } else {
+                messages.push_back( string_format(
+                                        _( "You need a battery with at least %s to fire the %1$s!" ),
+                                        gmode->tname(), units::display( energy_drain ) ) );
             }
         }
     }

@@ -486,16 +486,7 @@ std::pair<std::string, nc_color> display::power_text_color( const Character &u )
             c_pwr = c_light_red;
         }
 
-        if( u.get_power_level() < 1_J ) {
-            s_pwr = std::to_string( units::to_millijoule( u.get_power_level() ) ) +
-                    pgettext( "energy unit: millijoule", "mJ" );
-        } else if( u.get_power_level() < 1_kJ ) {
-            s_pwr = std::to_string( units::to_joule( u.get_power_level() ) ) +
-                    pgettext( "energy unit: joule", "J" );
-        } else {
-            s_pwr = std::to_string( units::to_kilojoule( u.get_power_level() ) ) +
-                    pgettext( "energy unit: kilojoule", "kJ" );
-        }
+		s_pwr = units::display( u.get_power_level() );
     }
     return std::make_pair( s_pwr, c_pwr );
 }

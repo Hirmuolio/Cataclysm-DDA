@@ -10,7 +10,7 @@
     "id": "power_short_desc",
     "//": "Omits the word 'Bionic' from the label.",
     "type": "widget",
-    "label": "Power",
+    "label": "Pwr",
     "style": "text",
     "var": "power_text"
   },
