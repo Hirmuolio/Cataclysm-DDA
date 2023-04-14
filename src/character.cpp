@@ -531,7 +531,7 @@ Character::Character() :
     sleep_deprivation = 0;
     daily_sleep = 0_turns;
     continuous_sleep = 0_turns;
-    set_rad( 0 );
+    radiation = 0;
     slow_rad = 0;
     set_stim( 0 );
     set_stamina( 10000 ); //Temporary value for stamina. It will be reset later from external json option.
@@ -1461,7 +1461,7 @@ void Character::mount_creature( monster &z )
 
 bool Character::check_mount_will_move( const tripoint &dest_loc )
 {
-    if( !is_mounted() ) {
+    if( !is_mounted() || mounted_creature->has_flag( MF_COMBAT_MOUNT ) ) {
         return true;
     }
     if( mounted_creature && mounted_creature->type->has_fear_trigger( mon_trigger::HOSTILE_CLOSE ) ) {
@@ -1489,10 +1489,12 @@ bool Character::check_mount_is_spooked()
     // -0.25% per point of dexterity (low -1%, average -2%, high -3%, extreme -3.5%)
     // -0.1% per point of strength ( low -0.4%, average -0.8%, high -1.2%, extreme -1.4% )
     // / 2 if horse has full tack and saddle.
+    // / 2 if mount has the monster flag COMBAT_MOUNT
     // Monster in spear reach monster and average stat (8) player on saddled horse, 14% -2% -0.8% / 2 = ~5%
     if( mounted_creature && mounted_creature->type->has_fear_trigger( mon_trigger::HOSTILE_CLOSE ) ) {
         const creature_size mount_size = mounted_creature->get_size();
         const bool saddled = mounted_creature->has_effect( effect_monster_saddled );
+        const bool combat_mount = mounted_creature->has_flag( MF_COMBAT_MOUNT );
         for( const monster &critter : g->all_monsters() ) {
             double chance = 1.0;
             Attitude att = critter.attitude_to( *this );
@@ -1508,6 +1510,9 @@ bool Character::check_mount_is_spooked()
                 if( saddled ) {
                     chance /= 2;
                 }
+                if( combat_mount ) {
+                    chance /= 2;
+                }
                 chance = std::max( 1.0, chance );
                 if( x_in_y( chance, 100.0 ) ) {
                     forced_dismount();
@@ -1515,6 +1520,18 @@ bool Character::check_mount_is_spooked()
                 }
             }
         }
+    }
+    return false;
+}
+
+bool Character::cant_do_mounted( bool msg ) const
+{
+    if( is_mounted() ) {
+        if( msg ) {
+            add_msg_player_or_npc( m_info, _( "You can't do that while mounted." ),
+                                   _( "<npcname> can't do that while mounted." ) );
+        }
+        return true;
     }
     return false;
 }
@@ -1735,10 +1752,10 @@ bool Character::uncanny_dodge()
 
     const bool can_dodge_bio = get_power_level() >= trigger_cost &&
                                has_active_bionic( bio_uncanny_dodge );
-    const bool can_dodge_mut = get_stamina() >= 300 && count_trait_flag( json_flag_UNCANNY_DODGE );
+    const bool can_dodge_mut = get_stamina() >= 300 && has_trait_flag( json_flag_UNCANNY_DODGE );
     const bool can_dodge_both = get_power_level() >= ( trigger_cost / 2 ) &&
                                 has_active_bionic( bio_uncanny_dodge ) &&
-                                get_stamina() >= 150 && count_trait_flag( json_flag_UNCANNY_DODGE );
+                                get_stamina() >= 150 && has_trait_flag( json_flag_UNCANNY_DODGE );
 
     if( !( can_dodge_bio || can_dodge_mut || can_dodge_both ) ) {
         return false;
@@ -3210,9 +3227,6 @@ void Character::apply_skill_boost()
 
 void Character::do_skill_rust()
 {
-    if( get_option<std::string>( "SKILL_RUST" ) == "off" ) {
-        return;
-    }
     for( std::pair<const skill_id, SkillLevel> &pair : *_skills ) {
         const Skill &aSkill = *pair.first;
         SkillLevel &skill_level_obj = pair.second;
@@ -3239,17 +3253,10 @@ void Character::do_skill_rust()
         }
 
         const int rust_resist = enchantment_cache->modify_value( enchant_vals::mod::SKILL_RUST_RESIST, 0 );
-        const int oldSkillLevel = skill_level_obj.level();
         if( skill_level_obj.rust( rust_resist, mutation_value( "skill_rust_multiplier" ) ) ) {
             add_msg_if_player( m_warning,
                                _( "Your knowledge of %s begins to fade, but your memory banks retain it!" ), aSkill.name() );
             mod_power_level( -bio_memory->power_trigger );
-        }
-        const int newSkill = skill_level_obj.level();
-        if( newSkill < oldSkillLevel ) {
-            add_msg_if_player( m_bad,
-                               _( "Your practical skill in %s may need some refreshing.  It has dropped to %d." ), aSkill.name(),
-                               newSkill );
         }
     }
 }
@@ -6178,7 +6185,7 @@ void Character::mend_item( item_location &&obj, bool interactive )
     if( mending_options.empty() ) {
         if( interactive ) {
             add_msg( m_info, _( "The %s doesn't have any faults to mend." ), obj->tname() );
-            if( obj->damage() > obj->damage_floor( false ) ) {
+            if( obj->damage() > obj->degradation() ) {
                 const std::set<itype_id> &rep = obj->repaired_with();
                 if( rep.empty() ) {
                     add_msg( m_info, _( "It is damaged, but cannot be repaired." ) );
@@ -6306,7 +6313,10 @@ int Character::get_rad() const
 
 void Character::set_rad( int new_rad )
 {
-    radiation = new_rad;
+    if( radiation != new_rad ) {
+        radiation = new_rad;
+        on_stat_change( "radiation", radiation );
+    }
 }
 
 void Character::mod_rad( int mod )
@@ -6327,7 +6337,7 @@ float Character::leak_level() const
         if( it->has_flag( flag_RADIOACTIVE ) ) {
             if( it->has_flag( flag_LEAK_ALWAYS ) ) {
                 ret += to_gram( it->weight() ) / 250.f;
-            } else if( it->has_flag( flag_LEAK_DAM ) && it->damage() > 0 ) {
+            } else if( it->has_flag( flag_LEAK_DAM ) ) {
                 ret += it->damage_level();
             }
         }
@@ -6703,12 +6713,13 @@ bool Character::consume_charges( item &used, int qty )
     return false;
 }
 
-int Character::item_handling_cost( const item &it, bool penalties, int base_cost ) const
+int Character::item_handling_cost( const item &it, bool penalties, int base_cost,
+                                   int charges_in_it ) const
 {
     int mv = base_cost;
     if( penalties ) {
         // 40 moves per liter, up to 200 at 5 liters
-        mv += std::min( 200, it.volume() / 20_ml );
+        mv += std::min( 200, it.volume( false, false, charges_in_it ) / 20_ml );
     }
 
     if( weapon.typeId() == itype_e_handcuffs ) {
@@ -8656,8 +8667,9 @@ std::list<item> Character::use_amount( const itype_id &it, int quantity,
             if( imenu.ret < 0 || static_cast<size_t>( imenu.ret ) >= tmp.size() ) {
                 break;
             }
-            tmp[imenu.ret]->use_amount( it, quantity, ret, filter );
-            remove_item( *tmp[imenu.ret] );
+            if( tmp[imenu.ret]->use_amount( it, quantity, ret, filter ) ) {
+                remove_item( *tmp[imenu.ret] );
+            }
             tmp.erase( tmp.begin() + imenu.ret );
         }
     }
@@ -10537,6 +10549,23 @@ int Character::book_fun_for( const item &book, const Character &p ) const
     return fun_bonus;
 }
 
+bool Character::has_bionic_with_flag( const json_character_flag &flag ) const
+{
+    for( const bionic &bio : *my_bionics ) {
+        if( bio.info().has_flag( flag ) ) {
+            return true;
+        }
+        if( bio.info().activated ) {
+            if( ( bio.info().has_active_flag( flag ) && has_active_bionic( bio.id ) ) ||
+                ( bio.info().has_inactive_flag( flag ) && !has_active_bionic( bio.id ) ) ) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 int Character::count_bionic_with_flag( const json_character_flag &flag ) const
 {
     int ret = 0;
@@ -10555,6 +10584,19 @@ int Character::count_bionic_with_flag( const json_character_flag &flag ) const
     return ret;
 }
 
+bool Character::has_bodypart_with_flag( const json_character_flag &flag ) const
+{
+    for( const bodypart_id &bp : get_all_body_parts() ) {
+        if( bp->has_flag( flag ) ) {
+            return true;
+        }
+        if( get_part( bp )->has_conditional_flag( flag ) ) {
+            return true;
+        }
+    }
+    return false;
+}
+
 int Character::count_bodypart_with_flag( const json_character_flag &flag ) const
 {
     int ret = 0;
@@ -10569,11 +10611,24 @@ int Character::count_bodypart_with_flag( const json_character_flag &flag ) const
     return ret;
 }
 
-int Character::has_flag( const json_character_flag &flag ) const
+bool Character::has_flag( const json_character_flag &flag ) const
 {
     // If this is a performance problem create a map of flags stored for a character and updated on trait, mutation, bionic add/remove, activate/deactivate, effect gain/loss
-    return count_trait_flag( flag ) + count_bionic_with_flag( flag ) + has_effect_with_flag(
-               flag ) + count_bodypart_with_flag( flag ) + count_mabuff_flag( flag );
+    return has_trait_flag( flag ) ||
+           has_bionic_with_flag( flag ) ||
+           has_effect_with_flag( flag ) ||
+           has_bodypart_with_flag( flag ) ||
+           has_mabuff_flag( flag );
+}
+
+int Character::count_flag( const json_character_flag &flag ) const
+{
+    // If this is a performance problem create a map of flags stored for a character and updated on trait, mutation, bionic add/remove, activate/deactivate, effect gain/loss
+    return count_trait_flag( flag ) +
+           count_bionic_with_flag( flag ) +
+           has_effect_with_flag( flag ) +
+           count_bodypart_with_flag( flag ) +
+           count_mabuff_flag( flag );
 }
 
 bool Character::is_driving() const
@@ -11082,6 +11137,9 @@ float Character::fall_damage_mod() const
     }
 
     // TODO: Bonus for Judo, mutations. Penalty for heavy weight (including mutations)
+
+    ret = enchantment_cache->modify_value( enchant_vals::mod::FALL_DAMAGE, ret );
+
     return std::max( 0.0f, ret );
 }
 

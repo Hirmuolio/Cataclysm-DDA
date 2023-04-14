@@ -105,6 +105,7 @@ enum m_flag : int {
     MF_SLUDGETRAIL,         // Causes monster to leave a sludge trap trail when moving
     MF_SMALLSLUDGETRAIL,    // Causes monster to leave a low intensity, 1 tile sludge pool approximately every other tile when moving
     MF_COLDPROOF,           // Immune to cold damage
+    MF_COMBAT_MOUNT,        // Mount has better chance to ignore hostile monster fear
     MF_FIREY,               // Burns stuff and is immune to fire
     MF_QUEEN,               // When it dies, local populations start to die off too
     MF_ELECTRONIC,          // e.g. a robot; affected by EMP blasts, and other stuff
@@ -123,7 +124,6 @@ enum m_flag : int {
     MF_REVIVES,             // Monster corpse will revive after a short period of time
     MF_VERMIN,              // Obsolete flag labeling "nuisance" or "scenery" monsters, now used to prevent loading the same.
     MF_NOGIB,               // Creature won't leave gibs / meat chunks when killed with huge damage.
-    MF_LARVA,               // Creature is a larva. Currently used for gib and blood handling.
     MF_ARTHROPOD_BLOOD,     // Forces monster to bleed hemolymph.
     MF_ACID_BLOOD,          // Makes monster bleed acid. Fun stuff! Does not automatically dissolve in a pool of acid on death.
     MF_BILE_BLOOD,          // Makes monster bleed bile.
@@ -346,6 +346,9 @@ struct mtype {
         int armor_biological = -1; /** innate armor vs. biological **/
         ::weakpoints weakpoints;
         weakpoint_families families;
+
+        // Traps avoided by this monster
+        std::set<trap_str_id> trap_avoids;
 
     private:
         std::vector<weakpoints_id> weakpoints_deferred;
