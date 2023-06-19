@@ -513,6 +513,29 @@ std::optional<int> message_iuse::use( Character &p, item &it, bool t,
         return std::nullopt;
     }
 
+    bool is_null = false;
+
+    if( !&p ) {
+        // Works and message is shown
+        add_msg( "On ground !&p" );
+        is_null = true;
+    }
+
+    if( &p == nullptr ) {
+        // Works and message is shown
+        add_msg( "On ground p == NULL" );
+        is_null = true;
+    }
+
+    if( is_null ) {
+        // The rest of the code crashes if there is no carrier
+        return std::nullopt;
+    }
+
+    if( p.is_avatar() ) {
+        add_msg( "Carried p->is_avatar()" );
+    }
+
     if( p.sees( pos ) && !message.empty() ) {
         p.add_msg_if_player( m_info, message.translated(), it.tname() );
     }

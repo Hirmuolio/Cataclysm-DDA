@@ -13315,7 +13315,7 @@ bool item::process_internal( map &here, Character *carrier, const tripoint &pos,
         if( calendar::turn >= countdown_point ) {
             active = false;
             if( type->countdown_action ) {
-                type->countdown_action.call( carrier ? *carrier : get_avatar(), *this, false, pos );
+                type->countdown_action.call( *carrier, *this, false, pos );
             }
             countdown_point = calendar::turn_max;
             if( type->revert_to ) {
