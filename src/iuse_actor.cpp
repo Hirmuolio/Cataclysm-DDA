@@ -533,6 +533,7 @@ std::optional<int> message_iuse::use( Character &p, item &it, bool t,
     }
 
     if( p.is_avatar() ) {
+		// Works and message is shown
         add_msg( "Carried p->is_avatar()" );
     }
 
